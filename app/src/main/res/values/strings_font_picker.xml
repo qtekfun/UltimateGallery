@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="font_label">Font</string>
+  <string name="font_default_name">Default</string>
+  <string name="font_picker_title">Choose a font</string>
+  <string name="font_import">Import font…</string>
+  <string name="font_sample">Aa Bb 123</string>
+  <string name="font_remove_named">Remove %1$s</string>
+  <string name="font_remove_title">Remove this font?</string>
+  <string name="font_remove_body">%1$s will be deleted from the app. Watermarks that use it switch to the default font.</string>
+  <string name="font_remove_confirm">Remove</string>
+  <string name="font_remove_cancel">Cancel</string>
+  <string name="font_imported">Font imported</string>
+  <string name="font_already_present">That font is already imported</string>
+  <string name="font_invalid">That file isn\'t a usable font</string>
+</resources>

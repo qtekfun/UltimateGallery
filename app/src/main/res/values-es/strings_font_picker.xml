@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="font_label">Fuente</string>
+  <string name="font_default_name">Predeterminada</string>
+  <string name="font_picker_title">Elige una fuente</string>
+  <string name="font_import">Importar fuente…</string>
+  <string name="font_sample">Aa Bb 123</string>
+  <string name="font_remove_named">Quitar %1$s</string>
+  <string name="font_remove_title">¿Quitar esta fuente?</string>
+  <string name="font_remove_body">%1$s se borrará de la aplicación. Las marcas de agua que la usan pasarán a la fuente predeterminada.</string>
+  <string name="font_remove_confirm">Quitar</string>
+  <string name="font_remove_cancel">Cancelar</string>
+  <string name="font_imported">Fuente importada</string>
+  <string name="font_already_present">Esa fuente ya estaba importada</string>
+  <string name="font_invalid">Ese archivo no es una fuente válida</string>
+</resources>

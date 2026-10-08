@@ -2,47 +2,46 @@ package com.qtekfun.ultimategallery.feature.watermark
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimategallery.R
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
+import com.qtekfun.ultimategallery.domain.watermark.FontInfo
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
-import com.qtekfun.ultimategallery.render.MarkTypefaces
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
 import kotlin.math.roundToInt
-
-private val FontChoices = listOf(
-    MarkFont.SANS to R.string.font_sans,
-    MarkFont.SERIF to R.string.font_serif,
-    MarkFont.MONOSPACE to R.string.font_mono,
-    MarkFont.CURSIVE to R.string.font_cursive,
-    MarkFont.CONDENSED to R.string.font_condensed
-)
 
 private const val WEIGHT_STEPS = 7
 private const val SAMPLE_HEIGHT_DP = 64
@@ -51,7 +50,7 @@ private const val SAMPLE_FILL = 0.8f
 
 /** The "Style" tab: how a text mark looks. A live sample stays pinned above the scrolling controls. */
 @Composable
-fun StylePanel(profile: WatermarkProfile, actions: EditorActions, modifier: Modifier = Modifier) {
+fun StylePanel(profile: WatermarkProfile, actions: EditorActions, modifier: Modifier = Modifier, fonts: List<FontInfo> = emptyList()) {
     val leaf = profile.source.leaf()
     if (leaf !is WatermarkSource.Text) {
         Column(modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -70,7 +69,7 @@ fun StylePanel(profile: WatermarkProfile, actions: EditorActions, modifier: Modi
             Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            TextStyleControls(leaf.style, actions.onStyle)
+            TextStyleControls(leaf, fonts, actions)
             OpacitySlider(profile, actions)
         }
     }
@@ -114,26 +113,26 @@ private fun StyleSample(text: WatermarkSource.Text, opacity: Float) {
 }
 
 @Composable
-private fun TextStyleControls(style: TextStyleSpec, set: (TextStyleSpec) -> Unit) {
-    Row(
-        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        FontChoices.forEach { (font, label) ->
-            // Each chip is written in its own typeface, so the choice can be judged before tapping it.
-            val family = remember(font) { FontFamily(androidx.compose.ui.text.font.Typeface(MarkTypefaces.create(font, FontWeight.Normal.weight, false))) }
-            FilterChip(
-                selected = style.font == font,
-                onClick = { set(style.copy(font = font)) },
-                label = { Text(stringResource(label), fontFamily = family) }
-            )
-        }
-        FilterChip(
-            selected = style.italic,
-            onClick = { set(style.copy(italic = !style.italic)) },
-            label = { Text(stringResource(R.string.italic), fontStyle = FontStyle.Italic) }
+private fun TextStyleControls(text: WatermarkSource.Text, fonts: List<FontInfo>, actions: EditorActions) {
+    val style = text.style
+    val set = actions.onStyle
+    var pickerOpen by remember { mutableStateOf(false) }
+    FontButton(style.fontId, fonts, actions) { pickerOpen = true }
+    if (pickerOpen) {
+        FontPickerSheet(
+            fonts = fonts,
+            selectedId = style.fontId,
+            sampleText = text.text,
+            actions = actions,
+            onSelect = { set(style.copy(fontId = it)) },
+            onDismiss = { pickerOpen = false }
         )
     }
+    FilterChip(
+        selected = style.italic,
+        onClick = { set(style.copy(italic = !style.italic)) },
+        label = { Text(stringResource(R.string.italic), fontStyle = FontStyle.Italic) }
+    )
     LabeledSlider(
         stringResource(R.string.weight),
         style.weight.toFloat(),
@@ -182,6 +181,20 @@ private fun TextStyleControls(style: TextStyleSpec, set: (TextStyleSpec) -> Unit
             { set(style.copy(backgroundPadding = it)) },
             valueText = "${(style.backgroundPadding * PERCENT).roundToInt()}%"
         )
+    }
+}
+
+/** One button naming the current font in its own typeface; it opens the font picker. */
+@Composable
+private fun FontButton(fontId: String, fonts: List<FontInfo>, actions: EditorActions, onClick: () -> Unit) {
+    val family = rememberFontFamily(fontId, actions.typefaceOf)
+    val name = fonts.firstOrNull { it.id == fontId }?.label
+        ?: stringResource(R.string.font_default_name).takeIf { fontId == FontIds.DEFAULT }
+        ?: fontId.substringAfter(':')
+    OutlinedButton(onClick = onClick, modifier = Modifier.fillMaxWidth().testTag("font_button")) {
+        Icon(Icons.Outlined.TextFields, contentDescription = null)
+        Text(stringResource(R.string.font_label), Modifier.padding(start = 8.dp), style = MaterialTheme.typography.labelLarge)
+        Text(name, Modifier.weight(1f).padding(start = 12.dp), fontFamily = family, maxLines = 1, textAlign = TextAlign.End)
     }
 }
 

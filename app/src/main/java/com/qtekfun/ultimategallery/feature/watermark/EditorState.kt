@@ -35,4 +35,4 @@ data class EditorUiState(
     val placement: Placement get() = profile.placementFor(orientation)
 }
 
-enum class EditorMessage { LOGO_IMPORT_FAILED, EMPTY_SELECTION, PROFILE_SAVED, LAST_PROFILE }
+enum class EditorMessage { LOGO_IMPORT_FAILED, EMPTY_SELECTION, PROFILE_SAVED, LAST_PROFILE, FONT_IMPORTED, FONT_ALREADY_PRESENT, FONT_INVALID }

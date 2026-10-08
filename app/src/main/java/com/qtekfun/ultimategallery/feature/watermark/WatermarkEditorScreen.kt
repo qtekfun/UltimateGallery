@@ -89,12 +89,19 @@ fun WatermarkEditorScreen(
     val empty = stringResource(R.string.empty_selection)
     val profileSaved = stringResource(R.string.profile_saved)
     val lastProfile = stringResource(R.string.profile_last)
+    val fontImported = stringResource(R.string.font_imported)
+    val fontAlreadyPresent = stringResource(R.string.font_already_present)
+    val fontInvalid = stringResource(R.string.font_invalid)
+    val fonts by viewModel.fonts.collectAsStateWithLifecycle()
     LaunchedEffect(state.message) {
         when (state.message) {
             EditorMessage.LOGO_IMPORT_FAILED -> snackbar.showSnackbar(importFailed)
             EditorMessage.EMPTY_SELECTION -> snackbar.showSnackbar(empty)
             EditorMessage.PROFILE_SAVED -> snackbar.showSnackbar(profileSaved)
             EditorMessage.LAST_PROFILE -> snackbar.showSnackbar(lastProfile)
+            EditorMessage.FONT_IMPORTED -> snackbar.showSnackbar(fontImported)
+            EditorMessage.FONT_ALREADY_PRESENT -> snackbar.showSnackbar(fontAlreadyPresent)
+            EditorMessage.FONT_INVALID -> snackbar.showSnackbar(fontInvalid)
             null -> Unit
         }
         if (state.message != null) viewModel.consumeMessage()
@@ -130,7 +137,10 @@ fun WatermarkEditorScreen(
             onOpacity = viewModel::setOpacity,
             onMargin = viewModel::setMargin,
             onSnap = viewModel::setSnapEnabled,
-            onResetPlacement = viewModel::resetPlacement
+            onResetPlacement = viewModel::resetPlacement,
+            onImportFont = viewModel::importFont,
+            onRemoveFont = viewModel::removeFont,
+            typefaceOf = viewModel::typefaceOf
         )
     }
 
@@ -271,7 +281,7 @@ fun WatermarkEditorScreen(
                             ).padding(horizontal = 16.dp, vertical = 12.dp)
                             when (state.tab) {
                                 EditorTab.MARK -> MarkPanel(state.profile, actions, panelModifier)
-                                EditorTab.STYLE -> StylePanel(state.profile, actions, panelModifier)
+                                EditorTab.STYLE -> StylePanel(state.profile, actions, panelModifier, fonts)
                                 EditorTab.PLACEMENT -> PlacementPanel(
                                     state.profile,
                                     state.orientation,

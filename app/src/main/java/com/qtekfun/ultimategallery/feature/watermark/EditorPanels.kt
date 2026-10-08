@@ -1,5 +1,6 @@
 package com.qtekfun.ultimategallery.feature.watermark
 
+import android.graphics.Typeface
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -211,5 +212,8 @@ class EditorActions(
     val onOpacity: (Float) -> Unit,
     val onMargin: (Float) -> Unit,
     val onSnap: (Boolean) -> Unit,
-    val onResetPlacement: () -> Unit
+    val onResetPlacement: () -> Unit,
+    val onImportFont: (Uri) -> Unit = {},
+    val onRemoveFont: (String) -> Unit = {},
+    val typefaceOf: (String) -> Typeface? = { null }
 )
