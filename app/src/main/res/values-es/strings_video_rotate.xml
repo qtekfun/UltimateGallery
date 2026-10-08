@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="video_rotate">Girar vídeo</string>
+  <string name="video_rotate_left">Girar a la izquierda</string>
+  <string name="video_rotate_right">Girar a la derecha</string>
+  <string name="video_rotate_cancel">Cancelar</string>
+  <string name="video_rotate_save">Guardar</string>
+  <string name="video_rotate_saving">Guardando el vídeo girado</string>
+  <string name="video_rotate_ask_title">Guardar vídeo girado</string>
+  <string name="video_rotate_ask_message">¿Cómo quieres guardar este vídeo?</string>
+  <string name="video_rotate_save_copy">Guardar una copia</string>
+  <string name="video_rotate_overwrite">Sobrescribir el original</string>
+  <string name="video_rotate_remember">Recordar mi elección</string>
+  <string name="video_rotate_done">Vídeo girado</string>
+  <string name="video_rotate_done_copy">Copia girada guardada</string>
+  <string name="video_rotate_open_copy">Abrir copia</string>
+  <string name="video_rotate_denied">No se guardó: cambiar el original necesita tu permiso</string>
+  <string name="video_rotate_unsupported">Este formato de vídeo no se puede girar sin pérdida</string>
+  <string name="video_rotate_failed">No se pudo girar el vídeo: %1$s</string>
+  <string name="video_rotate_preview_state">Vista previa girada %1$d grados a la derecha</string>
+</resources>

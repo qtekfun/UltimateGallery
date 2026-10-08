@@ -9,13 +9,19 @@ import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -35,10 +41,10 @@ import com.qtekfun.ultimategallery.domain.MediaItem
  * poster frame so swiping stays cheap.
  */
 @Composable
-fun VideoPage(item: MediaItem, isCurrent: Boolean, modifier: Modifier = Modifier) {
+fun VideoPage(item: MediaItem, isCurrent: Boolean, modifier: Modifier = Modifier, previewTurns: Int = 0, revision: Int = 0) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (isCurrent) {
-            ActivePlayer(item)
+            ActivePlayer(item, previewTurns, revision)
         } else {
             MediaThumb(
                 item.uri,
@@ -58,9 +64,9 @@ fun VideoPage(item: MediaItem, isCurrent: Boolean, modifier: Modifier = Modifier
 
 @Composable
 @androidx.annotation.OptIn(UnstableApi::class)
-private fun ActivePlayer(item: MediaItem) {
+private fun ActivePlayer(item: MediaItem, previewTurns: Int, revision: Int) {
     val context = LocalContext.current
-    val player = remember(item.id) {
+    val player = remember(item.id, revision) {
         ExoPlayer.Builder(context).build().apply {
             setMediaItem(PlayerMediaItem.fromUri(item.uri))
             repeatMode = Player.REPEAT_MODE_OFF
@@ -70,6 +76,8 @@ private fun ActivePlayer(item: MediaItem) {
     }
     DisposableEffect(player) { onDispose { player.release() } }
     LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) { player.pause() }
+    val degrees = animatedPreviewDegrees(previewTurns)
+    var pageSize by remember { mutableStateOf(IntSize.Zero) }
     AndroidView(
         factory = { ctx ->
             PlayerView(ctx).apply {
@@ -82,7 +90,16 @@ private fun ActivePlayer(item: MediaItem) {
                 silenceHaptics(this)
             }
         },
-        modifier = Modifier.fillMaxSize().mediaSharedElement(item.id)
+        modifier = Modifier
+            .fillMaxSize()
+            .onSizeChanged { pageSize = it }
+            .graphicsLayer {
+                rotationZ = degrees
+                val scale = fitScaleForRotation(pageSize.width.toFloat(), pageSize.height.toFloat(), degrees)
+                scaleX = scale
+                scaleY = scale
+            }
+            .mediaSharedElement(item.id)
     )
 }
 
