@@ -1,0 +1,43 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "343bddfebf28cba5359c905987709786",
+    "entities": [
+      {
+        "tableName": "hidden_folder",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bucketId` INTEGER NOT NULL, `name` TEXT NOT NULL, `hiddenAt` INTEGER NOT NULL, PRIMARY KEY(`bucketId`))",
+        "fields": [
+          {
+            "fieldPath": "bucketId",
+            "columnName": "bucketId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hiddenAt",
+            "columnName": "hiddenAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "bucketId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '343bddfebf28cba5359c905987709786')"
+    ]
+  }
+}

@@ -43,6 +43,8 @@ fun UltimateGalleryTheme(
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
         motionScheme = MotionScheme.expressive(),
+        shapes = GalleryShapes,
+        typography = GalleryTypography,
         content = content
     )
 }

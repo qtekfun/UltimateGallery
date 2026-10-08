@@ -3,11 +3,11 @@
 Execute all phases in order without pausing for review between them. Commit per task with clear messages. Keep CI green. Update this file ticking tasks as they finish.
 
 ## Phase 0 — Project setup
-- [ ] Create Android project `com.qtekfun.ultimategallery` (Kotlin, Compose, Material 3, minSdk 31), version catalog, R8, lint, ktlint/detekt.
-- [ ] Theme: dynamic color, light/dark, Material 3 Expressive typography/shapes/motion tokens.
-- [ ] Hilt, Navigation Compose, Room, DataStore, Coil 3, Media3, WorkManager wired in.
-- [ ] GitHub Actions: build, lint, test on PRs; signed release on tags.
-- [ ] README, LICENSE (confirm choice), CONTRIBUTING, strings in `en` and `es`.
+- [x] Create Android project `com.qtekfun.ultimategallery` (Kotlin, Compose, Material 3, minSdk 31), version catalog, R8, lint, ktlint/detekt.
+- [x] Theme: dynamic color, light/dark, Material 3 Expressive typography/shapes/motion tokens.
+- [x] Hilt, Navigation Compose, Room, DataStore, Coil 3, Media3, WorkManager wired in.
+- [x] GitHub Actions: build, lint, test on PRs; signed release on tags.
+- [x] README, LICENSE (confirm choice), CONTRIBUTING, strings in `en` and `es`.
 
 ## Phase 1 — Media access
 - [ ] Permission flow (full and partial access on Android 14+), onboarding screen explaining why.
