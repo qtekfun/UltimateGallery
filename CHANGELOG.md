@@ -3,6 +3,15 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [0.3.0]
+
+Profiles (pre-release).
+
+- Save watermark profiles (watermark, both orientation placements, opacity, export settings) and reuse them.
+- Profile sheet in the editor: choose, save changes, save as new, rename, duplicate, delete.
+- The last used profile is preselected; the first-run default profile is called "Wallapop".
+- Unsaved changes are marked and confirmed before leaving the editor.
+
 ## [0.2.0]
 
 Watermark editor and export, end to end (pre-release).

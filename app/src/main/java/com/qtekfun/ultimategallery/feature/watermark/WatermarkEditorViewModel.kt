@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qtekfun.ultimategallery.data.media.MediaRepository
+import com.qtekfun.ultimategallery.data.profile.ProfileRepository
 import com.qtekfun.ultimategallery.domain.BatchSelection
 import com.qtekfun.ultimategallery.domain.export.ExportController
 import com.qtekfun.ultimategallery.domain.export.ExportPaths
@@ -36,6 +37,7 @@ class WatermarkEditorViewModel @Inject constructor(
     private val batch: BatchSelection,
     private val importer: LogoImporter,
     private val exporter: ExportController,
+    private val profileRepository: ProfileRepository,
     val renderer: WatermarkRenderer
 ) : ViewModel() {
     private val _state = MutableStateFlow(EditorUiState())
@@ -54,6 +56,13 @@ class WatermarkEditorViewModel @Inject constructor(
     val snapEvents = snapChannel.receiveAsFlow()
 
     init {
+        viewModelScope.launch {
+            profileRepository.profiles.collect { list -> _state.update { it.copy(profiles = list) } }
+        }
+        viewModelScope.launch {
+            val initial = profileRepository.lastUsed()
+            _state.update { it.copy(profile = initial, savedProfile = initial) }
+        }
         viewModelScope.launch {
             val ids = savedState.get<LongArray>(KEY_IDS)?.toList() ?: batch.ids.value.also {
                 savedState[KEY_IDS] = it.toLongArray()
@@ -175,6 +184,7 @@ class WatermarkEditorViewModel @Inject constructor(
             _state.update { it.copy(tab = EditorTab.EXPORT) }
             return null
         }
+        if (s.profile.id != 0L) viewModelScope.launch { profileRepository.markUsed(s.profile.id) }
         return exporter.start(s.items.map { it.id }, s.profile)
     }
 
@@ -244,6 +254,67 @@ class WatermarkEditorViewModel @Inject constructor(
                 Placement.DefaultLandscape
             }
         )
+    }
+
+    // endregion
+
+    // region profiles
+
+    /** Loads a stored profile into the editor, replacing the current one and clearing the history. */
+    fun selectProfile(id: Long) {
+        viewModelScope.launch {
+            val loaded = profileRepository.get(id) ?: return@launch
+            history.clear()
+            profileRepository.markUsed(id)
+            _state.update { it.copy(profile = loaded, savedProfile = loaded, canUndo = false, canRedo = false) }
+        }
+    }
+
+    /** Stores the current changes into the loaded profile. */
+    fun saveProfile() {
+        viewModelScope.launch {
+            val saved = profileRepository.save(_state.value.profile)
+            profileRepository.markUsed(saved.id)
+            _state.update { it.copy(profile = saved, savedProfile = saved, message = EditorMessage.PROFILE_SAVED) }
+        }
+    }
+
+    fun saveProfileAs(name: String) {
+        viewModelScope.launch {
+            val saved = profileRepository.saveAs(_state.value.profile, name)
+            profileRepository.markUsed(saved.id)
+            _state.update { it.copy(profile = saved, savedProfile = saved, message = EditorMessage.PROFILE_SAVED) }
+        }
+    }
+
+    fun renameProfile(id: Long, name: String) {
+        viewModelScope.launch {
+            profileRepository.rename(id, name)
+            val renamed = profileRepository.get(id) ?: return@launch
+            _state.update { s ->
+                if (s.profile.id == id) {
+                    s.copy(profile = s.profile.copy(name = renamed.name), savedProfile = s.savedProfile?.copy(name = renamed.name))
+                } else {
+                    s
+                }
+            }
+        }
+    }
+
+    fun duplicateProfile(id: Long) {
+        viewModelScope.launch { profileRepository.duplicate(id) }
+    }
+
+    fun deleteProfile(id: Long) {
+        viewModelScope.launch {
+            if (!profileRepository.delete(id)) {
+                _state.update { it.copy(message = EditorMessage.LAST_PROFILE) }
+            } else if (_state.value.profile.id == id) {
+                val next = profileRepository.lastUsed()
+                history.clear()
+                _state.update { it.copy(profile = next, savedProfile = next, canUndo = false, canRedo = false) }
+            }
+        }
     }
 
     // endregion

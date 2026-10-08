@@ -20,8 +20,13 @@ data class EditorUiState(
     val canUndo: Boolean = false,
     val canRedo: Boolean = false,
     val tab: EditorTab = EditorTab.MARK,
-    val message: EditorMessage? = null
+    val message: EditorMessage? = null,
+    val profiles: List<WatermarkProfile> = emptyList(),
+    /** The stored version of the loaded profile, to tell whether there are unsaved changes. */
+    val savedProfile: WatermarkProfile? = null
 ) {
+    val dirty: Boolean get() = savedProfile != null && savedProfile != profile
+
     val current: MediaItem? get() = items.getOrNull(index)
 
     val orientation: Orientation
@@ -30,4 +35,4 @@ data class EditorUiState(
     val placement: Placement get() = profile.placementFor(orientation)
 }
 
-enum class EditorMessage { LOGO_IMPORT_FAILED, EMPTY_SELECTION }
+enum class EditorMessage { LOGO_IMPORT_FAILED, EMPTY_SELECTION, PROFILE_SAVED, LAST_PROFILE }

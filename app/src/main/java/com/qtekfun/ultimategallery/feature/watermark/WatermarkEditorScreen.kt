@@ -2,6 +2,7 @@ package com.qtekfun.ultimategallery.feature.watermark
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -17,6 +18,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Redo
 import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -30,6 +34,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,16 +69,23 @@ fun WatermarkEditorScreen(
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
     var panelOpen by remember { mutableStateOf(true) }
+    var showProfiles by remember { mutableStateOf(false) }
+    var confirmDiscard by remember { mutableStateOf(false) }
+    BackHandler(enabled = state.dirty) { confirmDiscard = true }
 
     LaunchedEffect(viewModel) {
         viewModel.snapEvents.collect { haptics.performHapticFeedback(HapticFeedbackType.SegmentTick) }
     }
     val importFailed = stringResource(R.string.logo_import_failed)
     val empty = stringResource(R.string.empty_selection)
+    val profileSaved = stringResource(R.string.profile_saved)
+    val lastProfile = stringResource(R.string.profile_last)
     LaunchedEffect(state.message) {
         when (state.message) {
             EditorMessage.LOGO_IMPORT_FAILED -> snackbar.showSnackbar(importFailed)
             EditorMessage.EMPTY_SELECTION -> snackbar.showSnackbar(empty)
+            EditorMessage.PROFILE_SAVED -> snackbar.showSnackbar(profileSaved)
+            EditorMessage.LAST_PROFILE -> snackbar.showSnackbar(lastProfile)
             null -> Unit
         }
         if (state.message != null) viewModel.consumeMessage()
@@ -113,11 +125,48 @@ fun WatermarkEditorScreen(
         )
     }
 
+    if (showProfiles) {
+        ProfileSheet(
+            profiles = state.profiles,
+            current = state.profile,
+            dirty = state.dirty,
+            actions = ProfileActions(
+                onSelect = viewModel::selectProfile,
+                onSave = viewModel::saveProfile,
+                onSaveAs = viewModel::saveProfileAs,
+                onRename = viewModel::renameProfile,
+                onDuplicate = viewModel::duplicateProfile,
+                onDelete = viewModel::deleteProfile
+            ),
+            onDismiss = { showProfiles = false }
+        )
+    }
+    if (confirmDiscard) {
+        AlertDialog(
+            onDismissRequest = { confirmDiscard = false },
+            title = { Text(stringResource(R.string.discard_title)) },
+            text = { Text(stringResource(R.string.discard_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmDiscard = false
+                    onBack()
+                }) { Text(stringResource(R.string.discard_confirm)) }
+            },
+            dismissButton = { TextButton(onClick = { confirmDiscard = false }) { Text(stringResource(R.string.discard_keep)) } }
+        )
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.editor_title)) },
+                title = {
+                    AssistChip(
+                        onClick = { showProfiles = true },
+                        label = { Text(state.profile.name + if (state.dirty) " •" else "", maxLines = 1) },
+                        leadingIcon = { Icon(Icons.Outlined.Bookmarks, contentDescription = stringResource(R.string.profile_menu)) }
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.back))

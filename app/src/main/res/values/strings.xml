@@ -121,4 +121,21 @@
   <string name="result_share_all">Share all</string>
   <string name="result_done">Done</string>
   <string name="result_failures">Photos that failed</string>
+  <string name="profile_menu">Profiles</string>
+  <string name="profile_unsaved">Unsaved changes</string>
+  <string name="profile_save">Save changes</string>
+  <string name="profile_save_as">Save as new profile…</string>
+  <string name="profile_rename">Rename</string>
+  <string name="profile_duplicate">Duplicate</string>
+  <string name="profile_delete">Delete</string>
+  <string name="profile_name">Profile name</string>
+  <string name="profile_delete_title">Delete this profile?</string>
+  <string name="profile_delete_body">The profile will be removed. Exported photos are not affected.</string>
+  <string name="profile_saved">Profile saved</string>
+  <string name="profile_last">You need at least one profile</string>
+  <string name="profile_more">More actions</string>
+  <string name="discard_title">Discard changes?</string>
+  <string name="discard_body">Your watermark edits are not saved to the profile.</string>
+  <string name="discard_confirm">Discard</string>
+  <string name="discard_keep">Keep editing</string>
 </resources>

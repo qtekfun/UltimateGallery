@@ -1,0 +1,5 @@
+Perfiles (versión preliminar).
+- Guarda perfiles de marca de agua y reutilízalos
+- Elegir, guardar, renombrar, duplicar, eliminar
+- Último perfil usado preseleccionado, por defecto "Wallapop"
+- Los cambios sin guardar se marcan y se confirman

@@ -5,6 +5,7 @@ import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.qtekfun.ultimategallery.data.db.AppDatabase
 import com.qtekfun.ultimategallery.data.db.HiddenFolderDao
+import com.qtekfun.ultimategallery.data.db.ProfileDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,13 +19,19 @@ import kotlinx.coroutines.CoroutineDispatcher
 object DatabaseModule {
     private const val DATABASE_NAME = "ultimategallery.db"
 
+    // The spread copies a one-element array once, when the database is created.
+    @Suppress("SpreadOperator")
     @Provides
     @Singleton
     fun database(@ApplicationContext context: Context, @IoDispatcher io: CoroutineDispatcher): AppDatabase =
         Room.databaseBuilder<AppDatabase>(context, DATABASE_NAME)
             .setDriver(AndroidSQLiteDriver())
             .setQueryCoroutineContext(io)
+            .addMigrations(*AppDatabase.MIGRATIONS)
             .build()
+
+    @Provides
+    fun profileDao(db: AppDatabase): ProfileDao = db.profileDao()
 
     @Provides
     fun hiddenFolderDao(db: AppDatabase): HiddenFolderDao = db.hiddenFolderDao()

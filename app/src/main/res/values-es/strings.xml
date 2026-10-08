@@ -123,4 +123,21 @@
   <string name="result_share_all">Compartir todo</string>
   <string name="result_done">Hecho</string>
   <string name="result_failures">Fotos con error</string>
+  <string name="profile_menu">Perfiles</string>
+  <string name="profile_unsaved">Cambios sin guardar</string>
+  <string name="profile_save">Guardar cambios</string>
+  <string name="profile_save_as">Guardar como perfil nuevo…</string>
+  <string name="profile_rename">Renombrar</string>
+  <string name="profile_duplicate">Duplicar</string>
+  <string name="profile_delete">Eliminar</string>
+  <string name="profile_name">Nombre del perfil</string>
+  <string name="profile_delete_title">¿Eliminar este perfil?</string>
+  <string name="profile_delete_body">Se eliminará el perfil. Las fotos exportadas no se ven afectadas.</string>
+  <string name="profile_saved">Perfil guardado</string>
+  <string name="profile_last">Necesitas al menos un perfil</string>
+  <string name="profile_more">Más acciones</string>
+  <string name="discard_title">¿Descartar los cambios?</string>
+  <string name="discard_body">Tus cambios de la marca no están guardados en el perfil.</string>
+  <string name="discard_confirm">Descartar</string>
+  <string name="discard_keep">Seguir editando</string>
 </resources>

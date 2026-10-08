@@ -34,8 +34,8 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Tests: pixel checks of rendered output, orientation handling, big images, mixed batches.
 
 ## Phase 5 — Profiles
-- [ ] Room entities and DAO for profiles; default "Wallapop" profile.
-- [ ] Profile picker: save, rename, duplicate, delete, last-used preselected.
+- [x] Room entities and DAO for profiles; default "Wallapop" profile.
+- [x] Profile picker: save, rename, duplicate, delete, last-used preselected.
 
 ## Phase 6 — Viewer
 - [ ] Pager with pinch/double-tap zoom and pan.
