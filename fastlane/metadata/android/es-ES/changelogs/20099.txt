@@ -1,0 +1,7 @@
+Editor de marca de agua y exportación (versión preliminar).
+- Marcas de texto, logo y mosaico
+- Un dedo mueve, dos escalan y giran
+- Guías de ajuste con vibración
+- Posición independiente en vertical y horizontal
+- Vista previa en cada foto, deshacer/rehacer
+- Exportación en segundo plano: JPEG/WebP/PNG, tamaño y EXIF

@@ -1,0 +1,7 @@
+Watermark editor and export (pre-release).
+- Text, logo and tiled watermarks
+- One finger moves, two scale and rotate
+- Snapping guides with haptics
+- Separate portrait and landscape placement
+- Live preview on every photo, undo/redo
+- Background export: JPEG/WebP/PNG, resize, EXIF options

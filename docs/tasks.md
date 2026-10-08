@@ -29,9 +29,9 @@ Execute all phases in order without pausing for review between them. Commit per 
 
 ## Phase 4 — Export
 - [x] Export settings UI: destination folder, format, quality, resize, filename pattern, EXIF mode.
-- [ ] Export pipeline (decode, render, encode, write via MediaStore with IS_PENDING, EXIF handling).
-- [ ] WorkManager foreground batch, progress, cancel, result summary (open folder, share all).
-- [ ] Tests: pixel checks of rendered output, orientation handling, big images, mixed batches.
+- [x] Export pipeline (decode, render, encode, write via MediaStore with IS_PENDING, EXIF handling).
+- [x] WorkManager foreground batch, progress, cancel, result summary (open folder, share all).
+- [x] Tests: pixel checks of rendered output, orientation handling, big images, mixed batches.
 
 ## Phase 5 — Profiles
 - [ ] Room entities and DAO for profiles; default "Wallapop" profile.
