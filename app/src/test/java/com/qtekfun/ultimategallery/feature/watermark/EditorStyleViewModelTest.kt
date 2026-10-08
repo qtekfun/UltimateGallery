@@ -17,7 +17,10 @@ import com.qtekfun.ultimategallery.domain.Folder
 import com.qtekfun.ultimategallery.domain.MediaItem
 import com.qtekfun.ultimategallery.domain.export.ExportController
 import com.qtekfun.ultimategallery.domain.export.ExportStatus
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
+import com.qtekfun.ultimategallery.domain.watermark.FontImportResult
+import com.qtekfun.ultimategallery.domain.watermark.FontInfo
+import com.qtekfun.ultimategallery.domain.watermark.FontKind
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
@@ -51,6 +54,7 @@ class EditorStyleViewModelTest {
     private lateinit var settingsFile: File
     private lateinit var repo: ProfileRepository
     private lateinit var vm: WatermarkEditorViewModel
+    private val fonts = FakeFontLibrary()
     private val exported = mutableListOf<WatermarkProfile>()
 
     private val item = MediaItem(1, Uri.parse("content://media/1"), "a.jpg", "image/jpeg", false, 0, 400, 300, 1, 0, 1, null)
@@ -72,8 +76,8 @@ class EditorStyleViewModelTest {
         override fun cancel(jobId: String) = Unit
     }
 
-    private val styleA = TextStyleSpec(font = MarkFont.SERIF, weight = 900, italic = true, colorArgb = 0xFF336699.toInt(), outlineEnabled = true)
-    private val styleB = TextStyleSpec(font = MarkFont.MONOSPACE, weight = 200, backgroundEnabled = true, shadowEnabled = false)
+    private val styleA = TextStyleSpec(weight = 900, italic = true, colorArgb = 0xFF336699.toInt(), outlineEnabled = true)
+    private val styleB = TextStyleSpec(fontId = FontIds.imported("Mine"), weight = 200, backgroundEnabled = true, shadowEnabled = false)
 
     @Before
     fun setUp() {
@@ -83,7 +87,7 @@ class EditorStyleViewModelTest {
         settingsFile = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
         repo = ProfileRepository(db.profileDao(), SettingsRepository(PreferenceDataStoreFactory.create { settingsFile }))
         val batch = BatchSelection().apply { set(listOf(1L)) }
-        vm = WatermarkEditorViewModel(SavedStateHandle(), media, batch, LogoImporter(context), exporter, repo, WatermarkRenderer { null })
+        vm = WatermarkEditorViewModel(SavedStateHandle(), media, batch, LogoImporter(context), exporter, repo, WatermarkRenderer { null }, fonts)
     }
 
     @After
@@ -149,6 +153,66 @@ class EditorStyleViewModelTest {
         vm.setType(MarkType.TILED)
         vm.setType(MarkType.TEXT)
         assertEquals(WatermarkSource.Text("Shop", styleA), vm.state.value.profile.source)
+    }
+
+    @Test
+    fun fontsComeFromTheLibrary() {
+        settle()
+        assertEquals(fonts.list.value, vm.fonts.value)
+    }
+
+    @Test
+    fun importedFontIsSelectedAndAnnounced() {
+        settle()
+        val font = FontInfo(FontIds.imported("New"), "New", FontKind.IMPORTED)
+        fonts.nextImport = FontImportResult.Imported(font)
+        vm.importFont(Uri.parse("content://fonts/new.ttf"))
+        settle { vm.state.value.message != null }
+        assertEquals(font.id, style().fontId)
+        assertEquals(EditorMessage.FONT_IMPORTED, vm.state.value.message)
+    }
+
+    @Test
+    fun alreadyPresentFontIsJustSelected() {
+        settle()
+        val font = fonts.list.value.first { it.kind == FontKind.BUNDLED }
+        fonts.nextImport = FontImportResult.AlreadyPresent(font)
+        vm.importFont(Uri.parse("content://fonts/lora.ttf"))
+        settle { vm.state.value.message != null }
+        assertEquals(font.id, style().fontId)
+        assertEquals(EditorMessage.FONT_ALREADY_PRESENT, vm.state.value.message)
+    }
+
+    @Test
+    fun invalidFontKeepsTheStyleAndReportsIt() {
+        settle()
+        fonts.nextImport = FontImportResult.Invalid
+        vm.importFont(Uri.parse("content://fonts/bad.txt"))
+        settle { vm.state.value.message != null }
+        assertEquals(FontIds.DEFAULT, style().fontId)
+        assertEquals(EditorMessage.FONT_INVALID, vm.state.value.message)
+    }
+
+    @Test
+    fun removingTheFontInUseFallsBackToTheDefaultInOneUndoStep() {
+        settle()
+        vm.setTextStyle(styleB)
+        vm.removeFont(FontIds.imported("Mine"))
+        settle { fonts.removed.isNotEmpty() }
+        assertEquals(listOf(FontIds.imported("Mine")), fonts.removed)
+        assertEquals(FontIds.DEFAULT, style().fontId)
+        assertEquals(styleB.copy(fontId = FontIds.DEFAULT), style())
+        vm.undo()
+        assertEquals(styleB, style())
+    }
+
+    @Test
+    fun removingAnotherFontLeavesTheStyleAlone() {
+        settle()
+        vm.setTextStyle(styleB)
+        vm.removeFont(FontIds.imported("Other"))
+        settle { fonts.removed.isNotEmpty() }
+        assertEquals(styleB, style())
     }
 
     private fun assertNotEquals0(id: Long) = assertTrue("profile id should come from the store", id != 0L)

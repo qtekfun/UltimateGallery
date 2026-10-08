@@ -1,5 +1,6 @@
 package com.qtekfun.ultimategallery.feature.watermark
 
+import android.graphics.Typeface
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,10 @@ import com.qtekfun.ultimategallery.domain.BatchSelection
 import com.qtekfun.ultimategallery.domain.export.ExportController
 import com.qtekfun.ultimategallery.domain.export.ExportPaths
 import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
+import com.qtekfun.ultimategallery.domain.watermark.FontImportResult
+import com.qtekfun.ultimategallery.domain.watermark.FontInfo
+import com.qtekfun.ultimategallery.domain.watermark.FontLibrary
 import com.qtekfun.ultimategallery.domain.watermark.Orientation
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.PlacementMath
@@ -23,13 +28,16 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class WatermarkEditorViewModel @Inject constructor(
     private val savedState: SavedStateHandle,
@@ -38,10 +46,14 @@ class WatermarkEditorViewModel @Inject constructor(
     private val importer: LogoImporter,
     private val exporter: ExportController,
     private val profileRepository: ProfileRepository,
-    val renderer: WatermarkRenderer
+    val renderer: WatermarkRenderer,
+    private val fontLibrary: FontLibrary
 ) : ViewModel() {
     private val _state = MutableStateFlow(EditorUiState())
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
+
+    /** Every selectable font (default, bundled, imported); empty until the library first reports. */
+    val fonts: StateFlow<List<FontInfo>> = fontLibrary.fonts.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val history = EditorHistory()
     private var gestureBefore: WatermarkProfile? = null
@@ -258,6 +270,40 @@ class WatermarkEditorViewModel @Inject constructor(
                 setBase(WatermarkSource.Image(stored))
             }
         }
+    }
+
+    /** The typeface of font [id] for previews, or null for the default font. */
+    fun typefaceOf(id: String): Typeface? = fontLibrary.typeface(id)
+
+    private fun selectFont(id: String) {
+        val leaf = leafOf(_state.value.profile.source) as? WatermarkSource.Text ?: return
+        updateText(key = "font") { it.copy(style = leaf.style.copy(fontId = id)) }
+    }
+
+    /** Imports the font file at [uri], selects it and reports the outcome through the editor message. */
+    fun importFont(uri: Uri) {
+        viewModelScope.launch {
+            val message = when (val result = fontLibrary.import(uri)) {
+                is FontImportResult.Imported -> {
+                    selectFont(result.font.id)
+                    EditorMessage.FONT_IMPORTED
+                }
+                is FontImportResult.AlreadyPresent -> {
+                    selectFont(result.font.id)
+                    EditorMessage.FONT_ALREADY_PRESENT
+                }
+                FontImportResult.Invalid -> EditorMessage.FONT_INVALID
+            }
+            _state.update { it.copy(message = message) }
+        }
+    }
+
+    /** Deletes an imported font; text marks using it fall back to the default font (one undo step). */
+    fun removeFont(id: String) {
+        val leaf = leafOf(_state.value.profile.source) as? WatermarkSource.Text
+        if (leaf != null && leaf.style.fontId == id) selectFont(FontIds.DEFAULT)
+        if (lastText.style.fontId == id) lastText = lastText.copy(style = lastText.style.copy(fontId = FontIds.DEFAULT))
+        viewModelScope.launch { fontLibrary.remove(id) }
     }
 
     fun resetPlacement() = edit {

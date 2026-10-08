@@ -15,7 +15,7 @@ import com.qtekfun.ultimategallery.domain.Folder
 import com.qtekfun.ultimategallery.domain.MediaItem
 import com.qtekfun.ultimategallery.domain.export.ExportController
 import com.qtekfun.ultimategallery.domain.export.ExportStatus
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
@@ -86,7 +86,8 @@ class EditorViewModelTest {
             LogoImporter(context),
             exporter,
             ProfileRepository(db.profileDao(), settings),
-            WatermarkRenderer { null }
+            WatermarkRenderer { null },
+            FakeFontLibrary()
         )
     }
 
@@ -94,16 +95,16 @@ class EditorViewModelTest {
     fun changingTheTextStyleUpdatesTheProfile() = runTest(dispatcher) {
         val vm = viewModel()
         advanceUntilIdle()
-        vm.setTextStyle((vm.state.value.profile.source as WatermarkSource.Text).style.copy(font = MarkFont.SERIF, weight = 900, italic = true))
+        vm.setTextStyle((vm.state.value.profile.source as WatermarkSource.Text).style.copy(fontId = FontIds.bundled("Lora"), weight = 900, italic = true))
         advanceUntilIdle()
         val style = (vm.state.value.profile.source as WatermarkSource.Text).style
-        assertEquals(MarkFont.SERIF, style.font)
+        assertEquals(FontIds.bundled("Lora"), style.fontId)
         assertEquals(900, style.weight)
         assertTrue(style.italic)
         vm.setText("Hello")
         advanceUntilIdle()
         val after = vm.state.value.profile.source as WatermarkSource.Text
         assertEquals("Hello", after.text)
-        assertEquals(MarkFont.SERIF, after.style.font)
+        assertEquals(FontIds.bundled("Lora"), after.style.fontId)
     }
 }
