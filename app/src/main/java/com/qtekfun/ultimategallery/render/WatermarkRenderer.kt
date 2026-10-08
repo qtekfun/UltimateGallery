@@ -4,9 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.Typeface
 import android.net.Uri
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
 import com.qtekfun.ultimategallery.domain.watermark.Orientation
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
@@ -84,16 +82,22 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
 
     /** Text laid out once at a reference size and scaled to the requested width. */
     private class TextMark(text: String, private val spec: TextStyleSpec) : Mark {
+        private val face = MarkTypefaces.resolve(spec.font, spec.weight, spec.italic, REF_SIZE)
         private val lines = text.lines().filter { it.isNotEmpty() }.ifEmpty { listOf(text) }
         private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = REF_SIZE
             textAlign = Paint.Align.CENTER
-            typeface = typefaceOf(spec)
+            typeface = face.typeface
             color = spec.colorArgb
+            if (face.emboldenPx > 0f) {
+                style = Paint.Style.FILL_AND_STROKE
+                strokeWidth = face.emboldenPx
+                strokeJoin = Paint.Join.ROUND
+            }
         }
         private val metrics = fill.fontMetrics
-        private val lineHeight = metrics.descent - metrics.ascent
-        private val textWidth = lines.maxOf { fill.measureText(it) }
+        private val lineHeight = metrics.descent - metrics.ascent + face.emboldenPx
+        private val textWidth = lines.maxOf { fill.measureText(it) } + face.emboldenPx
         private val pad = if (spec.backgroundEnabled) spec.backgroundPadding * lineHeight else 0f
         private val contentWidth = max(textWidth, 1f) + 2 * pad
         private val contentHeight = lineHeight * lines.size + 2 * pad
@@ -114,7 +118,7 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
                 if (spec.outlineEnabled) {
                     val stroke = Paint(fill).apply {
                         this.style = Paint.Style.STROKE
-                        strokeWidth = spec.outlineWidth * lineHeight
+                        strokeWidth = spec.outlineWidth * lineHeight + face.emboldenPx
                         strokeJoin = Paint.Join.ROUND
                         color = spec.outlineColorArgb
                     }
@@ -139,16 +143,5 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
     private companion object {
         const val ALPHA_MAX = 255
         const val DEFAULT_ASPECT = 3f
-
-        fun typefaceOf(style: TextStyleSpec): Typeface {
-            val family = when (style.font) {
-                MarkFont.SANS -> "sans-serif"
-                MarkFont.SERIF -> "serif"
-                MarkFont.MONOSPACE -> "monospace"
-                MarkFont.CURSIVE -> "cursive"
-                MarkFont.CONDENSED -> "sans-serif-condensed"
-            }
-            return Typeface.create(Typeface.create(family, Typeface.NORMAL), style.weight, style.italic)
-        }
     }
 }
