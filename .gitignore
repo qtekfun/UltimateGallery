@@ -10,3 +10,4 @@ captures/
 *.jks
 *.keystore
 core.[0-9]*
+.claude/

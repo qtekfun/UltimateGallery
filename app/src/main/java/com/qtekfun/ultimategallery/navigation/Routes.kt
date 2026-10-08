@@ -8,7 +8,10 @@ object Routes {
     const val PICKER = "picker"
     const val FOLDER = "folder/{bucketId}?name={name}&pick={pick}"
     const val WATERMARK = "watermark"
+    const val EXPORT = "export/{jobId}"
     const val SETTINGS = "settings"
+
+    fun export(jobId: String) = "export/$jobId"
 
     fun folder(bucketId: Long, name: String, pick: Boolean = false) = "folder/$bucketId?name=${Uri.encode(name)}&pick=$pick"
 }

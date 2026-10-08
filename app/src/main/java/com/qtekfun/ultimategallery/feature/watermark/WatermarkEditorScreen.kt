@@ -1,5 +1,9 @@
 package com.qtekfun.ultimategallery.feature.watermark
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
@@ -15,6 +19,7 @@ import androidx.compose.material.icons.automirrored.outlined.Redo
 import androidx.compose.material.icons.automirrored.outlined.Undo
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,19 +40,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qtekfun.ultimategallery.R
+import com.qtekfun.ultimategallery.domain.export.ExportPaths
 
 /** The watermark editor: canvas, batch strip and the control panels. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WatermarkEditorScreen(onBack: () -> Unit, modifier: Modifier = Modifier, viewModel: WatermarkEditorViewModel = hiltViewModel()) {
+fun WatermarkEditorScreen(
+    onBack: () -> Unit,
+    onExportStarted: (jobId: String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: WatermarkEditorViewModel = hiltViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val haptics = LocalHapticFeedback.current
+    val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
     var panelOpen by remember { mutableStateOf(true) }
 
@@ -63,6 +77,21 @@ fun WatermarkEditorScreen(onBack: () -> Unit, modifier: Modifier = Modifier, vie
             null -> Unit
         }
         if (state.message != null) viewModel.consumeMessage()
+    }
+
+    val startExport = {
+        viewModel.startExport()?.let(onExportStarted)
+    }
+    val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { startExport() }
+    val beginExport = {
+        if (state.items.isNotEmpty()) {
+            val needsAsk = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+            if (needsAsk && ExportPaths.isValidDestination(state.profile.export.destination)) {
+                notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                startExport()
+            }
+        }
     }
 
     val actions = remember(viewModel) {
@@ -100,6 +129,9 @@ fun WatermarkEditorScreen(onBack: () -> Unit, modifier: Modifier = Modifier, vie
                     }
                     IconButton(onClick = viewModel::redo, enabled = state.canRedo) {
                         Icon(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo))
+                    }
+                    FilledTonalButton(onClick = beginExport, enabled = state.items.isNotEmpty(), modifier = Modifier.padding(end = 8.dp)) {
+                        Text(stringResource(R.string.export_action))
                     }
                 }
             )
@@ -148,7 +180,7 @@ fun WatermarkEditorScreen(onBack: () -> Unit, modifier: Modifier = Modifier, vie
                         selectedTabIndex = state.tab.ordinal,
                         containerColor = androidx.compose.ui.graphics.Color.Transparent
                     ) {
-                        EditorTab.entries.filter { it != EditorTab.EXPORT }.forEach { tab ->
+                        EditorTab.entries.forEach { tab ->
                             Tab(
                                 selected = state.tab == tab,
                                 onClick = {
@@ -179,7 +211,7 @@ fun WatermarkEditorScreen(onBack: () -> Unit, modifier: Modifier = Modifier, vie
                                 actions,
                                 panelModifier
                             )
-                            EditorTab.EXPORT -> Unit
+                            EditorTab.EXPORT -> ExportPanel(state.profile.export, viewModel::setExportSettings, panelModifier)
                         }
                     }
                 }

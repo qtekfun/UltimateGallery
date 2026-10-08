@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qtekfun.ultimategallery.data.media.MediaRepository
 import com.qtekfun.ultimategallery.domain.BatchSelection
+import com.qtekfun.ultimategallery.domain.export.ExportController
+import com.qtekfun.ultimategallery.domain.export.ExportPaths
+import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
 import com.qtekfun.ultimategallery.domain.watermark.Orientation
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.PlacementMath
@@ -32,6 +35,7 @@ class WatermarkEditorViewModel @Inject constructor(
     private val media: MediaRepository,
     private val batch: BatchSelection,
     private val importer: LogoImporter,
+    private val exporter: ExportController,
     val renderer: WatermarkRenderer
 ) : ViewModel() {
     private val _state = MutableStateFlow(EditorUiState())
@@ -156,6 +160,23 @@ class WatermarkEditorViewModel @Inject constructor(
     fun setOpacity(value: Float) = edit("opacity") { it.copy(opacity = value.coerceIn(0f, 1f)) }
 
     fun setMargin(value: Float) = edit("margin") { it.copy(margin = value.coerceIn(0f, MAX_MARGIN)) }
+
+    /** Export settings are not part of the undo history. */
+    fun setExportSettings(settings: ExportSettings) = _state.update { it.copy(profile = it.profile.copy(export = settings)) }
+
+    /**
+     * Starts exporting the whole batch and returns the job id, or null when there is nothing to
+     * export or the destination is invalid (the Export tab is shown so the user can fix it).
+     */
+    fun startExport(): String? {
+        val s = _state.value
+        if (s.items.isEmpty()) return null
+        if (!ExportPaths.isValidDestination(s.profile.export.destination)) {
+            _state.update { it.copy(tab = EditorTab.EXPORT) }
+            return null
+        }
+        return exporter.start(s.items.map { it.id }, s.profile)
+    }
 
     fun setSnapEnabled(enabled: Boolean) = _state.update { it.copy(snapEnabled = enabled) }
 

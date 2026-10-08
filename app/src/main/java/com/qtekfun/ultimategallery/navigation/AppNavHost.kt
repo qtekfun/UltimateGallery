@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.qtekfun.ultimategallery.data.media.MediaAccessLevel
 import com.qtekfun.ultimategallery.domain.MediaItem
+import com.qtekfun.ultimategallery.feature.export.ExportProgressScreen
 import com.qtekfun.ultimategallery.feature.gallery.FolderScreen
 import com.qtekfun.ultimategallery.feature.gallery.HomeScreen
 import com.qtekfun.ultimategallery.feature.onboarding.AccessActions
@@ -64,7 +65,21 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                 onShare = { items -> share(context, items) }
             )
         }
-        composable(Routes.WATERMARK) { WatermarkEditorScreen(onBack = { nav.popBackStack() }) }
+        composable(Routes.WATERMARK) {
+            WatermarkEditorScreen(
+                onBack = { nav.popBackStack() },
+                onExportStarted = { jobId -> nav.navigate(Routes.export(jobId)) }
+            )
+        }
+        composable(Routes.EXPORT, arguments = listOf(navArgument("jobId") { type = NavType.StringType })) {
+            ExportProgressScreen(
+                onDone = { nav.popBackStack(Routes.HOME, inclusive = false) },
+                onOpenFolder = { folder ->
+                    nav.popBackStack(Routes.HOME, inclusive = false)
+                    nav.navigate(Routes.folder(folder.bucketId, folder.name))
+                }
+            )
+        }
         composable(Routes.SETTINGS) { WatermarkPlaceholder(onBack = { nav.popBackStack() }) }
     }
 }

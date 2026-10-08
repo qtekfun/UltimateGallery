@@ -28,7 +28,7 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Undo/redo.
 
 ## Phase 4 — Export
-- [ ] Export settings UI: destination folder, format, quality, resize, filename pattern, EXIF mode.
+- [x] Export settings UI: destination folder, format, quality, resize, filename pattern, EXIF mode.
 - [ ] Export pipeline (decode, render, encode, write via MediaStore with IS_PENDING, EXIF handling).
 - [ ] WorkManager foreground batch, progress, cancel, result summary (open folder, share all).
 - [ ] Tests: pixel checks of rendered output, orientation handling, big images, mixed batches.
