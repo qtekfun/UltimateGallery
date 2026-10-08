@@ -5,16 +5,19 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
+import com.qtekfun.ultimategallery.data.fonts.AppFontLibrary
 import com.qtekfun.ultimategallery.data.profile.ProfileCodec
 import com.qtekfun.ultimategallery.domain.MediaItem
 import com.qtekfun.ultimategallery.domain.watermark.ExifMode
 import com.qtekfun.ultimategallery.domain.watermark.ExportFormat
 import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
+import com.qtekfun.ultimategallery.domain.watermark.FontImportResult
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
+import com.qtekfun.ultimategallery.render.TestFonts
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -44,14 +47,15 @@ class StyledTextExportTest {
             return Uri.parse("content://fake/$displayName") to displayName
         }
     }
-    private val pipeline = ExportPipeline(
+    private fun pipelineWith(renderer: WatermarkRenderer) = ExportPipeline(
         context,
         ExportImageLoader(context, ExportImageLoader.DEFAULT_PIXEL_BUDGET),
-        WatermarkRenderer { null },
+        renderer,
         ExifCopier(context),
         sink,
         Dispatchers.Unconfined
     )
+    private var pipeline = pipelineWith(WatermarkRenderer({ null }, TestFonts.lookup))
     private val placement = Placement(0.5f, 0.5f, 0.8f, 0f)
 
     private fun export(profile: WatermarkProfile): Bitmap {
@@ -75,7 +79,7 @@ class StyledTextExportTest {
     }
 
     private val styled = TextStyleSpec(
-        font = MarkFont.SERIF,
+        fontId = FontIds.bundled("PlayfairDisplay"),
         weight = 900,
         italic = true,
         colorArgb = Color.YELLOW,
@@ -103,7 +107,7 @@ class StyledTextExportTest {
         val base = TextStyleSpec(shadowEnabled = false)
         val reference = pixels(export(profile(base)))
         val variants = mapOf(
-            "font" to base.copy(font = MarkFont.MONOSPACE),
+            "font" to base.copy(fontId = FontIds.bundled("RobotoMono")),
             "weight" to base.copy(weight = 900),
             "italic" to base.copy(italic = true),
             "color" to base.copy(colorArgb = Color.GREEN),
@@ -115,5 +119,29 @@ class StyledTextExportTest {
             val out = pixels(export(profile(style)))
             assertFalse("$name should change the export", reference.contentEquals(out))
         }
+    }
+
+    @Test
+    fun anImportedFontRoundTripsThroughTheJobFileAndRendersTheSameInExport() {
+        val library = AppFontLibrary(context, Dispatchers.Unconfined)
+        val source = File(folder.root, "My Script.ttf").also { File("src/main/assets/fonts/Pacifico.ttf").copyTo(it) }
+        val font = (runBlocking { library.import(Uri.fromFile(source)) } as FontImportResult.Imported).font
+        assertEquals("imported:My Script.ttf", font.id)
+
+        val imported = profile(TextStyleSpec(fontId = font.id, shadowEnabled = false))
+        val viaJob = ProfileCodec.fromJson(ProfileCodec.toJson(imported))
+        assertEquals(font.id, (viaJob.source as WatermarkSource.Text).style.fontId)
+
+        pipeline = pipelineWith(WatermarkRenderer({ null }, library::typeface))
+        val fromImport = pixels(export(viaJob))
+        val plain = pixels(export(profile(TextStyleSpec(shadowEnabled = false))))
+        assertFalse("the imported font is used", plain.contentEquals(fromImport))
+
+        // The same font file under a bundled id renders identically, and a missing font falls back to the default look.
+        pipeline = pipelineWith(WatermarkRenderer({ null }, TestFonts.lookup))
+        assertArrayEquals(fromImport, pixels(export(profile(TextStyleSpec(fontId = FontIds.bundled("Pacifico"), shadowEnabled = false)))))
+        runBlocking { library.remove(font.id) }
+        pipeline = pipelineWith(WatermarkRenderer({ null }, library::typeface))
+        assertArrayEquals(plain, pixels(export(viaJob)))
     }
 }

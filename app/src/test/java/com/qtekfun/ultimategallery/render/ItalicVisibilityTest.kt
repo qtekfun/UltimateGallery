@@ -3,7 +3,7 @@ package com.qtekfun.ultimategallery.render
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
@@ -18,19 +18,19 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34])
 class ItalicVisibilityTest {
-    private val renderer = WatermarkRenderer { null }
+    private val renderer = WatermarkRenderer({ null }, TestFonts.lookup)
 
-    private fun render(font: MarkFont, italic: Boolean): List<Int> {
+    private fun render(fontId: String, italic: Boolean): List<Int> {
         val bmp = Bitmap.createBitmap(600, 200, Bitmap.Config.ARGB_8888)
         bmp.eraseColor(Color.GRAY)
-        val style = TextStyleSpec(font = font, italic = italic, shadowEnabled = false)
+        val style = TextStyleSpec(fontId = fontId, italic = italic, shadowEnabled = false)
         renderer.draw(Canvas(bmp), 600, 200, WatermarkSource.Text("Wallapop Hill", style), 1f, Placement(0.5f, 0.5f, 0.8f, 0f))
         return IntArray(600 * 200).also { bmp.getPixels(it, 0, 600, 0, 0, 600, 200) }.toList()
     }
 
     @Test
     fun italicChangesTheOutputForEveryFont() {
-        MarkFont.entries.forEach { font ->
+        (listOf(FontIds.DEFAULT) + TestFonts.bundledIds).forEach { font ->
             assertNotEquals("italic $font", render(font, false), render(font, true))
         }
     }

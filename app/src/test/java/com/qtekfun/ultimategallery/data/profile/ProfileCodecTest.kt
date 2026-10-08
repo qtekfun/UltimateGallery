@@ -4,12 +4,13 @@ import android.net.Uri
 import com.qtekfun.ultimategallery.domain.watermark.ExifMode
 import com.qtekfun.ultimategallery.domain.watermark.ExportFormat
 import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -21,7 +22,7 @@ class ProfileCodecTest {
     private fun roundTrip(profile: WatermarkProfile) = ProfileCodec.fromJson(ProfileCodec.toJson(profile))
 
     private val style = TextStyleSpec(
-        font = MarkFont.SERIF,
+        fontId = "imported:My Font.ttf",
         weight = 800,
         italic = true,
         colorArgb = 0xFF112233.toInt(),
@@ -53,6 +54,33 @@ class ProfileCodecTest {
     fun textRoundTrips() {
         val p = profile(WatermarkSource.Text("@shop\nline", style))
         assertEquals(p, roundTrip(p))
+    }
+
+    private fun textWith(styleJson: String) = ProfileCodec.fromJson(
+        """{"name":"X","source":{"type":"text","text":"hi","style":$styleJson}}"""
+    ).source.let { (it as WatermarkSource.Text).style }
+
+    @Test
+    fun legacyFontNamesMigrateToFontIds() {
+        val expected = mapOf(
+            "SANS" to FontIds.DEFAULT,
+            "SERIF" to "bundled:PlayfairDisplay",
+            "MONOSPACE" to "bundled:RobotoMono",
+            "CURSIVE" to "bundled:DancingScript",
+            "CONDENSED" to "bundled:Oswald",
+            "WHATEVER" to FontIds.DEFAULT
+        )
+        expected.forEach { (legacy, id) -> assertEquals(legacy, id, textWith("""{"font":"$legacy","weight":300}""").fontId) }
+        assertEquals(300, textWith("""{"font":"SERIF","weight":300}""").weight)
+    }
+
+    @Test
+    fun fontIdWinsOverLegacyFontAndUnknownIdsLoad() {
+        assertEquals("imported:x.ttf", textWith("""{"font":"SERIF","fontId":"imported:x.ttf"}""").fontId)
+        assertEquals("future:thing", textWith("""{"fontId":"future:thing"}""").fontId)
+        assertEquals(FontIds.DEFAULT, textWith("{}").fontId)
+        assertEquals(FontIds.DEFAULT, TextStyleSpec().fontId)
+        assertTrue(ProfileCodec.toJson(profile(WatermarkSource.Text("a", style))).contains("\"fontId\""))
     }
 
     @Test

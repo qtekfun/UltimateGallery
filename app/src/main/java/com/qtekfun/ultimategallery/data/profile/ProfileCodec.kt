@@ -2,6 +2,7 @@ package com.qtekfun.ultimategallery.data.profile
 
 import android.net.Uri
 import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
@@ -122,7 +123,7 @@ object ProfileCodec {
     }
 
     private fun styleToJson(s: TextStyleSpec) = JSONObject().apply {
-        put("font", s.font.name)
+        put("fontId", s.fontId)
         put("weight", s.weight)
         put("italic", s.italic)
         put("color", s.colorArgb)
@@ -140,7 +141,7 @@ object ProfileCodec {
     private fun styleFromJson(o: JSONObject): TextStyleSpec {
         val d = TextStyleSpec()
         return TextStyleSpec(
-            font = enumOrDefault(o.optString("font"), d.font),
+            fontId = fontIdFrom(o, d.fontId),
             weight = o.optInt("weight", d.weight),
             italic = o.optBoolean("italic", d.italic),
             colorArgb = o.optInt("color", d.colorArgb),
@@ -154,6 +155,19 @@ object ProfileCodec {
             backgroundColorArgb = o.optInt("backgroundColor", d.backgroundColorArgb),
             backgroundPadding = o.optFloat("backgroundPadding", d.backgroundPadding)
         )
+    }
+
+    /** Reads `fontId`; profiles saved before font ids only have the legacy `font` enum name. */
+    private fun fontIdFrom(o: JSONObject, default: String): String {
+        val id = o.optString("fontId")
+        if (id.isNotEmpty()) return id
+        return when (o.optString("font")) {
+            "SERIF" -> FontIds.bundled("PlayfairDisplay")
+            "MONOSPACE" -> FontIds.bundled("RobotoMono")
+            "CURSIVE" -> FontIds.bundled("DancingScript")
+            "CONDENSED" -> FontIds.bundled("Oswald")
+            else -> default
+        }
     }
 
     private inline fun <reified E : Enum<E>> enumOrDefault(name: String, default: E): E = enumValues<E>().firstOrNull { it.name == name } ?: default

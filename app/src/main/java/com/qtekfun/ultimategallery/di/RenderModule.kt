@@ -1,5 +1,6 @@
 package com.qtekfun.ultimategallery.di
 
+import com.qtekfun.ultimategallery.domain.watermark.FontLibrary
 import com.qtekfun.ultimategallery.render.WatermarkBitmapStore
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
 import dagger.Module
@@ -13,5 +14,5 @@ import javax.inject.Singleton
 object RenderModule {
     @Provides
     @Singleton
-    fun watermarkRenderer(store: WatermarkBitmapStore): WatermarkRenderer = WatermarkRenderer(store::get)
+    fun watermarkRenderer(store: WatermarkBitmapStore, fontLibrary: FontLibrary): WatermarkRenderer = WatermarkRenderer(store::get, fontLibrary::typeface)
 }

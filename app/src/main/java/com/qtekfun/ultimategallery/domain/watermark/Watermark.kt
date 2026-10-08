@@ -2,12 +2,9 @@ package com.qtekfun.ultimategallery.domain.watermark
 
 import android.net.Uri
 
-enum class MarkFont { SANS, SERIF, MONOSPACE, CURSIVE, CONDENSED }
-
 /** How a text watermark looks. Sizes are relative to the text height so the style scales with the mark. */
 data class TextStyleSpec(
-    val font: MarkFont = MarkFont.SANS,
-    /** The font to use, see [FontIds]. Replaces [font], which is being removed. */
+    /** The font to use, see [FontIds]. */
     val fontId: String = FontIds.DEFAULT,
     /** CSS-like weight, 100..900. */
     val weight: Int = 600,

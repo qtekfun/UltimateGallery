@@ -3,7 +3,7 @@ package com.qtekfun.ultimategallery.render
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
+import com.qtekfun.ultimategallery.domain.watermark.FontIds
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
@@ -19,7 +19,7 @@ import org.robolectric.annotation.GraphicsMode
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34])
 class WeightVisibilityTest {
-    private val renderer = WatermarkRenderer { null }
+    private val renderer = WatermarkRenderer({ null }, TestFonts.lookup)
 
     private fun inkOf(style: TextStyleSpec): Int {
         val bmp = Bitmap.createBitmap(400, 100, Bitmap.Config.ARGB_8888)
@@ -32,8 +32,8 @@ class WeightVisibilityTest {
 
     @Test
     fun heavierWeightPutsMoreInkOnEveryFont() {
-        MarkFont.entries.forEach { font ->
-            val base = TextStyleSpec(font = font, colorArgb = Color.BLACK, shadowEnabled = false)
+        (listOf(FontIds.DEFAULT) + TestFonts.bundledIds).forEach { font ->
+            val base = TextStyleSpec(fontId = font, colorArgb = Color.BLACK, shadowEnabled = false)
             val light = inkOf(base.copy(weight = 300))
             val heavy = inkOf(base.copy(weight = 900))
             assertTrue("$font: weight 900 ($heavy) should be darker than 300 ($light)", heavy > light)
@@ -43,9 +43,9 @@ class WeightVisibilityTest {
     @Test
     fun missingWeightsAreEmulatedWithAStroke() {
         // Regardless of the weights a family ships, asking far above the resolved weight emboldens.
-        val resolved = MarkTypefaces.resolve(MarkFont.MONOSPACE, 900, false, 100f)
+        val resolved = MarkTypefaces.resolve(FontIds.bundled("RobotoMono"), TestFonts.lookup, 900, false, 100f)
         val actual = runCatching { resolved.typeface.weight }.getOrDefault(0)
         if (actual in 1..700) assertTrue(resolved.emboldenPx > 0f)
-        assertTrue(MarkTypefaces.resolve(MarkFont.MONOSPACE, 400, false, 100f).emboldenPx == 0f)
+        assertTrue(MarkTypefaces.resolve(FontIds.bundled("RobotoMono"), TestFonts.lookup, 400, false, 100f).emboldenPx == 0f)
     }
 }

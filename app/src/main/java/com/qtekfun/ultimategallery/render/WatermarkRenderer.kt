@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.net.Uri
 import com.qtekfun.ultimategallery.domain.watermark.Orientation
 import com.qtekfun.ultimategallery.domain.watermark.Placement
@@ -20,7 +21,10 @@ import kotlin.math.max
  * Every dimension is derived from fractions of the image size passed in, so the output at 400 px
  * wide is the same picture as at 4000 px wide.
  */
-class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
+class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?, private val fonts: (String) -> Typeface?) {
+    /** Keeps `WatermarkRenderer { ... }` working for callers that only need images; every font id falls back to the system default. */
+    constructor(bitmaps: (Uri) -> Bitmap?) : this(bitmaps, { null })
+
     /** Draws the profile's mark for the orientation of an [imageWidth] x [imageHeight] image. */
     fun draw(canvas: Canvas, imageWidth: Int, imageHeight: Int, profile: WatermarkProfile, orientation: Orientation = Orientation.of(imageWidth, imageHeight)) =
         draw(canvas, imageWidth, imageHeight, profile.source, profile.opacity, profile.placementFor(orientation))
@@ -59,7 +63,7 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
 
     private fun markFor(source: WatermarkSource): Mark? = when (source) {
         is WatermarkSource.Image -> bitmaps(source.uri)?.let { ImageMark(it) }
-        is WatermarkSource.Text -> source.text.takeIf { it.isNotBlank() }?.let { TextMark(it, source.style) }
+        is WatermarkSource.Text -> source.text.takeIf { it.isNotBlank() }?.let { TextMark(it, source.style, fonts) }
         is WatermarkSource.Tiled -> markFor(source.base)
     }
 
@@ -81,8 +85,8 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
     }
 
     /** Text laid out once at a reference size and scaled to the requested width. */
-    private class TextMark(text: String, private val spec: TextStyleSpec) : Mark {
-        private val face = MarkTypefaces.resolve(spec.font, spec.weight, spec.italic, REF_SIZE)
+    private class TextMark(text: String, private val spec: TextStyleSpec, fonts: (String) -> Typeface?) : Mark {
+        private val face = MarkTypefaces.resolve(spec.fontId, fonts, spec.weight, spec.italic, REF_SIZE)
         private val lines = text.lines().filter { it.isNotEmpty() }.ifEmpty { listOf(text) }
         private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = REF_SIZE
