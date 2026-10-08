@@ -114,6 +114,18 @@ class CropRotateScreenTest {
     }
 
     @Test
+    fun theDecodedShapeOfThePhotoReplacesAStaleStoredSize() {
+        show(SaveBehavior.COPY)
+        rule.waitForIdle()
+        assertEquals(CanvasSize(400f, 300f), viewModel.state.value.canvas)
+        viewModel.photoMeasured(300, 400)
+        rule.waitForIdle()
+        val canvas = viewModel.state.value.canvas
+        assertNotNull(canvas)
+        assertEquals(3f / 4f, canvas!!.width / canvas.height, 1e-4f)
+    }
+
+    @Test
     fun aspectChipLocksTheFrameShape() {
         show(SaveBehavior.COPY)
         rule.onNodeWithText("1:1").performClick()

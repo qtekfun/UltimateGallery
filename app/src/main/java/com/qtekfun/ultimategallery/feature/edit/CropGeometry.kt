@@ -51,6 +51,7 @@ object CropGeometry {
     private const val EPSILON = 1e-4f
     private const val SEARCH_STEPS = 28
     private const val SNAP_TOLERANCE = 0.015f
+    private const val SHAPE_TOLERANCE = 0.02f
     private const val HIT_SLOP_DIVISOR = 3f
     private const val QUARTER = 90.0
     private const val TURNS = 4
@@ -59,6 +60,22 @@ object CropGeometry {
     private val RIGHT_HANDLES = setOf(CropHandle.RIGHT, CropHandle.TOP_RIGHT, CropHandle.BOTTOM_RIGHT)
     private val TOP_HANDLES = setOf(CropHandle.TOP, CropHandle.TOP_LEFT, CropHandle.TOP_RIGHT)
     private val BOTTOM_HANDLES = setOf(CropHandle.BOTTOM, CropHandle.BOTTOM_LEFT, CropHandle.BOTTOM_RIGHT)
+
+    /**
+     * The size of a photo whose stored size is [storedWidth] x [storedHeight] and whose decoded size is [decoded]. The
+     * stored size is kept while its shape agrees with the decoded one (the decoded size may be a downsampled copy);
+     * otherwise the decoded shape is used at the stored long edge. Unusable stored sizes fall back to the decoded one.
+     */
+    fun reconcileSize(storedWidth: Int, storedHeight: Int, decoded: CanvasSize?): CanvasSize {
+        val stored = if (storedWidth > 0 && storedHeight > 0) CanvasSize(storedWidth.toFloat(), storedHeight.toFloat()) else null
+        if (decoded == null || decoded.width <= 0f || decoded.height <= 0f) return stored ?: CanvasSize(1f, 1f)
+        if (stored == null) return decoded
+        val relative = (decoded.width / decoded.height) / (stored.width / stored.height)
+        if (abs(relative - 1f) <= SHAPE_TOLERANCE) return stored
+        val longEdge = max(stored.width, stored.height)
+        val scale = longEdge / max(decoded.width, decoded.height)
+        return CanvasSize(decoded.width * scale, decoded.height * scale)
+    }
 
     /** The canvas of a [width] x [height] photo after [quarterTurns] turns. */
     fun canvasSize(width: Float, height: Float, quarterTurns: Int): CanvasSize =

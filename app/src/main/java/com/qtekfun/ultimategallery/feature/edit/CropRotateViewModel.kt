@@ -33,11 +33,20 @@ data class CropRotateState(
     val dragging: Boolean = false,
     val saving: Boolean = false,
     /** True while the "copy, overwrite or cancel" question is shown. */
-    val askingBehavior: Boolean = false
+    val askingBehavior: Boolean = false,
+    /** Size of the picture as the image loader decoded it (orientation applied), once known; its units don't matter. */
+    val decodedSize: CanvasSize? = null
 ) {
+    /**
+     * The size of the photo as shown, with the orientation applied. The stored size is the best guess until the picture is
+     * decoded; the decoded shape wins when the two disagree, as the stored one can be stale or not orientation-adjusted.
+     */
+    val photoSize: CanvasSize?
+        get() = item?.let { CropGeometry.reconcileSize(it.width, it.height, decodedSize) }
+
     /** The size of the canvas the crop frame lives on, in source pixels. */
     val canvas: CanvasSize?
-        get() = item?.let { CropGeometry.canvasSize(it.width.toFloat(), it.height.toFloat(), spec.turns) }
+        get() = photoSize?.let { CropGeometry.canvasSize(it.width, it.height, spec.turns) }
 
     val hasChanges: Boolean get() = !spec.isIdentity
 }
@@ -107,6 +116,13 @@ class CropRotateViewModel @Inject constructor(
         val ratio = aspect.ratio ?: return@edit s.copy(aspect = aspect)
         val shaped = CropGeometry.applyAspect(s.spec.crop, ratio, canvas)
         s.copy(aspect = aspect, spec = s.spec.copy(crop = CropGeometry.constrain(shaped, canvas, s.spec.straightenDeg)))
+    }
+
+    /** The image loader decoded the picture at [width] x [height]; its shape is the real one. */
+    fun photoMeasured(width: Int, height: Int) {
+        if (width <= 0 || height <= 0) return
+        val size = CanvasSize(width.toFloat(), height.toFloat())
+        _state.update { if (it.decodedSize == size) it else it.copy(decodedSize = size) }
     }
 
     fun dragStarted() = edit { it.copy(dragging = true) }
