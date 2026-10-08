@@ -181,8 +181,8 @@ fun MultiInfoDialog(items: List<MediaItem>, onDismiss: () -> Unit) {
 @Composable
 fun InfoMetadataActions(onShareWithout: () -> Unit, onSaveCopyWithout: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedButton(onClick = onShareWithout, enabled = enabled) { Text(stringResource(R.string.files_share_no_metadata)) }
-        OutlinedButton(onClick = onSaveCopyWithout, enabled = enabled) { Text(stringResource(R.string.files_save_no_metadata)) }
+        OutlinedButton(onClick = onShareWithout, enabled = enabled, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.files_share_no_metadata)) }
+        OutlinedButton(onClick = onSaveCopyWithout, enabled = enabled, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.files_save_no_metadata)) }
     }
 }
 

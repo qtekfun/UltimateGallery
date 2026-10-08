@@ -25,19 +25,23 @@ import com.qtekfun.ultimategallery.feature.files.InfoMetadataActions
 import java.util.Date
 import java.util.Locale
 
-/** The info panel: file facts, camera data and, when present, where the photo was taken. */
+/** The info panel: file facts, camera data and, when present, where the photo was taken. Always opens fully expanded. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InfoSheet(details: MediaDetails?, onDismiss: () -> Unit, onShareWithoutMetadata: (() -> Unit)? = null, onSaveCopyWithoutMetadata: (() -> Unit)? = null) {
+fun InfoSheet(details: MediaDetails, onDismiss: () -> Unit, onShareWithoutMetadata: (() -> Unit)? = null, onSaveCopyWithoutMetadata: (() -> Unit)? = null) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        Column(
-            Modifier.navigationBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp)
-        ) {
-            Text(stringResource(R.string.info_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 12.dp))
-            if (details != null) DetailRows(details)
-            if (onShareWithoutMetadata != null && onSaveCopyWithoutMetadata != null) {
-                InfoMetadataActions(onShareWithoutMetadata, onSaveCopyWithoutMetadata, Modifier.padding(top = 12.dp))
-            }
+        InfoSheetContent(details, onShareWithoutMetadata, onSaveCopyWithoutMetadata)
+    }
+}
+
+/** The sheet's body, separate from the sheet container so it can be tested on its own. */
+@Composable
+internal fun InfoSheetContent(details: MediaDetails, onShareWithoutMetadata: (() -> Unit)?, onSaveCopyWithoutMetadata: (() -> Unit)?) {
+    Column(Modifier.navigationBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp)) {
+        Text(stringResource(R.string.info_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 12.dp))
+        DetailRows(details)
+        if (onShareWithoutMetadata != null && onSaveCopyWithoutMetadata != null) {
+            InfoMetadataActions(onShareWithoutMetadata, onSaveCopyWithoutMetadata, Modifier.padding(top = 12.dp))
         }
     }
 }

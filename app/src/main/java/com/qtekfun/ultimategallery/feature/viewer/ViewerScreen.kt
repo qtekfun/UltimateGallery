@@ -2,7 +2,6 @@ package com.qtekfun.ultimategallery.feature.viewer
 
 import android.app.Activity
 import android.text.format.DateFormat
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,7 +74,6 @@ import com.qtekfun.ultimategallery.domain.MediaItem
 import com.qtekfun.ultimategallery.feature.files.FileActionDialogs
 import com.qtekfun.ultimategallery.feature.files.FileActionsEffects
 import com.qtekfun.ultimategallery.feature.files.FileActionsViewModel
-import com.qtekfun.ultimategallery.feature.files.InfoMetadataActions
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.min
@@ -156,7 +155,8 @@ private fun ViewerContent(
     val pager = rememberPagerState(initialPage = items.indexOfFirst { it.id == initialId }.coerceAtLeast(0)) { latestItems.size }
     var overlays by rememberSaveable { mutableStateOf(true) }
     var dragY by remember { mutableFloatStateOf(0f) }
-    var showInfo by remember { mutableStateOf(false) }
+    // The info sheet is keyed by item id: it survives rotation and closes if the item changes underneath it.
+    var infoFor by rememberSaveable { mutableStateOf<Long?>(null) }
     val current = items.getOrNull(pager.currentPage)
     val dragging = dragY != 0f
     val screenHeightPx = androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.height.toFloat()
@@ -167,11 +167,17 @@ private fun ViewerContent(
     LaunchedEffect(items) {
         val id = currentId.value ?: return@LaunchedEffect
         val index = items.indexOfFirst { it.id == id }
-        if (index >= 0 && index != pager.currentPage) pager.scrollToPage(index)
+        if (index >= 0) {
+            if (index != pager.currentPage) pager.scrollToPage(index)
+        } else {
+            // The remembered photo is gone (deleted or moved): follow whatever the pager settles on now.
+            items.getOrNull(pager.currentPage.coerceIn(0, items.lastIndex))?.let { currentId.value = it.id }
+        }
     }
+    LaunchedEffect(current?.id) { if (infoFor != null && infoFor != current?.id) infoFor = null }
 
-    ImmersiveEffect(hideBars = (!overlays || dragging) && !showInfo)
-    BackHandler(enabled = showInfo) { showInfo = false }
+    // System bars stay put while the sheet is open so the window insets never change under it.
+    ImmersiveEffect(hideBars = (!overlays || dragging) && infoFor == null)
 
     val backgroundAlpha = 1f - min(abs(dragY) / (screenHeightPx * 0.5f), 1f) * 0.85f
     Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = backgroundAlpha))) {
@@ -226,19 +232,23 @@ private fun ViewerContent(
                 Modifier.background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC000000)))).navigationBarsPadding()
             ) {
                 ThumbnailStrip(items, pager.currentPage, onSelect = { scope.launch { pager.animateScrollToPage(it) } })
-                if (current != null) ActionBar(current, actions, onWatermarkItem, onInfo = { showInfo = true })
+                if (current != null) ViewerActionBar(current, actions, onWatermarkItem, onInfo = { infoFor = current.id })
             }
         }
     }
 
-    if (showInfo && current != null) {
-        val details by produceState<MediaDetails?>(null, current.id) { value = detailsOf(current) }
-        InfoSheet(
-            details = details,
-            onDismiss = { showInfo = false },
-            onShareWithoutMetadata = if (current.isVideo) null else ({ files.shareWithoutMetadata(current) }),
-            onSaveCopyWithoutMetadata = if (current.isVideo) null else ({ files.saveCopyWithoutMetadata(current) })
-        )
+    val infoItem = items.firstOrNull { it.id == infoFor }
+    if (infoItem != null) {
+        // Load the facts first and only then open the sheet, so it never resizes or re-anchors while it opens.
+        val details by produceState<MediaDetails?>(null, infoItem.id) { value = runCatching { detailsOf(infoItem) }.getOrNull() }
+        details?.let { loaded ->
+            InfoSheet(
+                details = loaded,
+                onDismiss = { infoFor = null },
+                onShareWithoutMetadata = if (infoItem.isVideo) null else ({ files.shareWithoutMetadata(infoItem) }),
+                onSaveCopyWithoutMetadata = if (infoItem.isVideo) null else ({ files.saveCopyWithoutMetadata(infoItem) })
+            )
+        }
     }
 }
 
@@ -257,11 +267,17 @@ private fun TopBar(item: MediaItem, onBack: () -> Unit) {
         ) {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.viewer_close)) }
             Column(Modifier.weight(1f)) {
-                Text(date, style = androidx.compose.material3.MaterialTheme.typography.titleSmall)
+                Text(
+                    date,
+                    style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
                 Text(
                     item.displayName,
                     style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
                     maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     color = Color.White.copy(alpha = 0.75f)
                 )
             }
@@ -269,30 +285,30 @@ private fun TopBar(item: MediaItem, onBack: () -> Unit) {
     }
 }
 
+/** The viewer's bottom actions: icon-only, one equal slot each so they never overflow or crowd on narrow screens. */
 @Composable
-private fun ActionBar(item: MediaItem, actions: ViewerActions, onWatermark: (MediaItem) -> Unit, onInfo: () -> Unit) {
+internal fun ViewerActionBar(item: MediaItem, actions: ViewerActions, onWatermark: (MediaItem) -> Unit, onInfo: () -> Unit) {
     CompositionLocalProvider(LocalContentColor provides Color.White) {
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             if (!item.isVideo) {
-                IconButton(onClick = { onWatermark(item) }) {
-                    Icon(Icons.Outlined.WaterDrop, stringResource(R.string.watermark))
+                ActionSlot { IconButton(onClick = { onWatermark(item) }) { Icon(Icons.Outlined.WaterDrop, stringResource(R.string.watermark)) } }
+                actions.onEdit?.let { edit ->
+                    ActionSlot { IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.edit)) } }
                 }
             }
-            run {
-                if (!item.isVideo) {
-                    actions.onEdit?.let { edit -> IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.edit)) } }
-                }
-                IconButton(onClick = { actions.onShare(item) }) { Icon(Icons.Outlined.Share, stringResource(R.string.share)) }
-                actions.onDelete?.let { delete -> IconButton(onClick = { delete(item) }) { Icon(Icons.Outlined.Delete, stringResource(R.string.delete)) } }
-                IconButton(onClick = onInfo) { Icon(Icons.Outlined.Info, stringResource(R.string.info)) }
-                MoreMenu(item, actions)
+            ActionSlot { IconButton(onClick = { actions.onShare(item) }) { Icon(Icons.Outlined.Share, stringResource(R.string.share)) } }
+            actions.onDelete?.let { delete ->
+                ActionSlot { IconButton(onClick = { delete(item) }) { Icon(Icons.Outlined.Delete, stringResource(R.string.delete)) } }
             }
+            ActionSlot { IconButton(onClick = onInfo) { Icon(Icons.Outlined.Info, stringResource(R.string.info)) } }
+            ActionSlot { MoreMenu(item, actions) }
         }
     }
+}
+
+@Composable
+private fun RowScope.ActionSlot(content: @Composable () -> Unit) {
+    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { content() }
 }
 
 @Composable
