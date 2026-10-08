@@ -1,0 +1,47 @@
+# Overrides on top of detekt's defaults (buildUponDefaultConfig). Keep short and justified.
+build:
+  maxIssues: 0
+
+naming:
+  FunctionNaming:
+    # Composables are PascalCase by Compose API guidelines.
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
+
+complexity:
+  LongParameterList:
+    # Composables expose many optional parameters with defaults.
+    ignoreDefaultParameters: true
+    functionThreshold: 8
+    constructorThreshold: 10
+  LongMethod:
+    threshold: 80
+    ignoreAnnotated: ['Composable']
+  CyclomaticComplexMethod:
+    ignoreAnnotated: ['Composable']
+  TooManyFunctions:
+    excludes: ['**/test/**', '**/androidTest/**']
+    thresholdInFiles: 25
+    thresholdInClasses: 25
+  ComplexCondition:
+    threshold: 5
+  NestedBlockDepth:
+    threshold: 5
+
+style:
+  MagicNumber:
+    # Colors, typography tokens, gesture thresholds and geometry are literal values by nature.
+    ignoreAnnotated: ['Composable']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreExtensionFunctions: false
+    excludes: ['**/test/**', '**/androidTest/**', '**/*.kts', '**/core/theme/**']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  ReturnCount:
+    max: 4
+  ThrowsCount:
+    max: 3
+  UnusedPrivateProperty:
+    active: true
