@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="files_move_title">Mover a</string>
+  <string name="files_copy_title">Copiar a</string>
+  <string name="files_no_folders">Todavía no hay carpetas disponibles.</string>
+  <string name="files_new_folder_label">Carpeta nueva en Pictures</string>
+  <string name="files_new_folder_error">Usa un nombre sin / \\ : * ? \" &lt; &gt; |</string>
+  <string name="files_new_folder_move">Mover a la carpeta nueva</string>
+  <string name="files_new_folder_copy">Copiar a la carpeta nueva</string>
+  <string name="files_close">Cerrar</string>
+
+  <string name="files_rename_title">Renombrar</string>
+  <string name="files_rename_label">Nombre</string>
+  <string name="files_rename_extension">Extensión: .%1$s</string>
+  <string name="files_rename_error">Escribe un nombre sin / \\ : * ? \" &lt; &gt; |</string>
+  <string name="files_rename_action">Renombrar</string>
+
+  <string name="files_info_title">Detalles de la selección</string>
+  <plurals name="files_info_count">
+    <item quantity="one">%d elemento seleccionado</item>
+    <item quantity="many">%d elementos seleccionados</item>
+    <item quantity="other">%d elementos seleccionados</item>
+  </plurals>
+  <string name="files_info_total_size">Tamaño total: %1$s</string>
+
+  <plurals name="files_trashed">
+    <item quantity="one">%d elemento movido a la papelera</item>
+    <item quantity="many">%d elementos movidos a la papelera</item>
+    <item quantity="other">%d elementos movidos a la papelera</item>
+  </plurals>
+  <plurals name="files_moved">
+    <item quantity="one">%d elemento movido</item>
+    <item quantity="many">%d elementos movidos</item>
+    <item quantity="other">%d elementos movidos</item>
+  </plurals>
+  <plurals name="files_copied">
+    <item quantity="one">%d elemento copiado</item>
+    <item quantity="many">%d elementos copiados</item>
+    <item quantity="other">%d elementos copiados</item>
+  </plurals>
+  <string name="files_undo">Deshacer</string>
+  <string name="files_renamed">Renombrado</string>
+  <string name="files_failed">No ha funcionado. No se ha cambiado nada.</string>
+  <string name="files_denied">Cancelado. No se ha cambiado nada.</string>
+
+  <string name="files_share_no_metadata">Compartir sin metadatos</string>
+  <string name="files_save_no_metadata">Guardar copia sin metadatos</string>
+  <string name="files_copy_saved_no_metadata">Copia guardada sin metadatos</string>
+  <string name="files_no_metadata_unsupported">Solo se pueden limpiar imágenes JPEG, PNG y WebP.</string>
+  <string name="files_share_chooser">Compartir</string>
+</resources>
