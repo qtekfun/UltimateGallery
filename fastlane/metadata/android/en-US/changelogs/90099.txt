@@ -1,0 +1,5 @@
+Settings and polish (pre-release).
+- Settings: appearance, folders, editing, export defaults, about
+- Theme and dynamic color options
+- Two-pane editor and more columns on tablets
+- Haptics and larger touch targets

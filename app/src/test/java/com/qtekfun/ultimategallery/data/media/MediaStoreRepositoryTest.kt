@@ -116,3 +116,38 @@ class MediaStoreRepositoryTest {
         }
     }
 }
+
+/** Large-library smoke test: grouping and sorting tens of thousands of rows must stay fast. */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
+class MediaStoreRepositoryLargeLibraryTest {
+    private val context = ApplicationProvider.getApplicationContext<Context>()
+    private val repo = MediaStoreRepository(context, Dispatchers.IO)
+
+    @Test
+    fun fiftyThousandItemsAreGroupedAndListedQuickly() = runBlocking {
+        Robolectric.setupContentProvider(FakeMediaProvider::class.java, MediaStore.AUTHORITY)
+        FakeMediaProvider.rows = (1..50_000).map { i ->
+            FakeRow(
+                i.toLong(),
+                "IMG_$i.jpg",
+                bucketId = (i % 40).toLong(),
+                bucketName = "Folder ${i % 40}",
+                path = "DCIM/Folder ${i % 40}/",
+                dateTaken = i * 1000L
+            )
+        }
+        try {
+            val start = System.nanoTime()
+            val folders = repo.observeFolders().first()
+            val items = repo.observeItems(7).first()
+            val ms = (System.nanoTime() - start) / 1_000_000
+            assertEquals(40, folders.size)
+            assertEquals(1250, items.size)
+            assertEquals(50_000, folders.sumOf { it.count })
+            assertTrue("took $ms ms", ms < 15_000)
+        } finally {
+            FakeMediaProvider.rows = emptyList()
+        }
+    }
+}

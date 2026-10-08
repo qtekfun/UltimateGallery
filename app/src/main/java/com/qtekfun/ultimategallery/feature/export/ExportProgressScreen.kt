@@ -155,9 +155,9 @@ private fun Summary(
     )
     Text(
         if (failed == 0) {
-            stringResource(R.string.result_summary_ok, ok, folder?.name.orEmpty())
+            pluralStringResource(R.plurals.result_summary_ok, ok, ok, folder?.name.orEmpty())
         } else {
-            stringResource(R.string.result_summary_partial, ok, failed)
+            pluralStringResource(R.plurals.result_summary_partial, ok, ok, failed)
         },
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.bodyLarge

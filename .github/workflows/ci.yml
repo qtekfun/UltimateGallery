@@ -32,6 +32,13 @@ jobs:
       - name: Lint, static analysis, unit tests and debug build
         run: ./gradlew check assembleDebug
 
+      - name: Verify the app stays offline (no network permission)
+        run: |
+          aapt2=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | tail -1)
+          perms=$("$aapt2" dump permissions app/build/outputs/apk/debug/app-debug.apk)
+          echo "$perms"
+          if echo "$perms" | grep -q 'android.permission.INTERNET'; then echo "INTERNET permission found"; exit 1; fi
+
       - name: Upload reports
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

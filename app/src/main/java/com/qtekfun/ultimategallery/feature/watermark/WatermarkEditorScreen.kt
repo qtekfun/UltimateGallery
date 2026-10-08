@@ -8,12 +8,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Redo
@@ -54,6 +59,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.domain.export.ExportPaths
+
+private const val WIDE_LAYOUT_DP = 720
+private const val WIDE_PANEL_DP = 380
 
 /** The watermark editor: canvas, batch strip and the control panels. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -187,82 +195,98 @@ fun WatermarkEditorScreen(
         },
         snackbarHost = { SnackbarHost(snackbar) }
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
+            val wide = maxWidth >= WIDE_LAYOUT_DP.dp
             val current = state.current
-            Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 12.dp), contentAlignment = Alignment.Center) {
-                when {
-                    state.loading -> CircularProgressIndicator()
-                    current != null -> EditorCanvas(
-                        item = current,
+            val canvasArea: @Composable ColumnScope.() -> Unit = {
+                Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 12.dp), contentAlignment = Alignment.Center) {
+                    when {
+                        state.loading -> CircularProgressIndicator()
+                        current != null -> EditorCanvas(
+                            item = current,
+                            profile = state.profile,
+                            orientation = state.orientation,
+                            renderer = viewModel.renderer,
+                            guideX = state.guideX,
+                            guideY = state.guideY,
+                            onGestureStart = viewModel::gestureStart,
+                            onGesture = viewModel::gesture,
+                            onGestureEnd = viewModel::gestureEnd,
+                            onHandleDrag = viewModel::handleDrag,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+                if (state.items.size > 1 || current != null) {
+                    BatchStrip(
+                        items = state.items,
+                        selectedIndex = state.index,
                         profile = state.profile,
-                        orientation = state.orientation,
                         renderer = viewModel.renderer,
-                        guideX = state.guideX,
-                        guideY = state.guideY,
-                        onGestureStart = viewModel::gestureStart,
-                        onGesture = viewModel::gesture,
-                        onGestureEnd = viewModel::gestureEnd,
-                        onHandleDrag = viewModel::handleDrag,
-                        modifier = Modifier.fillMaxSize()
+                        onSelect = viewModel::select,
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
             }
-            if (state.items.size > 1 || current != null) {
-                BatchStrip(
-                    items = state.items,
-                    selectedIndex = state.index,
-                    profile = state.profile,
-                    renderer = viewModel.renderer,
-                    onSelect = viewModel::select,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+            val controlPanel: @Composable () -> Unit = {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = MaterialTheme.shapes.extraLarge.copy(
+                        bottomEnd = androidx.compose.foundation.shape.CornerSize(0.dp),
+                        bottomStart = androidx.compose.foundation.shape.CornerSize(0.dp)
+                    )
+                ) {
+                    Column(Modifier.navigationBarsPadding().animateContentSize()) {
+                        PrimaryTabRow(
+                            selectedTabIndex = state.tab.ordinal,
+                            containerColor = androidx.compose.ui.graphics.Color.Transparent
+                        ) {
+                            EditorTab.entries.forEach { tab ->
+                                Tab(
+                                    selected = state.tab == tab,
+                                    onClick = {
+                                        if (state.tab ==
+                                            tab
+                                        ) {
+                                            panelOpen = !panelOpen
+                                        } else {
+                                            viewModel.setTab(tab)
+                                            panelOpen = true
+                                        }
+                                    },
+                                    text = { Text(stringResource(tab.label())) }
+                                )
+                            }
+                        }
+                        AnimatedVisibility(visible = panelOpen) {
+                            val panelModifier = Modifier.fillMaxWidth().heightIn(
+                                max = if (wide) 2000.dp else 230.dp
+                            ).padding(horizontal = 16.dp, vertical = 12.dp)
+                            when (state.tab) {
+                                EditorTab.MARK -> MarkPanel(state.profile, actions, panelModifier)
+                                EditorTab.STYLE -> StylePanel(state.profile, actions, panelModifier)
+                                EditorTab.PLACEMENT -> PlacementPanel(
+                                    state.profile,
+                                    state.orientation,
+                                    state.snapEnabled,
+                                    actions,
+                                    panelModifier
+                                )
+                                EditorTab.EXPORT -> ExportPanel(state.profile.export, viewModel::setExportSettings, panelModifier)
+                            }
+                        }
+                    }
+                }
             }
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                shape = MaterialTheme.shapes.extraLarge.copy(
-                    bottomEnd = androidx.compose.foundation.shape.CornerSize(0.dp),
-                    bottomStart = androidx.compose.foundation.shape.CornerSize(0.dp)
-                )
-            ) {
-                Column(Modifier.navigationBarsPadding().animateContentSize()) {
-                    PrimaryTabRow(
-                        selectedTabIndex = state.tab.ordinal,
-                        containerColor = androidx.compose.ui.graphics.Color.Transparent
-                    ) {
-                        EditorTab.entries.forEach { tab ->
-                            Tab(
-                                selected = state.tab == tab,
-                                onClick = {
-                                    if (state.tab ==
-                                        tab
-                                    ) {
-                                        panelOpen = !panelOpen
-                                    } else {
-                                        viewModel.setTab(tab)
-                                        panelOpen = true
-                                    }
-                                },
-                                text = { Text(stringResource(tab.label())) }
-                            )
-                        }
-                    }
-                    AnimatedVisibility(visible = panelOpen) {
-                        val panelModifier = Modifier.fillMaxWidth().heightIn(
-                            max = 230.dp
-                        ).padding(horizontal = 16.dp, vertical = 12.dp)
-                        when (state.tab) {
-                            EditorTab.MARK -> MarkPanel(state.profile, actions, panelModifier)
-                            EditorTab.STYLE -> StylePanel(state.profile, actions, panelModifier)
-                            EditorTab.PLACEMENT -> PlacementPanel(
-                                state.profile,
-                                state.orientation,
-                                state.snapEnabled,
-                                actions,
-                                panelModifier
-                            )
-                            EditorTab.EXPORT -> ExportPanel(state.profile.export, viewModel::setExportSettings, panelModifier)
-                        }
-                    }
+            if (wide) {
+                Row(Modifier.fillMaxSize()) {
+                    Column(Modifier.weight(1f).fillMaxHeight()) { canvasArea() }
+                    Box(Modifier.width(WIDE_PANEL_DP.dp).fillMaxHeight()) { controlPanel() }
+                }
+            } else {
+                Column(Modifier.fillMaxSize()) {
+                    canvasArea()
+                    controlPanel()
                 }
             }
         }

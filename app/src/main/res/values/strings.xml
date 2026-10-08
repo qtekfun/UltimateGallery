@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">UltimateGallery</string>
-  <string name="gallery_placeholder">Your photos will appear here</string>
   <string name="onboarding_title">Your photos, on your device</string>
   <string name="onboarding_body">UltimateGallery needs access to your photos and videos to show them and to add watermarks in batch.</string>
   <string name="onboarding_point_offline">Works fully offline: the app has no network access at all.</string>
@@ -12,7 +11,6 @@
   <string name="onboarding_open_settings">Open settings</string>
   <string name="partial_access_message">Only the photos you selected are visible.</string>
   <string name="partial_access_allow_all">Allow all</string>
-  <string name="folders_title">Folders</string>
   <string name="watermark">Watermark</string>
   <string name="view_as_list">Show as list</string>
   <string name="view_as_grid">Show as grid</string>
@@ -25,14 +23,11 @@
   <string name="empty_folder">This folder is empty</string>
   <string name="picker_title">Choose photos</string>
   <string name="picker_continue">Continue</string>
-  <string name="picker_empty_hint">Pick the photos to watermark</string>
   <string name="videos_not_watermarked">Videos can\'t be watermarked yet</string>
   <string name="photo_item">Photo</string>
   <string name="video_item">Video</string>
-  <string name="selected_a11y">selected</string>
   <string name="day_today">Today</string>
   <string name="day_yesterday">Yesterday</string>
-  <string name="watermark_soon">The watermark editor arrives soon</string>
   <plurals name="item_count">
     <item quantity="one">%d item</item>
     <item quantity="other">%d items</item>
@@ -46,7 +41,6 @@
   <string name="delete">Delete</string>
   <string name="info">Info</string>
   <string name="rename">Rename</string>
-  <string name="editor_title">Watermark</string>
   <string name="undo">Undo</string>
   <string name="redo">Redo</string>
   <string name="tab_mark">Mark</string>
@@ -57,13 +51,10 @@
   <string name="type_image">Logo</string>
   <string name="type_tiled">Tiled</string>
   <string name="text_label">Watermark text</string>
-  <string name="choose_logo">Choose logo (PNG)</string>
   <string name="change_logo">Change logo</string>
   <string name="logo_hint">Use a PNG with a transparent background for the best result.</string>
-  <string name="tiled_repeats">Repeats</string>
   <string name="tiled_spacing">Spacing</string>
   <string name="tiled_stagger">Row offset</string>
-  <string name="font">Font</string>
   <string name="font_sans">Sans</string>
   <string name="font_serif">Serif</string>
   <string name="font_mono">Mono</string>
@@ -89,9 +80,7 @@
   <string name="hex_color">Hex color</string>
   <string name="ok">OK</string>
   <string name="cancel">Cancel</string>
-  <string name="hide_panel">Hide controls</string>
   <string name="export_action">Export</string>
-  <string name="export_n_photos">Export %1$d photos</string>
   <string name="export_destination">Destination folder</string>
   <string name="export_destination_error">Use a folder inside Pictures or DCIM</string>
   <string name="export_format">Format</string>
@@ -114,15 +103,12 @@
   <string name="result_title">Done</string>
   <string name="result_cancelled_title">Export cancelled</string>
   <string name="result_failed_title">Export failed</string>
-  <string name="result_summary_ok">%1$d photos exported to %2$s</string>
-  <string name="result_summary_partial">%1$d exported, %2$d failed</string>
   <string name="result_downscaled_note">Some very large photos were reduced to fit in memory.</string>
   <string name="result_open_folder">Open folder</string>
   <string name="result_share_all">Share all</string>
   <string name="result_done">Done</string>
   <string name="result_failures">Photos that failed</string>
   <string name="profile_menu">Profiles</string>
-  <string name="profile_unsaved">Unsaved changes</string>
   <string name="profile_save">Save changes</string>
   <string name="profile_save_as">Save as new profile…</string>
   <string name="profile_rename">Rename</string>
@@ -175,5 +161,43 @@
   <string name="app_folders_offer_body">Keep chat and screenshot images out of your gallery. Nothing is deleted or changed on your device, and you can change this in Settings.</string>
   <string name="app_folders_offer_apply">Hide selected</string>
   <string name="app_folders_offer_skip">Not now</string>
+  <string name="settings_appearance">Appearance</string>
+  <string name="settings_appearance_summary">Theme, dynamic color and grid size</string>
+  <string name="settings_edit">Editing</string>
+  <string name="settings_edit_summary">What happens when you save an edited photo</string>
+  <string name="settings_export">Export defaults</string>
+  <string name="settings_export_summary">Format, quality, folder and metadata for new profiles</string>
+  <string name="settings_about">About</string>
+  <string name="settings_about_summary">Version, licenses and credits</string>
+  <string name="theme">Theme</string>
+  <string name="theme_system">System default</string>
+  <string name="theme_light">Light</string>
+  <string name="theme_dark">Dark</string>
+  <string name="dynamic_color">Dynamic color</string>
+  <string name="dynamic_color_summary">Use colors from your wallpaper</string>
+  <string name="grid_default_title">Default grid size</string>
+  <string name="grid_folder_columns">Folder columns</string>
+  <string name="grid_photo_columns">Photo columns</string>
+  <string name="grid_pinch_hint">You can also pinch a grid to resize it.</string>
+  <string name="save_behavior">When saving an edited photo</string>
+  <string name="save_ask">Ask every time</string>
+  <string name="save_copy">Always save as a copy</string>
+  <string name="save_overwrite">Always overwrite the original</string>
+  <string name="save_overwrite_note">Overwriting asks for your permission through a system dialog.</string>
+  <string name="about_version">Version %1$s</string>
+  <string name="about_tagline">A gallery with batch watermarking. Fully offline.</string>
+  <string name="about_inspired">Functionally inspired by EasyWatermark (Apache-2.0). UltimateGallery is written from scratch and shares no code or design with it.</string>
+  <string name="about_license">Licensed under GPL-3.0-or-later.</string>
+  <string name="about_privacy">No network access, no Google Play Services, no analytics.</string>
+  <string name="about_open_source">Open-source licenses</string>
+  <string name="about_source">Source code and issues</string>
+  <plurals name="result_summary_ok">
+    <item quantity="one">%1$d photo exported to %2$s</item>
+    <item quantity="other">%1$d photos exported to %2$s</item>
+  </plurals>
+  <plurals name="result_summary_partial">
+    <item quantity="one">%1$d exported, %2$d failed</item>
+    <item quantity="other">%1$d exported, %2$d failed</item>
+  </plurals>
   <string name="edit">Edit</string>
 </resources>

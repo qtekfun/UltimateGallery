@@ -23,7 +23,11 @@ import com.qtekfun.ultimategallery.feature.export.ExportProgressScreen
 import com.qtekfun.ultimategallery.feature.gallery.FolderScreen
 import com.qtekfun.ultimategallery.feature.gallery.HomeScreen
 import com.qtekfun.ultimategallery.feature.onboarding.AccessActions
+import com.qtekfun.ultimategallery.feature.settings.AboutScreen
 import com.qtekfun.ultimategallery.feature.settings.AppFoldersSettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.AppearanceSettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.EditSettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.ExportDefaultsScreen
 import com.qtekfun.ultimategallery.feature.settings.FoldersSettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.SettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.settingsEntries
@@ -116,12 +120,20 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                 destination(Routes.SETTINGS) {
                     SettingsScreen(
                         entries = settingsEntries(
+                            onAppearance = { nav.navigate(Routes.SETTINGS_APPEARANCE) },
                             onFolders = { nav.navigate(Routes.SETTINGS_FOLDERS) },
-                            onAppFolders = { nav.navigate(Routes.SETTINGS_APP_FOLDERS) }
+                            onAppFolders = { nav.navigate(Routes.SETTINGS_APP_FOLDERS) },
+                            onEdit = { nav.navigate(Routes.SETTINGS_EDIT) },
+                            onExport = { nav.navigate(Routes.SETTINGS_EXPORT) },
+                            onAbout = { nav.navigate(Routes.SETTINGS_ABOUT) }
                         ),
                         onBack = { nav.popBackStack() }
                     )
                 }
+                destination(Routes.SETTINGS_APPEARANCE) { AppearanceSettingsScreen(onBack = { nav.popBackStack() }) }
+                destination(Routes.SETTINGS_EDIT) { EditSettingsScreen(onBack = { nav.popBackStack() }) }
+                destination(Routes.SETTINGS_EXPORT) { ExportDefaultsScreen(onBack = { nav.popBackStack() }) }
+                destination(Routes.SETTINGS_ABOUT) { AboutScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_FOLDERS) { FoldersSettingsScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_APP_FOLDERS) { AppFoldersSettingsScreen(onBack = { nav.popBackStack() }) }
             }

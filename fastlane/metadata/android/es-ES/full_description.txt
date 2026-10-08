@@ -1,3 +1,19 @@
-Una galería elegante basada en carpetas cuya función estrella es la marca de agua por lotes: elige muchas fotos, coloca una marca con los dedos, previsualízala en cada foto y expórtalas todas.
+UltimateGallery es una galería elegante basada en carpetas cuya función estrella es la <b>marca de agua por lotes</b>: elige muchas fotos, coloca una marca con los dedos, previsualízala en cada foto y expórtalas todas. Pensada para fotos de producto (por ejemplo anuncios de segunda mano) y creciendo hasta ser una galería completa.
 
-Totalmente sin conexión: sin permiso de red, sin Google Play Services, sin analítica.
+<b>Marca de agua</b>
+• Texto, logo (PNG con transparencia) o patrones en mosaico
+• Un dedo mueve la marca, dos dedos la escalan y giran; guías de ajuste con vibración
+• Posición independiente en vertical y horizontal, guardada en porcentajes para que todas las fotos tengan el mismo resultado relativo
+• Vista previa en cada foto del lote, deshacer y rehacer
+• Perfiles (plantillas), exportación JPEG / WebP / PNG, cambio de tamaño, patrón de nombre, opciones EXIF (sin ubicación por defecto)
+• Exportación en segundo plano con progreso y cancelación. Tus originales nunca se modifican.
+
+<b>Galería</b>
+• Carpetas en cuadrícula o lista, pellizca para cambiar el tamaño, cabeceras por fecha, selección por arrastre
+• Visor con zoom, transiciones de elemento compartido, tira de miniaturas y vídeo
+• Oculta carpetas solo dentro de la app (no se cambia nada en el dispositivo), con atajo para WhatsApp, Telegram y capturas
+• Mover, copiar, renombrar, compartir y eliminar (papelera del sistema), detalles y EXIF
+• Recorta, gira, voltea y endereza con animaciones fluidas; giro JPEG sin pérdida
+
+<b>Privada por diseño</b>
+Sin permiso de red, sin Google Play Services, sin analítica, sin anuncios. Solo dependencias de código abierto. Inglés y español.

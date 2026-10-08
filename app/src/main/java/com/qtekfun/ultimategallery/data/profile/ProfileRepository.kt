@@ -17,7 +17,7 @@ class ProfileRepository @Inject constructor(private val dao: ProfileDao, private
 
     /** Makes sure at least the default "Wallapop" profile exists (first run). */
     suspend fun ensureDefault() {
-        if (dao.count() == 0) save(WatermarkProfile(name = DEFAULT_NAME))
+        if (dao.count() == 0) save(WatermarkProfile(name = DEFAULT_NAME, export = settings.settings.first().exportDefaults))
     }
 
     suspend fun get(id: Long): WatermarkProfile? = dao.get(id)?.let(::toProfile)

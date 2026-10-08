@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ fun ColorRow(selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifi
             val isSelected = (selected and 0xFFFFFF) == (argb and 0xFFFFFF)
             Box(
                 Modifier
+                    .minimumInteractiveComponentSize()
                     .size(34.dp)
                     .clip(CircleShape)
                     .background(Color(argb))
@@ -69,6 +71,7 @@ fun ColorRow(selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifi
         }
         Box(
             Modifier
+                .minimumInteractiveComponentSize()
                 .size(34.dp)
                 .clip(CircleShape)
                 .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), CircleShape)

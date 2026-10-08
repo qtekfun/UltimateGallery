@@ -1,3 +1,19 @@
-A refined, folder-based gallery whose flagship feature is batch watermarking: pick many photos, place one watermark with your fingers, preview it on every photo and export them all.
+UltimateGallery is a refined, folder-based gallery whose flagship feature is <b>batch watermarking</b>: pick many photos, place one watermark with your fingers, preview it on every photo and export them all. Made for product photos (for example marketplace listings), and growing into a complete gallery.
 
-Fully offline: no network permission, no Google Play Services, no analytics.
+<b>Watermark</b>
+• Text, logo (PNG with transparency) or tiled patterns
+• One finger moves the mark, two fingers scale and rotate it; snapping guides with haptic ticks
+• Independent portrait and landscape placement, stored as percentages so every photo gets the same relative result
+• Live preview on every photo of the batch, undo and redo
+• Profiles (templates), JPEG / WebP / PNG export, resize, file name pattern, EXIF options (location removed by default)
+• Background export with progress and cancel. Your originals are never modified.
+
+<b>Gallery</b>
+• Folders as a grid or a list, pinch to resize grids, date headers, drag to select
+• Viewer with zoom, shared-element transitions, thumbnail strip and video playback
+• Hide folders inside the app only (nothing changes on disk), with a shortcut for WhatsApp, Telegram and screenshot folders
+• Move, copy, rename, share and delete (system trash), photo details and EXIF
+• Crop, rotate, flip and straighten with smooth animations; lossless JPEG rotation
+
+<b>Private by design</b>
+No network permission, no Google Play Services, no analytics, no ads. Open source dependencies only. English and Spanish.

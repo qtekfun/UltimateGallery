@@ -151,7 +151,7 @@ fun PhotoGrid(
     Box(modifier) {
         LazyVerticalGrid(
             state = gridState,
-            columns = GridCells.Fixed(columns),
+            columns = GridCells.Fixed(rememberAdaptiveColumns(columns)),
             modifier = Modifier
                 .fillMaxSize()
                 .pinchToResize(columns, MIN_PHOTO_COLUMNS, MAX_PHOTO_COLUMNS, onColumnsChange)
@@ -201,7 +201,16 @@ fun PhotoGrid(
                             item = entry.item,
                             selected = entry.item.id in selection,
                             selectionMode = selectionMode,
-                            onClick = { if (selectionMode) onToggle(entry.item) else onOpen(entry.item) }
+                            onClick = {
+                                if (selectionMode) {
+                                    haptics.performHapticFeedback(
+                                        if (entry.item.id in selection) HapticFeedbackType.ToggleOff else HapticFeedbackType.ToggleOn
+                                    )
+                                    onToggle(entry.item)
+                                } else {
+                                    onOpen(entry.item)
+                                }
+                            }
                         )
                     }
                 }

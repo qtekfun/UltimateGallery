@@ -3,27 +3,6 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
-## [0.6.0]
-
-Crop and rotate (pre-release).
-
-- Crop with free, 1:1, 4:3, 3:4 and 16:9 frames, 90-degree rotation, flip and a fine straighten dial that never shows empty corners.
-- Polished spring animation of the photo and the crop frame when rotating, and an animated flip; haptic ticks.
-- Save behavior: ask every time, always save a copy, or always overwrite (overwriting uses the system consent dialog). The choice can be remembered.
-- Lossless rotation for JPEG: turning a JPEG by 90 degrees only changes its orientation flag, with no re-encoding.
-- Edit button in the viewer.
-
-## [0.5.0]
-
-Gallery completion (pre-release).
-
-- Pinch to resize the folder grid and the photo grid, snapping to column counts; the choice is remembered.
-- Hide folders inside the app only (long press, with Undo); nothing changes on disk and no `.nomedia` is written.
-- Settings: Folders (a switch per folder) and App folders (hide WhatsApp, Telegram, screenshots and more, including folders that appear later).
-- First-run offer to hide app folders, with WhatsApp pre-checked; nothing is hidden without confirmation. Hidden folders stay out of the watermark picker unless you ask to see them.
-- File operations with the system consent dialogs: move, copy, rename, delete (system trash, with Undo), share, and details for a selection.
-- Share or save a copy of a photo without metadata (EXIF), from the info panel.
-
 ## [0.4.0]
 
 Viewer (pre-release).

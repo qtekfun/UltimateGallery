@@ -47,7 +47,7 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Pinch-to-zoom grid resize (folder grid and photo grid), snapping to column counts, persisted.
 - [x] Hidden folders: long-press Hide with undo, Settings → Folders list with switches.
 - [x] App folders catalog and Settings → App folders; first-run suggestion sheet (WhatsApp pre-checked).
-- [x] File operations: share, move, copy, rename, delete (system trash) with consent flows.
+- [ ] File operations: share, move, copy, rename, delete (system trash) with consent flows.
 
 ## Phase 8 — Crop and rotate
 - [x] Crop UI with aspect ratios, 90° rotate, flip, straighten dial.
@@ -55,9 +55,9 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Save behavior setting (overwrite / copy / ask) and implementation, including lossless JPEG 90° rotation via EXIF.
 
 ## Phase 9 — Settings and polish
-- [ ] Settings screens: appearance, folders, app folders, edit, export defaults, about (EasyWatermark credit, licenses).
-- [ ] Motion/haptics pass, predictive back, edge-to-edge, tablet/foldable layouts, accessibility pass.
-- [ ] Performance pass with large libraries (macrobenchmark or manual profiling).
+- [x] Settings screens: appearance, folders, app folders, edit, export defaults, about (EasyWatermark credit, licenses).
+- [x] Motion/haptics pass, predictive back, edge-to-edge, tablet/foldable layouts, accessibility pass.
+- [x] Performance pass with large libraries (macrobenchmark or manual profiling).
 
 ## Phase 10 — Release
 - [ ] Adaptive + monochrome launcher icon.

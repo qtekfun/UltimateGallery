@@ -1,0 +1,5 @@
+Ajustes y pulido (versión preliminar).
+- Ajustes: apariencia, carpetas, edición, exportación, acerca de
+- Opciones de tema y color dinámico
+- Editor de dos paneles y más columnas en tabletas
+- Vibración y zonas táctiles más grandes

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">UltimateGallery</string>
-  <string name="gallery_placeholder">Tus fotos aparecerán aquí</string>
   <string name="onboarding_title">Tus fotos, en tu dispositivo</string>
   <string name="onboarding_body">UltimateGallery necesita acceso a tus fotos y vídeos para mostrarlos y añadirles marcas de agua por lotes.</string>
   <string name="onboarding_point_offline">Funciona totalmente sin conexión: la app no tiene acceso a la red.</string>
@@ -12,7 +11,6 @@
   <string name="onboarding_open_settings">Abrir ajustes</string>
   <string name="partial_access_message">Solo se ven las fotos que seleccionaste.</string>
   <string name="partial_access_allow_all">Permitir todo</string>
-  <string name="folders_title">Carpetas</string>
   <string name="watermark">Marca de agua</string>
   <string name="view_as_list">Ver como lista</string>
   <string name="view_as_grid">Ver como cuadrícula</string>
@@ -25,14 +23,11 @@
   <string name="empty_folder">Esta carpeta está vacía</string>
   <string name="picker_title">Elegir fotos</string>
   <string name="picker_continue">Continuar</string>
-  <string name="picker_empty_hint">Elige las fotos a las que poner marca de agua</string>
   <string name="videos_not_watermarked">Los vídeos aún no admiten marca de agua</string>
   <string name="photo_item">Foto</string>
   <string name="video_item">Vídeo</string>
-  <string name="selected_a11y">seleccionada</string>
   <string name="day_today">Hoy</string>
   <string name="day_yesterday">Ayer</string>
-  <string name="watermark_soon">El editor de marca de agua llegará pronto</string>
   <plurals name="item_count">
     <item quantity="one">%d elemento</item>
     <item quantity="many">%d elementos</item>
@@ -48,7 +43,6 @@
   <string name="delete">Eliminar</string>
   <string name="info">Información</string>
   <string name="rename">Renombrar</string>
-  <string name="editor_title">Marca de agua</string>
   <string name="undo">Deshacer</string>
   <string name="redo">Rehacer</string>
   <string name="tab_mark">Marca</string>
@@ -59,13 +53,10 @@
   <string name="type_image">Logo</string>
   <string name="type_tiled">Mosaico</string>
   <string name="text_label">Texto de la marca</string>
-  <string name="choose_logo">Elegir logo (PNG)</string>
   <string name="change_logo">Cambiar logo</string>
   <string name="logo_hint">Usa un PNG con fondo transparente para un mejor resultado.</string>
-  <string name="tiled_repeats">Se repite</string>
   <string name="tiled_spacing">Separación</string>
   <string name="tiled_stagger">Desfase de filas</string>
-  <string name="font">Fuente</string>
   <string name="font_sans">Sans</string>
   <string name="font_serif">Serif</string>
   <string name="font_mono">Mono</string>
@@ -91,9 +82,7 @@
   <string name="hex_color">Color hexadecimal</string>
   <string name="ok">Aceptar</string>
   <string name="cancel">Cancelar</string>
-  <string name="hide_panel">Ocultar controles</string>
   <string name="export_action">Exportar</string>
-  <string name="export_n_photos">Exportar %1$d fotos</string>
   <string name="export_destination">Carpeta de destino</string>
   <string name="export_destination_error">Usa una carpeta dentro de Pictures o DCIM</string>
   <string name="export_format">Formato</string>
@@ -116,15 +105,12 @@
   <string name="result_title">Listo</string>
   <string name="result_cancelled_title">Exportación cancelada</string>
   <string name="result_failed_title">La exportación falló</string>
-  <string name="result_summary_ok">%1$d fotos exportadas a %2$s</string>
-  <string name="result_summary_partial">%1$d exportadas, %2$d con error</string>
   <string name="result_downscaled_note">Algunas fotos muy grandes se redujeron para caber en memoria.</string>
   <string name="result_open_folder">Abrir carpeta</string>
   <string name="result_share_all">Compartir todo</string>
   <string name="result_done">Hecho</string>
   <string name="result_failures">Fotos con error</string>
   <string name="profile_menu">Perfiles</string>
-  <string name="profile_unsaved">Cambios sin guardar</string>
   <string name="profile_save">Guardar cambios</string>
   <string name="profile_save_as">Guardar como perfil nuevo…</string>
   <string name="profile_rename">Renombrar</string>
@@ -177,5 +163,45 @@
   <string name="app_folders_offer_body">Mantén las imágenes de chats y capturas fuera de tu galería. No se borra ni cambia nada en tu dispositivo y puedes cambiarlo en Ajustes.</string>
   <string name="app_folders_offer_apply">Ocultar seleccionadas</string>
   <string name="app_folders_offer_skip">Ahora no</string>
+  <string name="settings_appearance">Apariencia</string>
+  <string name="settings_appearance_summary">Tema, color dinámico y tamaño de la cuadrícula</string>
+  <string name="settings_edit">Edición</string>
+  <string name="settings_edit_summary">Qué pasa al guardar una foto editada</string>
+  <string name="settings_export">Valores de exportación</string>
+  <string name="settings_export_summary">Formato, calidad, carpeta y metadatos de los perfiles nuevos</string>
+  <string name="settings_about">Acerca de</string>
+  <string name="settings_about_summary">Versión, licencias y créditos</string>
+  <string name="theme">Tema</string>
+  <string name="theme_system">Predeterminado del sistema</string>
+  <string name="theme_light">Claro</string>
+  <string name="theme_dark">Oscuro</string>
+  <string name="dynamic_color">Color dinámico</string>
+  <string name="dynamic_color_summary">Usa los colores de tu fondo de pantalla</string>
+  <string name="grid_default_title">Tamaño de cuadrícula por defecto</string>
+  <string name="grid_folder_columns">Columnas de carpetas</string>
+  <string name="grid_photo_columns">Columnas de fotos</string>
+  <string name="grid_pinch_hint">También puedes pellizcar una cuadrícula para cambiar su tamaño.</string>
+  <string name="save_behavior">Al guardar una foto editada</string>
+  <string name="save_ask">Preguntar siempre</string>
+  <string name="save_copy">Guardar siempre como copia</string>
+  <string name="save_overwrite">Sobrescribir siempre el original</string>
+  <string name="save_overwrite_note">Sobrescribir pide tu permiso mediante un diálogo del sistema.</string>
+  <string name="about_version">Versión %1$s</string>
+  <string name="about_tagline">Una galería con marcas de agua por lotes. Totalmente sin conexión.</string>
+  <string name="about_inspired">Inspirada funcionalmente en EasyWatermark (Apache-2.0). UltimateGallery está escrita desde cero y no comparte código ni diseño con ella.</string>
+  <string name="about_license">Licenciada bajo GPL-3.0-or-later.</string>
+  <string name="about_privacy">Sin acceso a la red, sin Google Play Services, sin analítica.</string>
+  <string name="about_open_source">Licencias de código abierto</string>
+  <string name="about_source">Código fuente e incidencias</string>
+  <plurals name="result_summary_ok">
+    <item quantity="one">%1$d foto exportada a %2$s</item>
+    <item quantity="many">%1$d fotos exportadas a %2$s</item>
+    <item quantity="other">%1$d fotos exportadas a %2$s</item>
+  </plurals>
+  <plurals name="result_summary_partial">
+    <item quantity="one">%1$d exportada, %2$d con error</item>
+    <item quantity="many">%1$d exportadas, %2$d con error</item>
+    <item quantity="other">%1$d exportadas, %2$d con error</item>
+  </plurals>
   <string name="edit">Editar</string>
 </resources>

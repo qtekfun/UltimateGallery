@@ -8,6 +8,9 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.qtekfun.ultimategallery.domain.watermark.ExifMode
+import com.qtekfun.ultimategallery.domain.watermark.ExportFormat
+import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +32,9 @@ data class AppSettings(
     val lastProfileId: Long = NO_PROFILE,
     val appFoldersOffered: Boolean = false,
     /** Ids of app folder groups (see `AppFolderCatalog`) hidden automatically. */
-    val autoHideApps: Set<String> = emptySet()
+    val autoHideApps: Set<String> = emptySet(),
+    /** Defaults applied to export settings of new profiles. */
+    val exportDefaults: ExportSettings = ExportSettings()
 ) {
     companion object {
         const val DEFAULT_FOLDER_COLUMNS = 2
@@ -52,7 +57,15 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
             saveBehavior = p[SAVE]?.let { runCatching { SaveBehavior.valueOf(it) }.getOrNull() } ?: d.saveBehavior,
             lastProfileId = p[LAST_PROFILE] ?: d.lastProfileId,
             appFoldersOffered = p[APP_FOLDERS_OFFERED] ?: d.appFoldersOffered,
-            autoHideApps = p[AUTO_HIDE_APPS] ?: d.autoHideApps
+            autoHideApps = p[AUTO_HIDE_APPS] ?: d.autoHideApps,
+            exportDefaults = ExportSettings(
+                format = p[EXPORT_FORMAT]?.let { runCatching { ExportFormat.valueOf(it) }.getOrNull() } ?: d.exportDefaults.format,
+                quality = p[EXPORT_QUALITY] ?: d.exportDefaults.quality,
+                maxLongEdge = (p[EXPORT_MAX_EDGE] ?: 0).takeIf { it > 0 },
+                fileNamePattern = p[EXPORT_PATTERN] ?: d.exportDefaults.fileNamePattern,
+                destination = p[EXPORT_DESTINATION] ?: d.exportDefaults.destination,
+                exif = p[EXPORT_EXIF]?.let { runCatching { ExifMode.valueOf(it) }.getOrNull() } ?: d.exportDefaults.exif
+            )
         )
     }
 
@@ -71,6 +84,17 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
     suspend fun setLastProfileId(id: Long) = set(LAST_PROFILE, id)
 
     suspend fun setAppFoldersOffered(offered: Boolean) = set(APP_FOLDERS_OFFERED, offered)
+
+    suspend fun setExportDefaults(e: ExportSettings) {
+        store.edit {
+            it[EXPORT_FORMAT] = e.format.name
+            it[EXPORT_QUALITY] = e.quality
+            it[EXPORT_MAX_EDGE] = e.maxLongEdge ?: 0
+            it[EXPORT_PATTERN] = e.fileNamePattern
+            it[EXPORT_DESTINATION] = e.destination
+            it[EXPORT_EXIF] = e.exif.name
+        }
+    }
 
     suspend fun setAutoHideApps(ids: Set<String>) = set(AUTO_HIDE_APPS, ids)
 
@@ -91,6 +115,12 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
         val SAVE = stringPreferencesKey("save_behavior")
         val LAST_PROFILE = longPreferencesKey("last_profile_id")
         val APP_FOLDERS_OFFERED = booleanPreferencesKey("app_folders_offered")
+        val EXPORT_FORMAT = stringPreferencesKey("export_format")
+        val EXPORT_QUALITY = intPreferencesKey("export_quality")
+        val EXPORT_MAX_EDGE = intPreferencesKey("export_max_edge")
+        val EXPORT_PATTERN = stringPreferencesKey("export_pattern")
+        val EXPORT_DESTINATION = stringPreferencesKey("export_destination")
+        val EXPORT_EXIF = stringPreferencesKey("export_exif")
         val AUTO_HIDE_APPS = stringSetPreferencesKey("auto_hide_apps")
     }
 }

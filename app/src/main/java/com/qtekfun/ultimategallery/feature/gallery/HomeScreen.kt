@@ -209,7 +209,7 @@ private fun FolderContent(
     val contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 4.dp, bottom = bottomInset + 96.dp)
     if (state.mode == HomeViewMode.GRID) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(state.columns),
+            columns = GridCells.Fixed(rememberAdaptiveColumns(state.columns)),
             modifier = Modifier.fillMaxSize().pinchToResize(state.columns, MIN_FOLDER_COLUMNS, MAX_FOLDER_COLUMNS, onColumnsChange),
             contentPadding = contentPadding,
             horizontalArrangement = Arrangement.spacedBy(12.dp),

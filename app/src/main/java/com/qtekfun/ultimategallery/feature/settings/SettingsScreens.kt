@@ -14,7 +14,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Crop
 import androidx.compose.material.icons.outlined.FolderOpen
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.IosShare
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +49,7 @@ class SettingsEntry(val icon: ImageVector, val title: Int, val summary: Int, val
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsScaffold(title: String, onBack: () -> Unit, modifier: Modifier = Modifier, content: @Composable (PaddingValues) -> Unit) {
+internal fun SettingsScaffold(title: String, onBack: () -> Unit, modifier: Modifier = Modifier, content: @Composable (PaddingValues) -> Unit) {
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -167,8 +171,19 @@ fun AppFoldersSettingsScreen(onBack: () -> Unit, modifier: Modifier = Modifier, 
     }
 }
 
-/** The sections available now; later phases add more. */
-fun settingsEntries(onFolders: () -> Unit, onAppFolders: () -> Unit): List<SettingsEntry> = listOf(
+/** The sections of the settings home. */
+fun settingsEntries(
+    onAppearance: () -> Unit,
+    onFolders: () -> Unit,
+    onAppFolders: () -> Unit,
+    onEdit: () -> Unit,
+    onExport: () -> Unit,
+    onAbout: () -> Unit
+): List<SettingsEntry> = listOf(
+    SettingsEntry(Icons.Outlined.Palette, R.string.settings_appearance, R.string.settings_appearance_summary, onAppearance),
     SettingsEntry(Icons.Outlined.FolderOpen, R.string.settings_folders, R.string.settings_folders_summary, onFolders),
-    SettingsEntry(Icons.Outlined.Apps, R.string.settings_app_folders, R.string.settings_app_folders_summary, onAppFolders)
+    SettingsEntry(Icons.Outlined.Apps, R.string.settings_app_folders, R.string.settings_app_folders_summary, onAppFolders),
+    SettingsEntry(Icons.Outlined.Crop, R.string.settings_edit, R.string.settings_edit_summary, onEdit),
+    SettingsEntry(Icons.Outlined.IosShare, R.string.settings_export, R.string.settings_export_summary, onExport),
+    SettingsEntry(Icons.Outlined.Info, R.string.settings_about, R.string.settings_about_summary, onAbout)
 )

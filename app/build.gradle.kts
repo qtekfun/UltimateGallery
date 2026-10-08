@@ -1,4 +1,10 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -128,6 +134,33 @@ ktlint {
 licensee {
     allow("Apache-2.0")
     allow("BSD-3-Clause")
+}
+
+// Ships the licensee report as an asset, so the About screen can list the open-source licenses.
+abstract class CopyLicenseReport : DefaultTask() {
+    @get:InputFile
+    abstract val report: RegularFileProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val target = outputDir.get().asFile.resolve("licenses").apply { mkdirs() }
+        report.get().asFile.copyTo(target.resolve("artifacts.json"), overwrite = true)
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        val cap = variant.name.replaceFirstChar { it.uppercase() }
+        val licensee = tasks.named("licenseeAndroid$cap")
+        val copy = tasks.register<CopyLicenseReport>("copyLicenseReport$cap") {
+            dependsOn(licensee)
+            report.set(layout.buildDirectory.file("reports/licensee/android$cap/artifacts.json"))
+        }
+        variant.sources.assets?.addGeneratedSourceDirectory(copy, CopyLicenseReport::outputDir)
+    }
 }
 
 dependencies {
