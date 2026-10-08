@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="export_channel_name">Watermark export</string>
+  <string name="export_notification_title">Exporting watermarked photos</string>
+  <string name="export_notification_progress">%1$d of %2$d</string>
+  <string name="export_cancel">Cancel</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="export_channel_name">Exportación de marcas de agua</string>
+  <string name="export_notification_title">Exportando fotos con marca de agua</string>
+  <string name="export_notification_progress">%1$d de %2$d</string>
+  <string name="export_cancel">Cancelar</string>
+</resources>

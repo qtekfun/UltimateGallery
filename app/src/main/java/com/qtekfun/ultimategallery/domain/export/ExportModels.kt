@@ -17,11 +17,7 @@ data class ExportItemResult(
     val downscaled: Boolean = false
 )
 
-data class ExportResult(
-    val jobId: String,
-    val items: List<ExportItemResult>,
-    val cancelled: Boolean
-) {
+data class ExportResult(val jobId: String, val items: List<ExportItemResult>, val cancelled: Boolean) {
     val succeeded: List<ExportItemResult> get() = items.filter { it.outputUri != null }
     val failed: List<ExportItemResult> get() = items.filter { it.outputUri == null }
 }
@@ -34,12 +30,7 @@ sealed interface ExportStatus {
      * [done] photos are finished out of [total]; [currentFraction] is the progress (0..1) of the photo
      * being processed, [currentName] its original file name.
      */
-    data class Running(
-        val done: Int,
-        val total: Int,
-        val currentFraction: Float,
-        val currentName: String?
-    ) : ExportStatus {
+    data class Running(val done: Int, val total: Int, val currentFraction: Float, val currentName: String?) : ExportStatus {
         val overall: Float get() = if (total == 0) 0f else (done + currentFraction) / total
     }
 
