@@ -140,4 +140,20 @@
   <string name="discard_body">Tus cambios de la marca no están guardados en el perfil.</string>
   <string name="discard_confirm">Descartar</string>
   <string name="discard_keep">Seguir editando</string>
+  <string name="info_title">Detalles</string>
+  <string name="info_name">Nombre</string>
+  <string name="info_date">Fecha</string>
+  <string name="info_size">Tamaño</string>
+  <string name="info_resolution">Resolución</string>
+  <string name="info_megapixels">%1$d × %2$d  ·  %3$s MP</string>
+  <string name="info_path">Carpeta</string>
+  <string name="info_type">Tipo</string>
+  <string name="info_duration">Duración</string>
+  <string name="info_camera">Cámara</string>
+  <string name="info_lens">Objetivo</string>
+  <string name="info_exposure">Exposición</string>
+  <string name="info_location">Ubicación</string>
+  <string name="info_open_map">Abrir en una app de mapas</string>
+  <string name="viewer_play">Reproducir vídeo</string>
+  <string name="viewer_close">Cerrar visor</string>
 </resources>

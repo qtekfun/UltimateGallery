@@ -8,8 +8,11 @@ object Routes {
     const val PICKER = "picker"
     const val FOLDER = "folder/{bucketId}?name={name}&pick={pick}"
     const val WATERMARK = "watermark"
+    const val VIEWER = "viewer/{bucketId}/{mediaId}"
     const val EXPORT = "export/{jobId}"
     const val SETTINGS = "settings"
+
+    fun viewer(bucketId: Long, mediaId: Long) = "viewer/$bucketId/$mediaId"
 
     fun export(jobId: String) = "export/$jobId"
 

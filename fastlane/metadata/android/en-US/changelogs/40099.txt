@@ -1,0 +1,7 @@
+Viewer (pre-release).
+- Swipe between photos and videos
+- Pinch and double-tap zoom, pan with inertia
+- Shared-element transition, swipe down to close
+- Thumbnail strip, video playback
+- Info panel with EXIF and location
+- Watermark and Share from the viewer

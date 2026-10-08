@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.core.theme.OverlineStyle
 import com.qtekfun.ultimategallery.core.ui.MediaThumb
+import com.qtekfun.ultimategallery.core.ui.mediaSharedElement
 import com.qtekfun.ultimategallery.domain.MediaItem
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -266,6 +267,7 @@ private fun MediaCell(item: MediaItem, selected: Boolean, selectionMode: Boolean
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
+                .mediaSharedElement(item.id)
                 .scale(scale)
                 .clip(if (selected) MaterialTheme.shapes.medium else MaterialTheme.shapes.extraSmall)
         )

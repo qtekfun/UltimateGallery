@@ -1,0 +1,7 @@
+Visor (versión preliminar).
+- Desliza entre fotos y vídeos
+- Zoom con pellizco y doble toque, desplazamiento con inercia
+- Transición de elemento compartido, desliza abajo para cerrar
+- Tira de miniaturas, reproducción de vídeo
+- Panel de información con EXIF y ubicación
+- Marca de agua y Compartir desde el visor

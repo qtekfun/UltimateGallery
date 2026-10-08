@@ -38,10 +38,10 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Profile picker: save, rename, duplicate, delete, last-used preselected.
 
 ## Phase 6 — Viewer
-- [ ] Pager with pinch/double-tap zoom and pan.
-- [ ] Shared-element transition from grid, swipe-down to dismiss.
-- [ ] Thumbnail strip, video playback (Media3), info/EXIF panel.
-- [ ] Viewer actions bar.
+- [x] Pager with pinch/double-tap zoom and pan.
+- [x] Shared-element transition from grid, swipe-down to dismiss.
+- [x] Thumbnail strip, video playback (Media3), info/EXIF panel.
+- [x] Viewer actions bar.
 
 ## Phase 7 — Gallery completion
 - [ ] Pinch-to-zoom grid resize (folder grid and photo grid), snapping to column counts, persisted.

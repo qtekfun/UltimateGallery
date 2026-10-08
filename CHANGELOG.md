@@ -3,6 +3,17 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [0.4.0]
+
+Viewer (pre-release).
+
+- Full-screen viewer: swipe between photos and videos, pinch and double-tap zoom, pan with inertia and bounds.
+- Shared-element transition from the grid and swipe down to close.
+- Thumbnail strip for quick navigation within the folder.
+- Video playback with simple controls (videos are viewable but not watermarked).
+- Info panel with date, size, resolution, camera data (EXIF) and location when present.
+- Viewer actions: Watermark, Share and Info.
+
 ## [0.3.0]
 
 Profiles (pre-release).
