@@ -10,9 +10,9 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] README, LICENSE (confirm choice), CONTRIBUTING, strings in `en` and `es`.
 
 ## Phase 1 — Media access
-- [ ] Permission flow (full and partial access on Android 14+), onboarding screen explaining why.
-- [ ] MediaStore repository: folders by bucket, paged items per folder, ContentObserver refresh.
-- [ ] Unit/instrumented tests with fake MediaStore data.
+- [x] Permission flow (full and partial access on Android 14+), onboarding screen explaining why.
+- [x] MediaStore repository: folders by bucket, paged items per folder, ContentObserver refresh.
+- [x] Unit/instrumented tests with fake MediaStore data.
 
 ## Phase 2 — Minimal gallery for the watermark flow
 - [ ] Home with folder grid and list toggle (persisted).

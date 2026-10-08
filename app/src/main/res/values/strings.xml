@@ -2,4 +2,14 @@
 <resources>
   <string name="app_name">UltimateGallery</string>
   <string name="gallery_placeholder">Your photos will appear here</string>
+  <string name="onboarding_title">Your photos, on your device</string>
+  <string name="onboarding_body">UltimateGallery needs access to your photos and videos to show them and to add watermarks in batch.</string>
+  <string name="onboarding_point_offline">Works fully offline: the app has no network access at all.</string>
+  <string name="onboarding_point_private">No accounts, no analytics, nothing leaves your phone.</string>
+  <string name="onboarding_point_partial">You can allow all media, or only some photos; allowing all is recommended.</string>
+  <string name="onboarding_grant">Allow access</string>
+  <string name="onboarding_denied">Access is needed to show your gallery. You can allow it from the system settings.</string>
+  <string name="onboarding_open_settings">Open settings</string>
+  <string name="partial_access_message">Only the photos you selected are visible.</string>
+  <string name="partial_access_allow_all">Allow all</string>
 </resources>

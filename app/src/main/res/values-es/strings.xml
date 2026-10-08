@@ -2,4 +2,14 @@
 <resources>
   <string name="app_name">UltimateGallery</string>
   <string name="gallery_placeholder">Tus fotos aparecerán aquí</string>
+  <string name="onboarding_title">Tus fotos, en tu dispositivo</string>
+  <string name="onboarding_body">UltimateGallery necesita acceso a tus fotos y vídeos para mostrarlos y añadirles marcas de agua por lotes.</string>
+  <string name="onboarding_point_offline">Funciona totalmente sin conexión: la app no tiene acceso a la red.</string>
+  <string name="onboarding_point_private">Sin cuentas ni analítica: nada sale de tu teléfono.</string>
+  <string name="onboarding_point_partial">Puedes permitir todo el contenido o solo algunas fotos; se recomienda permitir todo.</string>
+  <string name="onboarding_grant">Permitir acceso</string>
+  <string name="onboarding_denied">Hace falta acceso para mostrar tu galería. Puedes permitirlo en los ajustes del sistema.</string>
+  <string name="onboarding_open_settings">Abrir ajustes</string>
+  <string name="partial_access_message">Solo se ven las fotos que seleccionaste.</string>
+  <string name="partial_access_allow_all">Permitir todo</string>
 </resources>
