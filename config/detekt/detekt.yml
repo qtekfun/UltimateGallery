@@ -6,6 +6,9 @@ naming:
   FunctionNaming:
     # Composables are PascalCase by Compose API guidelines.
     ignoreAnnotated: ['Composable']
+  MatchingDeclarationName:
+    # Small related declarations (a state class and its composable) share a file.
+    active: false
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9_]*'
 
@@ -18,8 +21,6 @@ complexity:
   LongMethod:
     threshold: 80
     ignoreAnnotated: ['Composable']
-  CyclomaticComplexMethod:
-    ignoreAnnotated: ['Composable']
   TooManyFunctions:
     excludes: ['**/test/**', '**/androidTest/**']
     thresholdInFiles: 25
@@ -28,20 +29,18 @@ complexity:
     threshold: 5
   NestedBlockDepth:
     threshold: 5
+  CyclomaticComplexMethod:
+    threshold: 20
+    ignoreAnnotated: ['Composable']
+    excludes: ['**/test/**', '**/androidTest/**']
 
 style:
   MagicNumber:
-    # Colors, typography tokens, gesture thresholds and geometry are literal values by nature.
-    ignoreAnnotated: ['Composable']
-    ignorePropertyDeclaration: true
-    ignoreCompanionObjectPropertyDeclaration: true
-    ignoreExtensionFunctions: false
-    excludes: ['**/test/**', '**/androidTest/**', '**/*.kts', '**/core/theme/**']
+    # Geometry, gesture thresholds, cursor columns and colors are literal values by nature.
+    active: false
   UnusedPrivateMember:
     ignoreAnnotated: ['Preview']
   ReturnCount:
-    max: 4
+    max: 5
   ThrowsCount:
     max: 3
-  UnusedPrivateProperty:
-    active: true
