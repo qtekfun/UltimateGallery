@@ -115,3 +115,8 @@ A `CoroutineWorker` runs the batch as a foreground service with a progress notif
 - F-Droid ready from day 1: `fastlane/metadata/android/{en-US,es-ES}` with descriptions, changelogs, screenshots; reproducible builds; all dependencies FOSS. F-Droid submission after 1.0.
 - License: decide with the owner before first release (default proposal: GPL-3.0 or Apache-2.0; confirm).
 - At the end of the plan: icon, screenshots and store listing material.
+
+## 13. Implementation notes (deviations and clarifications)
+- Tiled marks: the pattern angle is the placement rotation (so two-finger rotation edits it per orientation) and the placement center anchors the lattice; `WatermarkSource.Tiled` carries `spacing`, `staggerX` and `staggerY` instead of `angleDeg` and `offset`.
+- Items of a folder are loaded as one thin list (id, uri, date, size) refreshed on MediaStore changes instead of a paged query: select-all and drag ranges need the full list, and the projection is cheap even with tens of thousands of items. Thumbnails are loaded lazily through `ContentResolver.loadThumbnail`.
+- Export jobs and their results are exchanged through `ExportController` (see `domain/export`), backed by WorkManager.
