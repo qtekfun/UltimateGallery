@@ -4,18 +4,37 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.qtekfun.ultimategallery.core.consent.ConsentBroker
 import com.qtekfun.ultimategallery.core.theme.UltimateGalleryTheme
 import com.qtekfun.ultimategallery.feature.onboarding.AccessGate
 import com.qtekfun.ultimategallery.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var consentBroker: ConsentBroker
+
+    private val consentLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+        consentBroker.onResult(it.resultCode == RESULT_OK)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                consentBroker.requests.collect { consentLauncher.launch(IntentSenderRequest.Builder(it.intentSender).build()) }
+            }
+        }
         enableEdgeToEdge()
         setContent {
             UltimateGalleryTheme {
