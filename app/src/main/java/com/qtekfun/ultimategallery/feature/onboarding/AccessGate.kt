@@ -59,11 +59,7 @@ class AccessActions(val requestFullAccess: () -> Unit, val openSettings: () -> U
  * the current [MediaAccessLevel] and actions to widen partial access.
  */
 @Composable
-fun AccessGate(
-    modifier: Modifier = Modifier,
-    viewModel: AccessViewModel = hiltViewModel(),
-    content: @Composable (MediaAccessLevel, AccessActions) -> Unit
-) {
+fun AccessGate(modifier: Modifier = Modifier, viewModel: AccessViewModel = hiltViewModel(), content: @Composable (MediaAccessLevel, AccessActions) -> Unit) {
     val level by viewModel.level.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var asked by remember { mutableStateOf(false) }

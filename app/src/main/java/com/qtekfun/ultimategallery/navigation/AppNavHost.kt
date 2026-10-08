@@ -14,6 +14,7 @@ import com.qtekfun.ultimategallery.domain.MediaItem
 import com.qtekfun.ultimategallery.feature.gallery.FolderScreen
 import com.qtekfun.ultimategallery.feature.gallery.HomeScreen
 import com.qtekfun.ultimategallery.feature.onboarding.AccessActions
+import com.qtekfun.ultimategallery.feature.watermark.WatermarkEditorScreen
 
 @Composable
 fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modifier: Modifier = Modifier) {
@@ -63,7 +64,7 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                 onShare = { items -> share(context, items) }
             )
         }
-        composable(Routes.WATERMARK) { WatermarkPlaceholder(onBack = { nav.popBackStack() }) }
+        composable(Routes.WATERMARK) { WatermarkEditorScreen(onBack = { nav.popBackStack() }) }
         composable(Routes.SETTINGS) { WatermarkPlaceholder(onBack = { nav.popBackStack() }) }
     }
 }

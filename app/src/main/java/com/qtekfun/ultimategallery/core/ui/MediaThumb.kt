@@ -17,12 +17,7 @@ import com.qtekfun.ultimategallery.core.image.MediaThumbnail
 
 /** A cropped grid thumbnail of [uri], served from the system thumbnail cache. */
 @Composable
-fun MediaThumb(
-    uri: Uri,
-    contentDescription: String?,
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop
-) {
+fun MediaThumb(uri: Uri, contentDescription: String?, modifier: Modifier = Modifier, contentScale: ContentScale = ContentScale.Crop) {
     val context = LocalContext.current
     val request = remember(uri) {
         ImageRequest.Builder(context).data(MediaThumbnail(uri)).crossfade(true).build()

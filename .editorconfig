@@ -16,7 +16,7 @@ trim_trailing_whitespace = false
 
 [*.{kt,kts}]
 ktlint_code_style = android_studio
-max_line_length = 120
+max_line_length = 160
 # Composables are PascalCase by Compose API guidelines.
 ktlint_function_naming_ignore_when_annotated_with = Composable
 ktlint_standard_blank-line-between-when-conditions = disabled

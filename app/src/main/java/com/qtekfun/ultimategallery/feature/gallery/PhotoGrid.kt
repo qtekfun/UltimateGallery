@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -101,9 +102,9 @@ fun PhotoGrid(
     val currentOnChange by rememberUpdatedState(onSelectionChange)
     var dragPos by remember { mutableStateOf<Offset?>(null) }
     var autoScroll by remember { mutableFloatStateOf(0f) }
-    var anchor by remember { mutableStateOf(-1) }
+    var anchor by remember { mutableIntStateOf(-1) }
     var base by remember { mutableStateOf<Set<Long>>(emptySet()) }
-    var lastTouched by remember { mutableStateOf(-1) }
+    var lastTouched by remember { mutableIntStateOf(-1) }
 
     fun indexAt(pos: Offset): Int? = gridState.layoutInfo.visibleItemsInfo.firstOrNull {
         pos.x >= it.offset.x && pos.x < it.offset.x + it.size.width &&

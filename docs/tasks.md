@@ -20,12 +20,12 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Multi-selection with drag-select, selection bar with primary "Watermark" action.
 
 ## Phase 3 — Watermark editor
-- [ ] Placement model and percentage-based math with orientation buckets; unit tests.
-- [ ] Shared `WatermarkRenderer` (image, text, tiled) used by preview and export.
-- [ ] Editor canvas: drag, two-finger scale+rotate, handles, opacity, snapping guides and haptics.
-- [ ] Image watermark import (PNG with transparency), text styling UI, tiled pattern UI.
-- [ ] Batch thumbnail strip with live watermark; tap to switch the canvas photo.
-- [ ] Undo/redo.
+- [x] Placement model and percentage-based math with orientation buckets; unit tests.
+- [x] Shared `WatermarkRenderer` (image, text, tiled) used by preview and export.
+- [x] Editor canvas: drag, two-finger scale+rotate, handles, opacity, snapping guides and haptics.
+- [x] Image watermark import (PNG with transparency), text styling UI, tiled pattern UI.
+- [x] Batch thumbnail strip with live watermark; tap to switch the canvas photo.
+- [x] Undo/redo.
 
 ## Phase 4 — Export
 - [ ] Export settings UI: destination folder, format, quality, resize, filename pattern, EXIF mode.

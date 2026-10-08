@@ -22,11 +22,7 @@ sealed interface HomeState {
 }
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    media: MediaRepository,
-    private val settings: SettingsRepository,
-    private val batch: BatchSelection
-) : ViewModel() {
+class HomeViewModel @Inject constructor(media: MediaRepository, private val settings: SettingsRepository, private val batch: BatchSelection) : ViewModel() {
     val state: StateFlow<HomeState> = combine(media.observeFolders(), settings.settings) { folders, s ->
         HomeState.Loaded(folders, s.homeViewMode, s.folderGridColumns) as HomeState
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), HomeState.Loading)

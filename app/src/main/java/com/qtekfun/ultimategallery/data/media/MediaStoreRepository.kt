@@ -35,10 +35,8 @@ import kotlinx.coroutines.withContext
  * because the MediaStore does not support GROUP BY. Date taken falls back to date added.
  */
 @Singleton
-class MediaStoreRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
-    @IoDispatcher private val io: CoroutineDispatcher
-) : MediaRepository {
+class MediaStoreRepository @Inject constructor(@ApplicationContext private val context: Context, @IoDispatcher private val io: CoroutineDispatcher) :
+    MediaRepository {
     private val resolver: ContentResolver get() = context.contentResolver
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -54,14 +52,12 @@ class MediaStoreRepository @Inject constructor(
     }.debounce(CHANGE_DEBOUNCE_MS).onStart { emit(Unit) }.conflate()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeFolders(): Flow<List<Folder>> =
-        changes().mapLatest { queryFolders() }.distinctUntilChanged().flowOn(io)
+    override fun observeFolders(): Flow<List<Folder>> = changes().mapLatest { queryFolders() }.distinctUntilChanged().flowOn(io)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeItems(bucketId: Long): Flow<List<MediaItem>> =
-        changes().mapLatest { queryItems(BUCKET_SELECTION, arrayOf(bucketId.toString())) }
-            .distinctUntilChanged()
-            .flowOn(io)
+    override fun observeItems(bucketId: Long): Flow<List<MediaItem>> = changes().mapLatest { queryItems(BUCKET_SELECTION, arrayOf(bucketId.toString())) }
+        .distinctUntilChanged()
+        .flowOn(io)
 
     override suspend fun loadItems(ids: List<Long>): List<MediaItem> = withContext(io) {
         if (ids.isEmpty()) return@withContext emptyList()
@@ -180,13 +176,11 @@ class MediaStoreRepository @Inject constructor(
         )
 
         /** Date taken in ms, or date added (seconds) converted to ms when the former is missing. */
-        internal fun effectiveDate(dateTakenMs: Long, dateAddedSec: Long): Long =
-            if (dateTakenMs > 0) dateTakenMs else dateAddedSec * MS_PER_SECOND
+        internal fun effectiveDate(dateTakenMs: Long, dateAddedSec: Long): Long = if (dateTakenMs > 0) dateTakenMs else dateAddedSec * MS_PER_SECOND
 
-        internal fun folderName(displayName: String?, relativePath: String?): String =
-            displayName?.takeIf { it.isNotBlank() }
-                ?: relativePath?.trimEnd('/')?.substringAfterLast('/')?.takeIf { it.isNotBlank() }
-                ?: "?"
+        internal fun folderName(displayName: String?, relativePath: String?): String = displayName?.takeIf { it.isNotBlank() }
+            ?: relativePath?.trimEnd('/')?.substringAfterLast('/')?.takeIf { it.isNotBlank() }
+            ?: "?"
 
         fun mediaUri(id: Long, isVideo: Boolean): Uri = ContentUris.withAppendedId(
             if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI,

@@ -10,6 +10,5 @@ object Routes {
     const val WATERMARK = "watermark"
     const val SETTINGS = "settings"
 
-    fun folder(bucketId: Long, name: String, pick: Boolean = false) =
-        "folder/$bucketId?name=${Uri.encode(name)}&pick=$pick"
+    fun folder(bucketId: Long, name: String, pick: Boolean = false) = "folder/$bucketId?name=${Uri.encode(name)}&pick=$pick"
 }

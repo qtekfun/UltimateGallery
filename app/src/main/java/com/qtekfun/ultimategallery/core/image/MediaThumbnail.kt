@@ -23,11 +23,7 @@ class MediaThumbnailKeyer : Keyer<MediaThumbnail> {
     override fun key(data: MediaThumbnail, options: Options): String = "thumb:${data.uri}"
 }
 
-class MediaThumbnailFetcher(
-    private val context: Context,
-    private val data: MediaThumbnail,
-    private val options: Options
-) : Fetcher {
+class MediaThumbnailFetcher(private val context: Context, private val data: MediaThumbnail, private val options: Options) : Fetcher {
     override suspend fun fetch(): FetchResult {
         val w = (options.size.width as? Dimension.Pixels)?.px ?: DEFAULT_PX
         val h = (options.size.height as? Dimension.Pixels)?.px ?: DEFAULT_PX
@@ -40,8 +36,7 @@ class MediaThumbnailFetcher(
     }
 
     class Factory(private val context: Context) : Fetcher.Factory<MediaThumbnail> {
-        override fun create(data: MediaThumbnail, options: Options, imageLoader: ImageLoader): Fetcher =
-            MediaThumbnailFetcher(context, data, options)
+        override fun create(data: MediaThumbnail, options: Options, imageLoader: ImageLoader): Fetcher = MediaThumbnailFetcher(context, data, options)
     }
 
     private companion object {

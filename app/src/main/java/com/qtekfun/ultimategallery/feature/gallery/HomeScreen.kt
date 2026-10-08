@@ -169,12 +169,7 @@ private fun FolderContent(state: HomeState.Loaded, bottomInset: androidx.compose
 }
 
 @Composable
-fun FolderCard(
-    folder: Folder,
-    onClick: (Folder) -> Unit,
-    modifier: Modifier = Modifier,
-    onLongClick: ((Folder) -> Unit)? = null
-) {
+fun FolderCard(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Modifier, onLongClick: ((Folder) -> Unit)? = null) {
     val shape = MaterialTheme.shapes.extraLarge
     Box(
         modifier
@@ -218,12 +213,7 @@ fun FolderCard(
 }
 
 @Composable
-fun FolderRow(
-    folder: Folder,
-    onClick: (Folder) -> Unit,
-    modifier: Modifier = Modifier,
-    onLongClick: ((Folder) -> Unit)? = null
-) {
+fun FolderRow(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Modifier, onLongClick: ((Folder) -> Unit)? = null) {
     Row(
         modifier
             .fillMaxWidth()

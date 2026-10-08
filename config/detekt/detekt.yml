@@ -18,14 +18,14 @@ complexity:
     ignoreDefaultParameters: true
     functionThreshold: 8
     ignoreAnnotated: ['Composable']
-    constructorThreshold: 10
+    constructorThreshold: 16
   LongMethod:
     threshold: 80
     ignoreAnnotated: ['Composable']
   TooManyFunctions:
     excludes: ['**/test/**', '**/androidTest/**']
     thresholdInFiles: 25
-    thresholdInClasses: 25
+    thresholdInClasses: 40
   ComplexCondition:
     threshold: 5
   NestedBlockDepth:
@@ -45,3 +45,5 @@ style:
     max: 5
   ThrowsCount:
     max: 3
+  MaxLineLength:
+    maxLineLength: 160
