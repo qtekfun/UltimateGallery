@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="files_move_title">Move to</string>
+  <string name="files_copy_title">Copy to</string>
+  <string name="files_no_folders">No folders available here yet.</string>
+  <string name="files_new_folder_label">New folder in Pictures</string>
+  <string name="files_new_folder_error">Use a name without / \\ : * ? \" &lt; &gt; |</string>
+  <string name="files_new_folder_move">Move to new folder</string>
+  <string name="files_new_folder_copy">Copy to new folder</string>
+  <string name="files_close">Close</string>
+
+  <string name="files_rename_title">Rename</string>
+  <string name="files_rename_label">Name</string>
+  <string name="files_rename_extension">Extension: .%1$s</string>
+  <string name="files_rename_error">Enter a name without / \\ : * ? \" &lt; &gt; |</string>
+  <string name="files_rename_action">Rename</string>
+
+  <string name="files_info_title">Selection details</string>
+  <plurals name="files_info_count">
+    <item quantity="one">%d item selected</item>
+    <item quantity="other">%d items selected</item>
+  </plurals>
+  <string name="files_info_total_size">Total size: %1$s</string>
+
+  <plurals name="files_trashed">
+    <item quantity="one">%d item moved to trash</item>
+    <item quantity="other">%d items moved to trash</item>
+  </plurals>
+  <plurals name="files_moved">
+    <item quantity="one">%d item moved</item>
+    <item quantity="other">%d items moved</item>
+  </plurals>
+  <plurals name="files_copied">
+    <item quantity="one">%d item copied</item>
+    <item quantity="other">%d items copied</item>
+  </plurals>
+  <string name="files_undo">Undo</string>
+  <string name="files_renamed">Renamed</string>
+  <string name="files_failed">That did not work. Nothing was changed.</string>
+  <string name="files_denied">Cancelled. Nothing was changed.</string>
+
+  <string name="files_share_no_metadata">Share without metadata</string>
+  <string name="files_save_no_metadata">Save copy without metadata</string>
+  <string name="files_copy_saved_no_metadata">Copy saved without metadata</string>
+  <string name="files_no_metadata_unsupported">Only JPEG, PNG and WebP images can be cleaned.</string>
+  <string name="files_share_chooser">Share</string>
+</resources>
