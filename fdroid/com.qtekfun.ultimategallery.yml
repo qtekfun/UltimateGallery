@@ -1,0 +1,36 @@
+# Draft of the F-Droid metadata (for a merge request to gitlab.com/fdroid/fdroiddata).
+# Fill in `commit` with the release tag's commit and `AllowedAPKSigningKeys` with the SHA-256 of the
+# release certificate once the project's signing key exists (see RELEASING.md). Submit after 1.0.
+Categories:
+  - Multimedia
+  - Graphics
+License: GPL-3.0-or-later
+AuthorName: qtekfun
+SourceCode: https://github.com/qtekfun/UltimateGallery
+IssueTracker: https://github.com/qtekfun/UltimateGallery/issues
+Changelog: https://github.com/qtekfun/UltimateGallery/blob/HEAD/CHANGELOG.md
+
+AutoName: UltimateGallery
+
+RepoType: git
+Repo: https://github.com/qtekfun/UltimateGallery.git
+Binaries: https://github.com/qtekfun/UltimateGallery/releases/download/v%v/UltimateGallery-%v.apk
+
+Builds:
+  - versionName: 1.0.0-rc1
+    versionCode: 1000001
+    commit: TODO_RELEASE_TAG_COMMIT
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-21-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+# AllowedAPKSigningKeys: TODO_SHA256_OF_THE_RELEASE_CERTIFICATE
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$
+CurrentVersion: 1.0.0-rc1
+CurrentVersionCode: 1000001
