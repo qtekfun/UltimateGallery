@@ -79,10 +79,17 @@ private fun ActivePlayer(item: MediaItem) {
                 controllerShowTimeoutMs = CONTROLLER_TIMEOUT_MS
                 setShowNextButton(false)
                 setShowPreviousButton(false)
+                silenceHaptics(this)
             }
         },
         modifier = Modifier.fillMaxSize().mediaSharedElement(item.id)
     )
+}
+
+/** Views vibrate on their own; the player's controls must obey the app-wide haptics switch (off by default). */
+internal fun silenceHaptics(view: android.view.View) {
+    view.isHapticFeedbackEnabled = false
+    (view as? ViewGroup)?.let { group -> for (i in 0 until group.childCount) silenceHaptics(group.getChildAt(i)) }
 }
 
 private const val CONTROLLER_TIMEOUT_MS = 2_500
