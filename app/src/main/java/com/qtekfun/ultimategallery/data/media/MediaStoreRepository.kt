@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.di.IoDispatcher
 import com.qtekfun.ultimategallery.domain.Folder
 import com.qtekfun.ultimategallery.domain.MediaItem
@@ -91,7 +92,7 @@ class MediaStoreRepository @Inject constructor(@ApplicationContext private val c
         return accs.values.map {
             Folder(
                 bucketId = it.bucketId,
-                name = folderName(it.name, it.path),
+                name = folderName(it.name, it.path, context.getString(R.string.unknown_folder)),
                 relativePath = it.path,
                 count = it.count,
                 coverUri = mediaUri(it.newestId, it.newestVideo),
@@ -178,9 +179,9 @@ class MediaStoreRepository @Inject constructor(@ApplicationContext private val c
         /** Date taken in ms, or date added (seconds) converted to ms when the former is missing. */
         internal fun effectiveDate(dateTakenMs: Long, dateAddedSec: Long): Long = if (dateTakenMs > 0) dateTakenMs else dateAddedSec * MS_PER_SECOND
 
-        internal fun folderName(displayName: String?, relativePath: String?): String = displayName?.takeIf { it.isNotBlank() }
+        internal fun folderName(displayName: String?, relativePath: String?, unknown: String = "?"): String = displayName?.takeIf { it.isNotBlank() }
             ?: relativePath?.trimEnd('/')?.substringAfterLast('/')?.takeIf { it.isNotBlank() }
-            ?: "?"
+            ?: unknown
 
         fun mediaUri(id: Long, isVideo: Boolean): Uri = ContentUris.withAppendedId(
             if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI,

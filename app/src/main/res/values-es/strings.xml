@@ -202,4 +202,5 @@
   <string name="haptics">Respuesta háptica</string>
   <string name="haptics_summary">Vibraciones breves al ajustar, seleccionar y girar</string>
   <string name="font_default">Predeterminada</string>
+  <string name="unknown_folder">Carpeta sin nombre</string>
 </resources>

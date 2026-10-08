@@ -95,11 +95,22 @@ private fun ActivePlayer(item: MediaItem, previewTurns: Int, revision: Int) {
             .onSizeChanged { pageSize = it }
             .graphicsLayer {
                 rotationZ = degrees
-                val scale = fitScaleForRotation(pageSize.width.toFloat(), pageSize.height.toFloat(), degrees)
+                val aspect = if (item.width > 0 && item.height > 0) item.width.toFloat() / item.height else 0f
+                val scale = if (aspect > 0f) {
+                    fitScaleForVideoRotation(pageSize.width.toFloat(), pageSize.height.toFloat(), aspect, degrees)
+                } else {
+                    fitScaleForRotation(pageSize.width.toFloat(), pageSize.height.toFloat(), degrees)
+                }
                 scaleX = scale
                 scaleY = scale
             }
-            .mediaSharedElement(item.id)
+            .mediaSharedElement(item.id),
+        // The controls would turn with the video; hide them while previewing a rotation.
+        update = { view ->
+            // The player is recreated after an overwrite (revision); the view must follow it, not keep the released one.
+            if (view.player !== player) view.player = player
+            view.useController = previewTurns == 0
+        }
     )
 }
 

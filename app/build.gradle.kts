@@ -69,6 +69,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Lets a local debug build live next to the release-signed app on the same device.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             // Without a release key the APK is signed with the debug key so it stays installable.
             signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")

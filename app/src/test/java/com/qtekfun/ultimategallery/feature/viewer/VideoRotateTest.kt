@@ -273,4 +273,18 @@ class VideoRotateUiTest {
         assertEquals(1080f / 2000f, fitScaleForRotation(1080f, 2000f, 90f), 0.001f)
         assertEquals(1f, fitScaleForRotation(1080f, 2000f, 180f), 0.001f)
     }
+
+    @Test
+    fun aLandscapeVideoTurnedUprightFillsATallPage() {
+        // 16:9 video on a 1080x2400 page: upright it is 1080x607; turned a quarter it can be 1080 wide x 1920 tall.
+        assertEquals(1f, fitScaleForVideoRotation(1080f, 2400f, 16f / 9f, 0f), 0.001f)
+        assertEquals(1080f / 607.5f, fitScaleForVideoRotation(1080f, 2400f, 16f / 9f, 90f), 0.01f)
+        assertEquals(1f, fitScaleForVideoRotation(1080f, 2400f, 16f / 9f, 180f), 0.001f)
+    }
+
+    @Test
+    fun aPortraitVideoTurnedSidewaysShrinksToFit() {
+        val s = fitScaleForVideoRotation(1080f, 2400f, 9f / 16f, 90f)
+        assertEquals(1080f / 1920f, s, 0.01f)
+    }
 }

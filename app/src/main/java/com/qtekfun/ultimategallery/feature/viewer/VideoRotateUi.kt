@@ -67,6 +67,26 @@ internal fun fitScaleForRotation(width: Float, height: Float, degrees: Float): F
     return 1f + (quarter - 1f) * t
 }
 
+/**
+ * Scale that makes a video of [videoAspect] (width over height), letterboxed inside a page of [width] x [height],
+ * fill the page as much as possible once the page is turned by [degrees]. 1 when upright; above 1 when the
+ * turned video can be shown larger (for example a landscape video turned upright on a tall screen).
+ */
+internal fun fitScaleForVideoRotation(width: Float, height: Float, videoAspect: Float, degrees: Float): Float {
+    if (width <= 0f || height <= 0f || videoAspect <= 0f) return 1f
+    // The video as shown upright: the largest rectangle of that shape inside the page.
+    val displayedW = min(width, height * videoAspect)
+    val displayedH = displayedW / videoAspect
+    val rad = Math.toRadians(degrees.toDouble())
+    val c = abs(kotlin.math.cos(rad)).toFloat()
+    val s = abs(sin(rad)).toFloat()
+    val boxW = displayedW * c + displayedH * s
+    val boxH = displayedW * s + displayedH * c
+    // Relative to the upright size, which itself already fits the page.
+    val upright = min(width / displayedW, height / displayedH)
+    return min(width / boxW, height / boxH) / upright
+}
+
 /** The compact bottom panel of the rotate preview. */
 @Composable
 internal fun VideoRotatePanel(state: VideoRotateState, onTurn: (Int) -> Unit, onCancel: () -> Unit, onSave: () -> Unit, modifier: Modifier = Modifier) {

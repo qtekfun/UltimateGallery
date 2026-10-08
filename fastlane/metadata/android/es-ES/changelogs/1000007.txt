@@ -1,0 +1,4 @@
+Correcciones tras probar en móvil (preliminar).
+- La vista previa del giro de vídeo ocupa la pantalla
+- El visor se actualiza tras sobrescribir un vídeo
+- Las carpetas sin nombre tienen un nombre claro

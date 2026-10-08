@@ -1,0 +1,4 @@
+Fixes from phone testing (pre-release).
+- Video rotate preview fills the screen
+- Viewer refreshes after overwriting a video
+- Unnamed folders get a proper name
