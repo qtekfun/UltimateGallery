@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="crop_title">Crop and rotate</string>
+  <string name="crop_cancel">Cancel</string>
+  <string name="crop_reset">Reset</string>
+  <string name="crop_save">Save</string>
+  <string name="crop_rotate_left">Rotate left</string>
+  <string name="crop_rotate_right">Rotate right</string>
+  <string name="crop_flip_horizontal">Flip horizontally</string>
+  <string name="crop_flip_vertical">Flip vertically</string>
+  <string name="crop_straighten">Straighten</string>
+  <string name="crop_straighten_value">%1$s°</string>
+  <string name="crop_straighten_state">%1$s degrees</string>
+  <string name="crop_aspect_free">Free</string>
+  <string name="crop_aspect_square">1:1</string>
+  <string name="crop_aspect_4_3">4:3</string>
+  <string name="crop_aspect_3_4">3:4</string>
+  <string name="crop_aspect_16_9">16:9</string>
+  <string name="crop_frame_description">Crop frame. Drag the frame or its handles to change the crop.</string>
+  <string name="crop_image_description">Photo being edited</string>
+  <string name="crop_ask_title">Save changes</string>
+  <string name="crop_ask_message">How do you want to save this photo?</string>
+  <string name="crop_save_copy">Save a copy</string>
+  <string name="crop_overwrite">Overwrite original</string>
+  <string name="crop_remember">Remember my choice</string>
+  <string name="crop_save_denied">Not saved: changing the original needs your permission</string>
+  <string name="crop_save_failed">Couldn\'t save the photo</string>
+  <string name="crop_load_failed">This photo can\'t be edited</string>
+</resources>
