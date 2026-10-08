@@ -1,0 +1,3 @@
+Una galería elegante basada en carpetas cuya función estrella es la marca de agua por lotes: elige muchas fotos, coloca una marca con los dedos, previsualízala en cada foto y expórtalas todas.
+
+Totalmente sin conexión: sin permiso de red, sin Google Play Services, sin analítica.

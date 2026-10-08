@@ -17,6 +17,7 @@ complexity:
     # Composables expose many optional parameters with defaults.
     ignoreDefaultParameters: true
     functionThreshold: 8
+    ignoreAnnotated: ['Composable']
     constructorThreshold: 10
   LongMethod:
     threshold: 80

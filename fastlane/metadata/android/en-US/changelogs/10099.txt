@@ -1,0 +1,7 @@
+First usable gallery (pre-release).
+- Folders as a grid or a list
+- Photo grid with date headers
+- Multi-select with drag, Share
+- Watermark photo picker (editor coming next)
+- Permission onboarding and selected-photos-only support
+- English and Spanish, fully offline

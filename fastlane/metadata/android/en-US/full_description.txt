@@ -1,0 +1,3 @@
+A refined, folder-based gallery whose flagship feature is batch watermarking: pick many photos, place one watermark with your fingers, preview it on every photo and export them all.
+
+Fully offline: no network permission, no Google Play Services, no analytics.

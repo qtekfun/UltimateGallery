@@ -12,4 +12,40 @@
   <string name="onboarding_open_settings">Abrir ajustes</string>
   <string name="partial_access_message">Solo se ven las fotos que seleccionaste.</string>
   <string name="partial_access_allow_all">Permitir todo</string>
+  <string name="folders_title">Carpetas</string>
+  <string name="watermark">Marca de agua</string>
+  <string name="view_as_list">Ver como lista</string>
+  <string name="view_as_grid">Ver como cuadrícula</string>
+  <string name="settings">Ajustes</string>
+  <string name="back">Atrás</string>
+  <string name="close">Cerrar</string>
+  <string name="select_all">Seleccionar todo</string>
+  <string name="share">Compartir</string>
+  <string name="empty_folders">Aún no hay fotos ni vídeos</string>
+  <string name="empty_folder">Esta carpeta está vacía</string>
+  <string name="picker_title">Elegir fotos</string>
+  <string name="picker_continue">Continuar</string>
+  <string name="picker_empty_hint">Elige las fotos a las que poner marca de agua</string>
+  <string name="videos_not_watermarked">Los vídeos aún no admiten marca de agua</string>
+  <string name="photo_item">Foto</string>
+  <string name="video_item">Vídeo</string>
+  <string name="selected_a11y">seleccionada</string>
+  <string name="day_today">Hoy</string>
+  <string name="day_yesterday">Ayer</string>
+  <string name="watermark_soon">El editor de marca de agua llegará pronto</string>
+  <plurals name="item_count">
+    <item quantity="one">%d elemento</item>
+    <item quantity="many">%d elementos</item>
+    <item quantity="other">%d elementos</item>
+  </plurals>
+  <plurals name="selected_count">
+    <item quantity="one">%d seleccionado</item>
+    <item quantity="many">%d seleccionados</item>
+    <item quantity="other">%d seleccionados</item>
+  </plurals>
+  <string name="move">Mover</string>
+  <string name="copy">Copiar</string>
+  <string name="delete">Eliminar</string>
+  <string name="info">Información</string>
+  <string name="rename">Renombrar</string>
 </resources>

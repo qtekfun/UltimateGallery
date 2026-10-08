@@ -1,0 +1,7 @@
+Primera galería utilizable (versión preliminar).
+- Carpetas en cuadrícula o lista
+- Cuadrícula de fotos con cabeceras por fecha
+- Selección múltiple con arrastre, Compartir
+- Selector de fotos para marca de agua (editor próximamente)
+- Pantalla de permisos y soporte de "solo fotos seleccionadas"
+- Inglés y español, totalmente sin conexión

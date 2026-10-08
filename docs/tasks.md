@@ -15,9 +15,9 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Unit/instrumented tests with fake MediaStore data.
 
 ## Phase 2 — Minimal gallery for the watermark flow
-- [ ] Home with folder grid and list toggle (persisted).
-- [ ] Folder screen with photo grid and date headers.
-- [ ] Multi-selection with drag-select, selection bar with primary "Watermark" action.
+- [x] Home with folder grid and list toggle (persisted).
+- [x] Folder screen with photo grid and date headers.
+- [x] Multi-selection with drag-select, selection bar with primary "Watermark" action.
 
 ## Phase 3 — Watermark editor
 - [ ] Placement model and percentage-based math with orientation buckets; unit tests.
