@@ -80,7 +80,7 @@ private fun ActivePlayer(item: MediaItem, previewTurns: Int, revision: Int) {
     var pageSize by remember { mutableStateOf(IntSize.Zero) }
     AndroidView(
         factory = { ctx ->
-            PlayerView(ctx).apply {
+            (android.view.LayoutInflater.from(ctx).inflate(R.layout.player_view_texture, null) as PlayerView).apply {
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 this.player = player
                 useController = true

@@ -1,0 +1,4 @@
+Rotate videos (pre-release).
+- Rotate button for videos with animated preview
+- Lossless: only the rotation flag changes (MP4/MOV/3GP)
+- Overwrite the original or save a copy

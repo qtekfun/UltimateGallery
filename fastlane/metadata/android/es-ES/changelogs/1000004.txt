@@ -1,0 +1,4 @@
+Girar vídeos (versión preliminar).
+- Botón de girar en vídeos con vista previa animada
+- Sin pérdida: solo cambia la marca de rotación (MP4/MOV/3GP)
+- Sobrescribir el original o guardar una copia
