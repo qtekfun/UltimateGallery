@@ -177,4 +177,5 @@
   <string name="app_folders_offer_body">Mantén las imágenes de chats y capturas fuera de tu galería. No se borra ni cambia nada en tu dispositivo y puedes cambiarlo en Ajustes.</string>
   <string name="app_folders_offer_apply">Ocultar seleccionadas</string>
   <string name="app_folders_offer_skip">Ahora no</string>
+  <string name="edit">Editar</string>
 </resources>

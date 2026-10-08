@@ -1,0 +1,5 @@
+Recortar y girar (versión preliminar).
+- Recorte con proporciones, giro 90, volteo, enderezado
+- Giro y volteo con animación de muelle
+- Guardar: preguntar, copia o sobrescribir
+- Giro JPEG sin pérdida mediante EXIF

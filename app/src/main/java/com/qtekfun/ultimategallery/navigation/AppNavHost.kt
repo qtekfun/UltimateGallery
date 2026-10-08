@@ -18,6 +18,7 @@ import com.qtekfun.ultimategallery.core.ui.LocalNavAnimatedScope
 import com.qtekfun.ultimategallery.core.ui.LocalSharedTransitionScope
 import com.qtekfun.ultimategallery.data.media.MediaAccessLevel
 import com.qtekfun.ultimategallery.domain.MediaItem
+import com.qtekfun.ultimategallery.feature.edit.CropRotateScreen
 import com.qtekfun.ultimategallery.feature.export.ExportProgressScreen
 import com.qtekfun.ultimategallery.feature.gallery.FolderScreen
 import com.qtekfun.ultimategallery.feature.gallery.HomeScreen
@@ -90,8 +91,12 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                     ViewerScreen(
                         onBack = { nav.popBackStack() },
                         onWatermark = { nav.navigate(Routes.WATERMARK) },
-                        onShare = { item -> share(context, listOf(item)) }
+                        onShare = { item -> share(context, listOf(item)) },
+                        onEdit = { item -> nav.navigate(Routes.edit(item.id)) }
                     )
+                }
+                destination(Routes.EDIT, arguments = listOf(navArgument("mediaId") { type = NavType.LongType })) {
+                    CropRotateScreen(onBack = { nav.popBackStack() }, onSaved = { nav.popBackStack() })
                 }
                 destination(Routes.WATERMARK) {
                     WatermarkEditorScreen(

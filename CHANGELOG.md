@@ -3,6 +3,16 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [0.6.0]
+
+Crop and rotate (pre-release).
+
+- Crop with free, 1:1, 4:3, 3:4 and 16:9 frames, 90-degree rotation, flip and a fine straighten dial that never shows empty corners.
+- Polished spring animation of the photo and the crop frame when rotating, and an animated flip; haptic ticks.
+- Save behavior: ask every time, always save a copy, or always overwrite (overwriting uses the system consent dialog). The choice can be remembered.
+- Lossless rotation for JPEG: turning a JPEG by 90 degrees only changes its orientation flag, with no re-encoding.
+- Edit button in the viewer.
+
 ## [0.5.0]
 
 Gallery completion (pre-release).

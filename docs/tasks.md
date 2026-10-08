@@ -50,9 +50,9 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] File operations: share, move, copy, rename, delete (system trash) with consent flows.
 
 ## Phase 8 — Crop and rotate
-- [ ] Crop UI with aspect ratios, 90° rotate, flip, straighten dial.
-- [ ] Animated spring rotation and flip.
-- [ ] Save behavior setting (overwrite / copy / ask) and implementation, including lossless JPEG 90° rotation via EXIF.
+- [x] Crop UI with aspect ratios, 90° rotate, flip, straighten dial.
+- [x] Animated spring rotation and flip.
+- [x] Save behavior setting (overwrite / copy / ask) and implementation, including lossless JPEG 90° rotation via EXIF.
 
 ## Phase 9 — Settings and polish
 - [ ] Settings screens: appearance, folders, app folders, edit, export defaults, about (EasyWatermark credit, licenses).

@@ -1,0 +1,5 @@
+Crop and rotate (pre-release).
+- Crop with aspect ratios, rotate 90, flip, straighten
+- Spring-animated rotation and flip
+- Save: ask, copy or overwrite
+- Lossless JPEG rotation via EXIF

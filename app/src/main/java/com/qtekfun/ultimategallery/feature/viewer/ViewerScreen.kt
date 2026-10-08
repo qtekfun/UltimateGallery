@@ -28,6 +28,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Crop
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoreVert
@@ -87,6 +88,7 @@ private val DISMISS_DISTANCE = 140.dp
 /** What the viewer can do with the current item. A null action is not offered. */
 class ViewerActions(
     val onShare: (MediaItem) -> Unit,
+    val onEdit: ((MediaItem) -> Unit)? = null,
     val onMove: ((MediaItem) -> Unit)? = null,
     val onCopy: ((MediaItem) -> Unit)? = null,
     val onRename: ((MediaItem) -> Unit)? = null,
@@ -99,6 +101,7 @@ fun ViewerScreen(
     onBack: () -> Unit,
     onWatermark: () -> Unit,
     onShare: (MediaItem) -> Unit,
+    onEdit: (MediaItem) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ViewerViewModel = hiltViewModel()
 ) {
@@ -119,6 +122,7 @@ fun ViewerScreen(
                 initialId = viewModel.initialMediaId,
                 actions = ViewerActions(
                     onShare = onShare,
+                    onEdit = onEdit,
                     onMove = { files.moveTo(listOf(it)) },
                     onCopy = { files.copyTo(listOf(it)) },
                     onRename = { files.rename(it) },
@@ -280,6 +284,9 @@ private fun ActionBar(item: MediaItem, actions: ViewerActions, onWatermark: (Med
             }
             Spacer(Modifier.weight(1f))
             Row(horizontalArrangement = Arrangement.End) {
+                if (!item.isVideo) {
+                    actions.onEdit?.let { edit -> IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.edit)) } }
+                }
                 IconButton(onClick = { actions.onShare(item) }) { Icon(Icons.Outlined.Share, stringResource(R.string.share)) }
                 actions.onDelete?.let { delete -> IconButton(onClick = { delete(item) }) { Icon(Icons.Outlined.Delete, stringResource(R.string.delete)) } }
                 IconButton(onClick = onInfo) { Icon(Icons.Outlined.Info, stringResource(R.string.info)) }
