@@ -50,6 +50,9 @@ class WatermarkEditorViewModel @Inject constructor(
     private var lastText: WatermarkSource.Text = WatermarkSource.Text("@wallapop")
     private var lastImage: WatermarkSource.Image? = null
 
+    /** True once the user changed the profile, so a late initial profile load must not replace it. */
+    private var touched = false
+
     private val snapChannel = Channel<Unit>(Channel.CONFLATED)
 
     /** Emits once each time a drag newly locks onto a guide or a rotation detent. */
@@ -61,7 +64,16 @@ class WatermarkEditorViewModel @Inject constructor(
         }
         viewModelScope.launch {
             val initial = profileRepository.lastUsed()
-            _state.update { it.copy(profile = initial, savedProfile = initial) }
+            // The load is asynchronous: if the user already edited the default profile meanwhile, keep
+            // those edits on top of the loaded identity instead of replacing them.
+            _state.update {
+                if (touched) {
+                    it.copy(profile = it.profile.copy(id = initial.id, name = initial.name), savedProfile = initial)
+                } else {
+                    it.copy(profile = initial, savedProfile = initial)
+                }
+            }
+            if (!touched) remember(initial.source)
         }
         viewModelScope.launch {
             val ids = savedState.get<LongArray>(KEY_IDS)?.toList() ?: batch.ids.value.also {
@@ -116,6 +128,7 @@ class WatermarkEditorViewModel @Inject constructor(
 
     private fun updateRaw(raw: Placement) {
         rawPlacement = raw
+        touched = true
         val s = _state.value
         val item = s.current ?: return
         val imageAspect = item.width.toFloat() / item.height
@@ -161,6 +174,7 @@ class WatermarkEditorViewModel @Inject constructor(
         val before = _state.value.profile
         val after = change(before)
         if (after == before) return
+        touched = true
         history.record(before, key, now())
         _state.update { it.copy(profile = after) }
         publishHistory()
@@ -171,7 +185,10 @@ class WatermarkEditorViewModel @Inject constructor(
     fun setMargin(value: Float) = edit("margin") { it.copy(margin = value.coerceIn(0f, MAX_MARGIN)) }
 
     /** Export settings are not part of the undo history. */
-    fun setExportSettings(settings: ExportSettings) = _state.update { it.copy(profile = it.profile.copy(export = settings)) }
+    fun setExportSettings(settings: ExportSettings) {
+        touched = true
+        _state.update { it.copy(profile = it.profile.copy(export = settings)) }
+    }
 
     /**
      * Starts exporting the whole batch and returns the job id, or null when there is nothing to
@@ -265,6 +282,8 @@ class WatermarkEditorViewModel @Inject constructor(
         viewModelScope.launch {
             val loaded = profileRepository.get(id) ?: return@launch
             history.clear()
+            touched = true
+            remember(loaded.source)
             profileRepository.markUsed(id)
             _state.update { it.copy(profile = loaded, savedProfile = loaded, canUndo = false, canRedo = false) }
         }
@@ -312,6 +331,7 @@ class WatermarkEditorViewModel @Inject constructor(
             } else if (_state.value.profile.id == id) {
                 val next = profileRepository.lastUsed()
                 history.clear()
+                remember(next.source)
                 _state.update { it.copy(profile = next, savedProfile = next, canUndo = false, canRedo = false) }
             }
         }
@@ -320,12 +340,18 @@ class WatermarkEditorViewModel @Inject constructor(
     // endregion
 
     fun undo() {
-        history.undo(_state.value.profile)?.let { restored -> _state.update { it.copy(profile = restored) } }
+        history.undo(_state.value.profile)?.let { restored ->
+            remember(restored.source)
+            _state.update { it.copy(profile = restored) }
+        }
         publishHistory()
     }
 
     fun redo() {
-        history.redo(_state.value.profile)?.let { restored -> _state.update { it.copy(profile = restored) } }
+        history.redo(_state.value.profile)?.let { restored ->
+            remember(restored.source)
+            _state.update { it.copy(profile = restored) }
+        }
         publishHistory()
     }
 
