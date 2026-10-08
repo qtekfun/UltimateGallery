@@ -55,11 +55,6 @@
   <string name="logo_hint">Use a PNG with a transparent background for the best result.</string>
   <string name="tiled_spacing">Spacing</string>
   <string name="tiled_stagger">Row offset</string>
-  <string name="font_sans">Sans</string>
-  <string name="font_serif">Serif</string>
-  <string name="font_mono">Mono</string>
-  <string name="font_cursive">Script</string>
-  <string name="font_condensed">Narrow</string>
   <string name="weight">Weight</string>
   <string name="italic">Italic</string>
   <string name="color">Color</string>

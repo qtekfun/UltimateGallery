@@ -1,0 +1,4 @@
+Selector de fuentes (versión preliminar).
+- Elige fuentes, cada una con su propia letra
+- 6 fuentes libres incluidas, importa tus .ttf/.otf
+- Un solo botón de cursiva, chips antiguos eliminados

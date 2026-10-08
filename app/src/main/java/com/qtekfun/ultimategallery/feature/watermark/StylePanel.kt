@@ -64,7 +64,7 @@ fun StylePanel(profile: WatermarkProfile, actions: EditorActions, modifier: Modi
         return
     }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        StyleSample(leaf, profile.opacity)
+        StyleSample(leaf, profile.opacity, actions.typefaceOf)
         Column(
             Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -88,8 +88,8 @@ private fun OpacitySlider(profile: WatermarkProfile, actions: EditorActions) {
 
 /** The mark drawn by the shared renderer on a neutral backdrop, so every change is visible at once. */
 @Composable
-private fun StyleSample(text: WatermarkSource.Text, opacity: Float) {
-    val renderer = remember { WatermarkRenderer { null } }
+private fun StyleSample(text: WatermarkSource.Text, opacity: Float, typefaceOf: (String) -> android.graphics.Typeface?) {
+    val renderer = remember(typefaceOf) { WatermarkRenderer({ null }, typefaceOf) }
     val description = stringResource(R.string.style_preview)
     Canvas(
         Modifier

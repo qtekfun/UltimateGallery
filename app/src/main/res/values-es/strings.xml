@@ -57,11 +57,6 @@
   <string name="logo_hint">Usa un PNG con fondo transparente para un mejor resultado.</string>
   <string name="tiled_spacing">Separación</string>
   <string name="tiled_stagger">Desfase de filas</string>
-  <string name="font_sans">Sans</string>
-  <string name="font_serif">Serif</string>
-  <string name="font_mono">Mono</string>
-  <string name="font_cursive">Cursiva</string>
-  <string name="font_condensed">Estrecha</string>
   <string name="weight">Grosor</string>
   <string name="italic">Cursiva</string>
   <string name="color">Color</string>

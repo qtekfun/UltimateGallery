@@ -1,0 +1,4 @@
+Font picker (pre-release).
+- Pick fonts, each shown in its own typeface
+- 6 free fonts included, import your own .ttf/.otf
+- One Italic button, old font chips removed
