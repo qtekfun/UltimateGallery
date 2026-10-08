@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="style_preview">Vista previa</string>
+  <string name="outline_width">Grosor del contorno</string>
+  <string name="shadow_softness">Suavidad de la sombra</string>
+  <string name="shadow_color">Color de la sombra</string>
+  <string name="background_padding">Margen del fondo</string>
+  <string name="outline_color">Color del contorno</string>
+  <string name="background_color">Color del fondo</string>
+</resources>

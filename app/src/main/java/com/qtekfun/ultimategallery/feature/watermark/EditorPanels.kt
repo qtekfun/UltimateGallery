@@ -3,13 +3,13 @@ package com.qtekfun.ultimategallery.feature.watermark
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
@@ -29,16 +29,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimategallery.R
-import com.qtekfun.ultimategallery.domain.watermark.MarkFont
 import com.qtekfun.ultimategallery.domain.watermark.Orientation
 import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
 import kotlin.math.roundToInt
 
-private fun WatermarkSource.leaf(): WatermarkSource = if (this is WatermarkSource.Tiled) base.leaf() else this
+internal fun WatermarkSource.leaf(): WatermarkSource = if (this is WatermarkSource.Tiled) base.leaf() else this
 
 private fun WatermarkSource.type(): MarkType = when {
     this is WatermarkSource.Tiled -> MarkType.TILED
@@ -124,71 +124,6 @@ fun MarkPanel(profile: WatermarkProfile, actions: EditorActions, modifier: Modif
     }
 }
 
-/** The "Style" tab: how a text mark looks. */
-@Composable
-fun StylePanel(profile: WatermarkProfile, actions: EditorActions, modifier: Modifier = Modifier) {
-    val leaf = profile.source.leaf()
-    Column(modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        if (leaf is WatermarkSource.Text) {
-            val style = leaf.style
-            val set = actions.onStyle
-            Row(
-                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                listOf(
-                    MarkFont.SANS to R.string.font_sans,
-                    MarkFont.SERIF to R.string.font_serif,
-                    MarkFont.MONOSPACE to R.string.font_mono,
-                    MarkFont.CURSIVE to R.string.font_cursive,
-                    MarkFont.CONDENSED to R.string.font_condensed
-                ).forEach { (font, label) ->
-                    FilterChip(selected = style.font == font, onClick = {
-                        set(style.copy(font = font))
-                    }, label = { Text(stringResource(label)) })
-                }
-                FilterChip(selected = style.italic, onClick = {
-                    set(style.copy(italic = !style.italic))
-                }, label = { Text(stringResource(R.string.italic)) })
-            }
-            LabeledSlider(stringResource(R.string.weight), style.weight.toFloat(), 100f..900f, {
-                set(
-                    style.copy(
-                        weight =
-                            (it / 100f).roundToInt() * 100
-                    )
-                )
-            }, valueText = style.weight.toString())
-            Text(stringResource(R.string.color), style = MaterialTheme.typography.labelLarge)
-            ColorRow(style.colorArgb, { set(style.copy(colorArgb = it)) })
-            ToggleRow(stringResource(R.string.outline), style.outlineEnabled) { set(style.copy(outlineEnabled = it)) }
-            if (style.outlineEnabled) ColorRow(style.outlineColorArgb, { set(style.copy(outlineColorArgb = it)) })
-            ToggleRow(stringResource(R.string.shadow), style.shadowEnabled) { set(style.copy(shadowEnabled = it)) }
-            ToggleRow(stringResource(R.string.background_pill), style.backgroundEnabled) {
-                set(style.copy(backgroundEnabled = it))
-            }
-            if (style.backgroundEnabled) {
-                ColorRow(style.backgroundColorArgb, {
-                    set(style.copy(backgroundColorArgb = it))
-                })
-            }
-        } else {
-            Text(
-                stringResource(R.string.logo_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        LabeledSlider(
-            stringResource(R.string.opacity),
-            profile.opacity,
-            0f..1f,
-            actions.onOpacity,
-            valueText = "${(profile.opacity * 100).roundToInt()}%"
-        )
-    }
-}
-
 /** The "Placement" tab: margins, snapping and per-orientation placement. */
 @Composable
 fun PlacementPanel(profile: WatermarkProfile, orientation: Orientation, snapEnabled: Boolean, actions: EditorActions, modifier: Modifier = Modifier) {
@@ -229,7 +164,8 @@ fun LabeledSlider(
     range: ClosedFloatingPointRange<Float>,
     onChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    valueText: String? = null
+    valueText: String? = null,
+    steps: Int = 0
 ) {
     Column(modifier) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -244,19 +180,19 @@ fun LabeledSlider(
                 )
             }
         }
-        Slider(value = value.coerceIn(range.start, range.endInclusive), onValueChange = onChange, valueRange = range)
+        Slider(value = value.coerceIn(range.start, range.endInclusive), onValueChange = onChange, valueRange = range, steps = steps)
     }
 }
 
 @Composable
-private fun ToggleRow(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+internal fun ToggleRow(label: String, checked: Boolean, onChange: (Boolean) -> Unit) {
     Row(
-        Modifier.fillMaxWidth(),
+        Modifier.fillMaxWidth().toggleable(value = checked, role = Role.Switch, onValueChange = onChange),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(label, style = MaterialTheme.typography.bodyLarge)
-        Switch(checked = checked, onCheckedChange = onChange)
+        Switch(checked = checked, onCheckedChange = null)
     }
 }
 
