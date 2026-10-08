@@ -28,14 +28,20 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -65,6 +71,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.domain.MediaItem
+import com.qtekfun.ultimategallery.feature.files.FileActionDialogs
+import com.qtekfun.ultimategallery.feature.files.FileActionsEffects
+import com.qtekfun.ultimategallery.feature.files.FileActionsViewModel
+import com.qtekfun.ultimategallery.feature.files.InfoMetadataActions
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.min
@@ -77,7 +87,6 @@ private val DISMISS_DISTANCE = 140.dp
 /** What the viewer can do with the current item. A null action is not offered. */
 class ViewerActions(
     val onShare: (MediaItem) -> Unit,
-    val onEdit: ((MediaItem) -> Unit)? = null,
     val onMove: ((MediaItem) -> Unit)? = null,
     val onCopy: ((MediaItem) -> Unit)? = null,
     val onRename: ((MediaItem) -> Unit)? = null,
@@ -95,6 +104,10 @@ fun ViewerScreen(
 ) {
     val items by viewModel.items.collectAsStateWithLifecycle()
     val loaded = items
+    val files: FileActionsViewModel = hiltViewModel()
+    val snackbar = remember { SnackbarHostState() }
+    FileActionDialogs(files)
+    FileActionsEffects(files, snackbar)
     Box(modifier.fillMaxSize().background(Color.Black)) {
         if (loaded == null) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -104,7 +117,14 @@ fun ViewerScreen(
             ViewerContent(
                 items = loaded,
                 initialId = viewModel.initialMediaId,
-                actions = ViewerActions(onShare = onShare),
+                actions = ViewerActions(
+                    onShare = onShare,
+                    onMove = { files.moveTo(listOf(it)) },
+                    onCopy = { files.copyTo(listOf(it)) },
+                    onRename = { files.rename(it) },
+                    onDelete = { files.trash(listOf(it)) }
+                ),
+                files = files,
                 onBack = onBack,
                 onWatermarkItem = {
                     viewModel.startWatermark(it)
@@ -113,6 +133,7 @@ fun ViewerScreen(
                 detailsOf = viewModel::details
             )
         }
+        SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 140.dp))
     }
 }
 
@@ -121,6 +142,7 @@ private fun ViewerContent(
     items: List<MediaItem>,
     initialId: Long,
     actions: ViewerActions,
+    files: FileActionsViewModel,
     onBack: () -> Unit,
     onWatermarkItem: (MediaItem) -> Unit,
     detailsOf: suspend (MediaItem) -> MediaDetails
@@ -208,7 +230,12 @@ private fun ViewerContent(
 
     if (showInfo && current != null) {
         val details by produceState<MediaDetails?>(null, current.id) { value = detailsOf(current) }
-        InfoSheet(details = details, onDismiss = { showInfo = false })
+        InfoSheet(
+            details = details,
+            onDismiss = { showInfo = false },
+            onShareWithoutMetadata = if (current.isVideo) null else ({ files.shareWithoutMetadata(current) }),
+            onSaveCopyWithoutMetadata = if (current.isVideo) null else ({ files.saveCopyWithoutMetadata(current) })
+        )
     }
 }
 
@@ -254,7 +281,37 @@ private fun ActionBar(item: MediaItem, actions: ViewerActions, onWatermark: (Med
             Spacer(Modifier.weight(1f))
             Row(horizontalArrangement = Arrangement.End) {
                 IconButton(onClick = { actions.onShare(item) }) { Icon(Icons.Outlined.Share, stringResource(R.string.share)) }
+                actions.onDelete?.let { delete -> IconButton(onClick = { delete(item) }) { Icon(Icons.Outlined.Delete, stringResource(R.string.delete)) } }
                 IconButton(onClick = onInfo) { Icon(Icons.Outlined.Info, stringResource(R.string.info)) }
+                MoreMenu(item, actions)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MoreMenu(item: MediaItem, actions: ViewerActions) {
+    var open by remember { mutableStateOf(false) }
+    IconButton(onClick = { open = true }) {
+        Icon(Icons.Outlined.MoreVert, stringResource(R.string.profile_more))
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            actions.onMove?.let { act ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.move)) }, onClick = {
+                    open = false
+                    act(item)
+                })
+            }
+            actions.onCopy?.let { act ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.copy)) }, onClick = {
+                    open = false
+                    act(item)
+                })
+            }
+            actions.onRename?.let { act ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.rename)) }, onClick = {
+                    open = false
+                    act(item)
+                })
             }
         }
     }

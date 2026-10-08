@@ -1,0 +1,5 @@
+Galería completa (versión preliminar).
+- Pellizca para cambiar el tamaño de las cuadrículas
+- Oculta carpetas en la app (deshacer), carpetas de apps
+- Mover, copiar, renombrar, eliminar (papelera), compartir
+- Compartir o guardar copia sin EXIF

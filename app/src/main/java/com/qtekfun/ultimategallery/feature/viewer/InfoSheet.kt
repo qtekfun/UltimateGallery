@@ -20,19 +20,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimategallery.R
+import com.qtekfun.ultimategallery.feature.files.InfoMetadataActions
 import java.util.Date
 import java.util.Locale
 
 /** The info panel: file facts, camera data and, when present, where the photo was taken. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InfoSheet(details: MediaDetails?, onDismiss: () -> Unit) {
+fun InfoSheet(details: MediaDetails?, onDismiss: () -> Unit, onShareWithoutMetadata: (() -> Unit)? = null, onSaveCopyWithoutMetadata: (() -> Unit)? = null) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
             Modifier.navigationBarsPadding().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp)
         ) {
             Text(stringResource(R.string.info_title), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 12.dp))
             if (details != null) DetailRows(details)
+            if (onShareWithoutMetadata != null && onSaveCopyWithoutMetadata != null) {
+                InfoMetadataActions(onShareWithoutMetadata, onSaveCopyWithoutMetadata, Modifier.padding(top = 12.dp))
+            }
         }
     }
 }

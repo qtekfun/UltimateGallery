@@ -46,6 +46,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.domain.MediaItem
+import com.qtekfun.ultimategallery.feature.files.FileActionDialogs
+import com.qtekfun.ultimategallery.feature.files.FileActionsEffects
+import com.qtekfun.ultimategallery.feature.files.FileActionsViewModel
 import kotlinx.coroutines.launch
 
 /**
@@ -66,9 +69,13 @@ fun FolderScreen(
     val pick = viewModel.pickMode
     val selecting = pick || state.selection.isNotEmpty()
     val snackbar = remember { SnackbarHostState() }
+    val files: FileActionsViewModel = hiltViewModel()
+    val selectedItems = { state.items.filter { it.id in state.selection } }
     val scope = rememberCoroutineScope()
     val noVideos = stringResource(R.string.videos_not_watermarked)
 
+    FileActionDialogs(files)
+    FileActionsEffects(files, snackbar)
     BackHandler(enabled = !pick && state.selection.isNotEmpty()) { viewModel.clearSelection() }
 
     Scaffold(
@@ -155,7 +162,15 @@ fun FolderScreen(
                                     scope.launch { snackbar.showSnackbar(noVideos) }
                                 }
                             },
-                            onShare = { onShare(state.items.filter { it.id in state.selection }) }
+                            onShare = { onShare(state.items.filter { it.id in state.selection }) },
+                            onMove = { selectedItems().let { files.moveTo(it) } },
+                            onCopy = { selectedItems().let { files.copyTo(it) } },
+                            onDelete = {
+                                selectedItems().let { files.trash(it) }
+                                viewModel.clearSelection()
+                            },
+                            onInfo = { files.showInfo(selectedItems()) },
+                            onRename = state.items.singleOrNull { it.id in state.selection }?.let { item -> { files.rename(item) } }
                         )
                     )
                 }

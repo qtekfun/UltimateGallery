@@ -1,0 +1,5 @@
+Gallery completion (pre-release).
+- Pinch to resize the grids
+- Hide folders in the app (undo), app folders list
+- Move, copy, rename, delete (system trash), share
+- Share or save a copy without EXIF

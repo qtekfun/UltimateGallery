@@ -47,7 +47,7 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Pinch-to-zoom grid resize (folder grid and photo grid), snapping to column counts, persisted.
 - [x] Hidden folders: long-press Hide with undo, Settings → Folders list with switches.
 - [x] App folders catalog and Settings → App folders; first-run suggestion sheet (WhatsApp pre-checked).
-- [ ] File operations: share, move, copy, rename, delete (system trash) with consent flows.
+- [x] File operations: share, move, copy, rename, delete (system trash) with consent flows.
 
 ## Phase 8 — Crop and rotate
 - [ ] Crop UI with aspect ratios, 90° rotate, flip, straighten dial.
