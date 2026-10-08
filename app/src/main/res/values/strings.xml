@@ -154,4 +154,25 @@
   <string name="info_open_map">Open in a maps app</string>
   <string name="viewer_play">Play video</string>
   <string name="viewer_close">Close viewer</string>
+  <string name="app_folder_screenshots">Screenshots</string>
+  <string name="app_folder_screen_recordings">Screen recordings</string>
+  <string name="hide_folder">Hide folder</string>
+  <string name="folder_hidden">“%1$s” hidden</string>
+  <string name="undo_action">Undo</string>
+  <string name="show_hidden_folders">Show hidden folders</string>
+  <string name="hide_hidden_folders">Hide hidden folders</string>
+  <string name="settings_title">Settings</string>
+  <string name="settings_folders">Folders</string>
+  <string name="settings_folders_summary">Choose which folders appear in the app</string>
+  <string name="settings_app_folders">App folders</string>
+  <string name="settings_app_folders_summary">Hide WhatsApp, Telegram, screenshots and more automatically</string>
+  <string name="folders_hidden_note">Hiding only affects this app. Nothing changes on your device.</string>
+  <string name="folder_hidden_by_app">Hidden by the %1$s app folder rule</string>
+  <string name="folders_empty">No folders found</string>
+  <string name="app_folders_none">No app folders found on this device</string>
+  <string name="app_folders_hint">Folders of these apps stay out of your gallery, including new ones that appear later.</string>
+  <string name="app_folders_offer_title">Hide app folders?</string>
+  <string name="app_folders_offer_body">Keep chat and screenshot images out of your gallery. Nothing is deleted or changed on your device, and you can change this in Settings.</string>
+  <string name="app_folders_offer_apply">Hide selected</string>
+  <string name="app_folders_offer_skip">Not now</string>
 </resources>

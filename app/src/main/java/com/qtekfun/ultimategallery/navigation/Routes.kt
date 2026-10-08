@@ -11,6 +11,8 @@ object Routes {
     const val VIEWER = "viewer/{bucketId}/{mediaId}"
     const val EXPORT = "export/{jobId}"
     const val SETTINGS = "settings"
+    const val SETTINGS_FOLDERS = "settings/folders"
+    const val SETTINGS_APP_FOLDERS = "settings/app-folders"
 
     fun viewer(bucketId: Long, mediaId: Long) = "viewer/$bucketId/$mediaId"
 

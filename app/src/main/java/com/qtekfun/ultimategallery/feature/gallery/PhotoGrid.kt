@@ -71,6 +71,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlinx.coroutines.delay
 
+const val MIN_PHOTO_COLUMNS = 2
+const val MAX_PHOTO_COLUMNS = 8
 private const val EDGE_SCROLL_MAX_PX = 28f
 private const val MEDIA_CONTENT_TYPE = "media"
 private const val HEADER_CONTENT_TYPE = "header"
@@ -89,6 +91,7 @@ fun PhotoGrid(
     onOpen: (MediaItem) -> Unit,
     onToggle: (MediaItem) -> Unit,
     onSelectionChange: (Set<Long>) -> Unit,
+    onColumnsChange: (Int) -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     gridState: LazyGridState = rememberLazyGridState()
@@ -151,6 +154,7 @@ fun PhotoGrid(
             columns = GridCells.Fixed(columns),
             modifier = Modifier
                 .fillMaxSize()
+                .pinchToResize(columns, MIN_PHOTO_COLUMNS, MAX_PHOTO_COLUMNS, onColumnsChange)
                 .pointerInput(keyToIndex) {
                     detectDragGesturesAfterLongPress(
                         onDragStart = { pos ->

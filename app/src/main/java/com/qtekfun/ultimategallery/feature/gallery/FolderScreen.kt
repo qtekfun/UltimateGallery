@@ -179,6 +179,7 @@ fun FolderScreen(
                     onOpen = { onOpenMedia(it, state.items) },
                     onToggle = { viewModel.toggle(it.id) },
                     onSelectionChange = viewModel::setSelection,
+                    onColumnsChange = viewModel::setColumns,
                     contentPadding = PaddingValues(
                         top = padding.calculateTopPadding(),
                         bottom = padding.calculateBottomPadding() + 24.dp

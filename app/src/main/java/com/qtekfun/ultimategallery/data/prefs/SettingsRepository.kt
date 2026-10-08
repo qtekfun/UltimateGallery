@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +27,9 @@ data class AppSettings(
     val dynamicColor: Boolean = true,
     val saveBehavior: SaveBehavior = SaveBehavior.ASK,
     val lastProfileId: Long = NO_PROFILE,
-    val appFoldersOffered: Boolean = false
+    val appFoldersOffered: Boolean = false,
+    /** Ids of app folder groups (see `AppFolderCatalog`) hidden automatically. */
+    val autoHideApps: Set<String> = emptySet()
 ) {
     companion object {
         const val DEFAULT_FOLDER_COLUMNS = 2
@@ -48,7 +51,8 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
             dynamicColor = p[DYNAMIC] ?: d.dynamicColor,
             saveBehavior = p[SAVE]?.let { runCatching { SaveBehavior.valueOf(it) }.getOrNull() } ?: d.saveBehavior,
             lastProfileId = p[LAST_PROFILE] ?: d.lastProfileId,
-            appFoldersOffered = p[APP_FOLDERS_OFFERED] ?: d.appFoldersOffered
+            appFoldersOffered = p[APP_FOLDERS_OFFERED] ?: d.appFoldersOffered,
+            autoHideApps = p[AUTO_HIDE_APPS] ?: d.autoHideApps
         )
     }
 
@@ -68,6 +72,12 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
 
     suspend fun setAppFoldersOffered(offered: Boolean) = set(APP_FOLDERS_OFFERED, offered)
 
+    suspend fun setAutoHideApps(ids: Set<String>) = set(AUTO_HIDE_APPS, ids)
+
+    suspend fun setAutoHideApp(id: String, enabled: Boolean) {
+        store.edit { it[AUTO_HIDE_APPS] = (it[AUTO_HIDE_APPS] ?: emptySet()).let { current -> if (enabled) current + id else current - id } }
+    }
+
     private suspend fun <T> set(key: Preferences.Key<T>, value: T) {
         store.edit { it[key] = value }
     }
@@ -81,5 +91,6 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
         val SAVE = stringPreferencesKey("save_behavior")
         val LAST_PROFILE = longPreferencesKey("last_profile_id")
         val APP_FOLDERS_OFFERED = booleanPreferencesKey("app_folders_offered")
+        val AUTO_HIDE_APPS = stringSetPreferencesKey("auto_hide_apps")
     }
 }

@@ -22,6 +22,10 @@ import com.qtekfun.ultimategallery.feature.export.ExportProgressScreen
 import com.qtekfun.ultimategallery.feature.gallery.FolderScreen
 import com.qtekfun.ultimategallery.feature.gallery.HomeScreen
 import com.qtekfun.ultimategallery.feature.onboarding.AccessActions
+import com.qtekfun.ultimategallery.feature.settings.AppFoldersSettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.FoldersSettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.SettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.settingsEntries
 import com.qtekfun.ultimategallery.feature.viewer.ViewerScreen
 import com.qtekfun.ultimategallery.feature.watermark.WatermarkEditorScreen
 
@@ -104,7 +108,17 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                         }
                     )
                 }
-                destination(Routes.SETTINGS) { WatermarkPlaceholder(onBack = { nav.popBackStack() }) }
+                destination(Routes.SETTINGS) {
+                    SettingsScreen(
+                        entries = settingsEntries(
+                            onFolders = { nav.navigate(Routes.SETTINGS_FOLDERS) },
+                            onAppFolders = { nav.navigate(Routes.SETTINGS_APP_FOLDERS) }
+                        ),
+                        onBack = { nav.popBackStack() }
+                    )
+                }
+                destination(Routes.SETTINGS_FOLDERS) { FoldersSettingsScreen(onBack = { nav.popBackStack() }) }
+                destination(Routes.SETTINGS_APP_FOLDERS) { AppFoldersSettingsScreen(onBack = { nav.popBackStack() }) }
             }
         }
     }

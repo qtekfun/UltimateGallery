@@ -156,4 +156,25 @@
   <string name="info_open_map">Abrir en una app de mapas</string>
   <string name="viewer_play">Reproducir vídeo</string>
   <string name="viewer_close">Cerrar visor</string>
+  <string name="app_folder_screenshots">Capturas de pantalla</string>
+  <string name="app_folder_screen_recordings">Grabaciones de pantalla</string>
+  <string name="hide_folder">Ocultar carpeta</string>
+  <string name="folder_hidden">«%1$s» oculta</string>
+  <string name="undo_action">Deshacer</string>
+  <string name="show_hidden_folders">Mostrar carpetas ocultas</string>
+  <string name="hide_hidden_folders">Ocultar carpetas ocultas</string>
+  <string name="settings_title">Ajustes</string>
+  <string name="settings_folders">Carpetas</string>
+  <string name="settings_folders_summary">Elige qué carpetas aparecen en la app</string>
+  <string name="settings_app_folders">Carpetas de apps</string>
+  <string name="settings_app_folders_summary">Oculta WhatsApp, Telegram, capturas y más automáticamente</string>
+  <string name="folders_hidden_note">Ocultar solo afecta a esta app. No cambia nada en tu dispositivo.</string>
+  <string name="folder_hidden_by_app">Oculta por la regla de carpetas de %1$s</string>
+  <string name="folders_empty">No se encontraron carpetas</string>
+  <string name="app_folders_none">No hay carpetas de apps en este dispositivo</string>
+  <string name="app_folders_hint">Las carpetas de estas apps quedan fuera de tu galería, incluidas las nuevas que aparezcan.</string>
+  <string name="app_folders_offer_title">¿Ocultar carpetas de apps?</string>
+  <string name="app_folders_offer_body">Mantén las imágenes de chats y capturas fuera de tu galería. No se borra ni cambia nada en tu dispositivo y puedes cambiarlo en Ajustes.</string>
+  <string name="app_folders_offer_apply">Ocultar seleccionadas</string>
+  <string name="app_folders_offer_skip">Ahora no</string>
 </resources>
