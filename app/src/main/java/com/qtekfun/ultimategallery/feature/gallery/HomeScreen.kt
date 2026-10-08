@@ -54,6 +54,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -323,7 +324,7 @@ private fun HideMenu(expanded: Boolean, onDismiss: () -> Unit, onHide: () -> Uni
 @Composable
 private fun AppFoldersOfferSheet(offer: List<DetectedAppFolders>, onApply: (Set<String>) -> Unit, onDismiss: () -> Unit) {
     var checked by remember(offer) { mutableStateOf(offer.map { it.entry.id }.filter { it == AppFolderCatalog.WHATSAPP }.toSet()) }
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.navigationBarsPadding().padding(horizontal = 24.dp).padding(bottom = 16.dp)) {
             Text(stringResource(R.string.app_folders_offer_title), style = MaterialTheme.typography.titleLarge)
             Text(

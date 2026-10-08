@@ -204,4 +204,6 @@
     <item quantity="other">%1$d exportadas, %2$d con error</item>
   </plurals>
   <string name="edit">Editar</string>
+  <string name="haptics">Respuesta háptica</string>
+  <string name="haptics_summary">Vibraciones breves al ajustar, seleccionar y girar</string>
 </resources>

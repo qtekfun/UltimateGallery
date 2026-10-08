@@ -98,6 +98,17 @@ fun AppearanceSettingsScreen(onBack: () -> Unit, modifier: Modifier = Modifier, 
                 }
                 Switch(checked = s.dynamicColor, onCheckedChange = viewModel::setDynamicColor)
             }
+            Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.haptics), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        stringResource(R.string.haptics_summary),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(checked = s.hapticsEnabled, onCheckedChange = viewModel::setHapticsEnabled)
+            }
             SectionTitle(stringResource(R.string.grid_default_title))
             ColumnsSlider(
                 stringResource(R.string.grid_folder_columns),

@@ -9,14 +9,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.qtekfun.ultimategallery.core.consent.ConsentBroker
 import com.qtekfun.ultimategallery.core.theme.UltimateGalleryTheme
+import com.qtekfun.ultimategallery.core.ui.SilentHaptics
 import com.qtekfun.ultimategallery.data.prefs.AppSettings
 import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.data.prefs.ThemeMode
@@ -51,9 +55,13 @@ class MainActivity : ComponentActivity() {
                 ThemeMode.LIGHT -> false
                 ThemeMode.DARK -> true
             }
-            UltimateGalleryTheme(darkTheme = dark, dynamicColor = settings.dynamicColor) {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    AccessGate { level, actions -> AppNavHost(level, actions) }
+            val realHaptics = LocalHapticFeedback.current
+            val haptics = remember(realHaptics, settings.hapticsEnabled) { if (settings.hapticsEnabled) realHaptics else SilentHaptics }
+            CompositionLocalProvider(LocalHapticFeedback provides haptics) {
+                UltimateGalleryTheme(darkTheme = dark, dynamicColor = settings.dynamicColor) {
+                    Surface(modifier = Modifier.fillMaxSize()) {
+                        AccessGate { level, actions -> AppNavHost(level, actions) }
+                    }
                 }
             }
         }

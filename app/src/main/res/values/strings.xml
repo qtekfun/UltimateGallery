@@ -200,4 +200,6 @@
     <item quantity="other">%1$d exported, %2$d failed</item>
   </plurals>
   <string name="edit">Edit</string>
+  <string name="haptics">Haptic feedback</string>
+  <string name="haptics_summary">Short vibrations when snapping, selecting and rotating</string>
 </resources>

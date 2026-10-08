@@ -41,6 +41,8 @@ class SettingsViewModel @Inject constructor(private val folders: FolderRepositor
 
     fun setDynamicColor(enabled: Boolean) = launch { settingsRepo.setDynamicColor(enabled) }
 
+    fun setHapticsEnabled(enabled: Boolean) = launch { settingsRepo.setHapticsEnabled(enabled) }
+
     fun setSaveBehavior(behavior: SaveBehavior) = launch { settingsRepo.setSaveBehavior(behavior) }
 
     fun setFolderColumns(columns: Int) = launch { settingsRepo.setFolderGridColumns(columns) }

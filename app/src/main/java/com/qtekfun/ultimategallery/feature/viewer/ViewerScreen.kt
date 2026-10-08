@@ -34,7 +34,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.WaterDrop
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -171,7 +170,7 @@ private fun ViewerContent(
         if (index >= 0 && index != pager.currentPage) pager.scrollToPage(index)
     }
 
-    ImmersiveEffect(hideBars = !overlays || dragging)
+    ImmersiveEffect(hideBars = (!overlays || dragging) && !showInfo)
     BackHandler(enabled = showInfo) { showInfo = false }
 
     val backgroundAlpha = 1f - min(abs(dragY) / (screenHeightPx * 0.5f), 1f) * 0.85f
@@ -215,7 +214,7 @@ private fun ViewerContent(
             enter = fadeIn() + slideInVertically { -it },
             exit = fadeOut() + slideOutVertically { -it }
         ) {
-            if (current != null) TopBar(current, onBack) { showInfo = true }
+            if (current != null) TopBar(current, onBack)
         }
         AnimatedVisibility(
             visible = overlays && !dragging,
@@ -244,7 +243,7 @@ private fun ViewerContent(
 }
 
 @Composable
-private fun TopBar(item: MediaItem, onBack: () -> Unit, onInfo: () -> Unit) {
+private fun TopBar(item: MediaItem, onBack: () -> Unit) {
     val context = LocalContext.current
     val date = remember(item.dateMs) {
         DateFormat.getMediumDateFormat(context).format(Date(item.dateMs)) + "  " + DateFormat.getTimeFormat(context).format(Date(item.dateMs))
@@ -266,7 +265,6 @@ private fun TopBar(item: MediaItem, onBack: () -> Unit, onInfo: () -> Unit) {
                     color = Color.White.copy(alpha = 0.75f)
                 )
             }
-            IconButton(onClick = onInfo) { Icon(Icons.Outlined.Info, stringResource(R.string.info)) }
         }
     }
 }
@@ -274,16 +272,17 @@ private fun TopBar(item: MediaItem, onBack: () -> Unit, onInfo: () -> Unit) {
 @Composable
 private fun ActionBar(item: MediaItem, actions: ViewerActions, onWatermark: (MediaItem) -> Unit, onInfo: () -> Unit) {
     CompositionLocalProvider(LocalContentColor provides Color.White) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (!item.isVideo) {
-                Button(onClick = { onWatermark(item) }) {
-                    Icon(Icons.Outlined.WaterDrop, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.watermark))
+                IconButton(onClick = { onWatermark(item) }) {
+                    Icon(Icons.Outlined.WaterDrop, stringResource(R.string.watermark))
                 }
             }
-            Spacer(Modifier.weight(1f))
-            Row(horizontalArrangement = Arrangement.End) {
+            run {
                 if (!item.isVideo) {
                     actions.onEdit?.let { edit -> IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.edit)) } }
                 }

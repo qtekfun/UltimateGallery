@@ -28,6 +28,8 @@ data class AppSettings(
     val photoGridColumns: Int = DEFAULT_PHOTO_COLUMNS,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val dynamicColor: Boolean = true,
+    /** Haptic feedback is off until the user turns it on in Settings. */
+    val hapticsEnabled: Boolean = false,
     val saveBehavior: SaveBehavior = SaveBehavior.ASK,
     val lastProfileId: Long = NO_PROFILE,
     val appFoldersOffered: Boolean = false,
@@ -54,6 +56,7 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
             photoGridColumns = p[PHOTO_COLUMNS] ?: d.photoGridColumns,
             themeMode = p[THEME]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: d.themeMode,
             dynamicColor = p[DYNAMIC] ?: d.dynamicColor,
+            hapticsEnabled = p[HAPTICS] ?: d.hapticsEnabled,
             saveBehavior = p[SAVE]?.let { runCatching { SaveBehavior.valueOf(it) }.getOrNull() } ?: d.saveBehavior,
             lastProfileId = p[LAST_PROFILE] ?: d.lastProfileId,
             appFoldersOffered = p[APP_FOLDERS_OFFERED] ?: d.appFoldersOffered,
@@ -78,6 +81,8 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
     suspend fun setThemeMode(mode: ThemeMode) = set(THEME, mode.name)
 
     suspend fun setDynamicColor(enabled: Boolean) = set(DYNAMIC, enabled)
+
+    suspend fun setHapticsEnabled(enabled: Boolean) = set(HAPTICS, enabled)
 
     suspend fun setSaveBehavior(behavior: SaveBehavior) = set(SAVE, behavior.name)
 
@@ -112,6 +117,7 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
         val PHOTO_COLUMNS = intPreferencesKey("photo_grid_columns")
         val THEME = stringPreferencesKey("theme_mode")
         val DYNAMIC = booleanPreferencesKey("dynamic_color")
+        val HAPTICS = booleanPreferencesKey("haptics_enabled")
         val SAVE = stringPreferencesKey("save_behavior")
         val LAST_PROFILE = longPreferencesKey("last_profile_id")
         val APP_FOLDERS_OFFERED = booleanPreferencesKey("app_folders_offered")
