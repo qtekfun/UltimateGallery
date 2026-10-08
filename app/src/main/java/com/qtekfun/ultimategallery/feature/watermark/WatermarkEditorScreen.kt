@@ -62,6 +62,7 @@ import com.qtekfun.ultimategallery.domain.export.ExportPaths
 
 private const val WIDE_LAYOUT_DP = 720
 private const val WIDE_PANEL_DP = 380
+private const val STYLE_PANEL_DP = 340
 
 /** The watermark editor: canvas, batch strip and the control panels. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -260,7 +261,13 @@ fun WatermarkEditorScreen(
                         }
                         AnimatedVisibility(visible = panelOpen) {
                             val panelModifier = Modifier.fillMaxWidth().heightIn(
-                                max = if (wide) 2000.dp else 230.dp
+                                max = if (wide) {
+                                    2000.dp
+                                } else if (state.tab == EditorTab.STYLE) {
+                                    STYLE_PANEL_DP.dp
+                                } else {
+                                    230.dp
+                                }
                             ).padding(horizontal = 16.dp, vertical = 12.dp)
                             when (state.tab) {
                                 EditorTab.MARK -> MarkPanel(state.profile, actions, panelModifier)

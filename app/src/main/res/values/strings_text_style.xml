@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="style_preview">Preview</string>
+  <string name="outline_width">Outline thickness</string>
+  <string name="shadow_softness">Shadow softness</string>
+  <string name="shadow_color">Shadow color</string>
+  <string name="background_padding">Background padding</string>
+  <string name="outline_color">Outline color</string>
+  <string name="background_color">Background color</string>
+</resources>
