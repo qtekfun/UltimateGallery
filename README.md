@@ -19,6 +19,12 @@ Part of the Ultimate family of apps. Package: `com.qtekfun.ultimategallery`.
 - Material 3 Expressive, dynamic color, English and Spanish.
 - **Fully offline**: no network permission, no Google Play Services, no analytics. FOSS dependencies only.
 
+## Status
+
+Pre-releases are published on the GitHub releases page; the current one is a release candidate that still
+needs on-device testing. Until a release signing key is configured the APKs are signed with the debug key
+(the release notes say so), which is fine for trying the app but not for distribution.
+
 ## Build
 
 Requirements: JDK 21 and the Android SDK (platform 37).

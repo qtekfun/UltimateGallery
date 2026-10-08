@@ -60,7 +60,7 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Performance pass with large libraries (macrobenchmark or manual profiling).
 
 ## Phase 10 — Release
-- [ ] Adaptive + monochrome launcher icon.
-- [ ] F-Droid metadata (`fastlane/`), reproducible build check, no proprietary dependencies.
-- [ ] Screenshots and store listing text in English and Spanish.
-- [ ] Tag 0.1.0 pre-release on GitHub; 1.0 after on-device testing; F-Droid submission after 1.0.
+- [x] Adaptive + monochrome launcher icon.
+- [x] F-Droid metadata (`fastlane/`), reproducible build check, no proprietary dependencies.
+- [ ] Screenshots and store listing text in English and Spanish. (Listing text is done; screenshots must be taken on a device and added under `fastlane/metadata/android/<locale>/images/phoneScreenshots/`.)
+- [x] Tag pre-releases on GitHub (0.1.0 to 0.9.0 and 1.0.0-rc1); 1.0 after on-device testing; F-Droid submission after 1.0.

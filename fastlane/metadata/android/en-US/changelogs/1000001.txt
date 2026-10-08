@@ -1,0 +1,5 @@
+First release candidate (pre-release).
+- Feature-complete gallery with batch watermarking
+- Themed launcher icon and store listing
+- Reproducible build, fully offline
+- Awaiting on-device testing before 1.0

@@ -1,0 +1,5 @@
+Primera versión candidata (preliminar).
+- Galería completa con marcas de agua por lotes
+- Icono temático y ficha de la tienda
+- Compilación reproducible, totalmente sin conexión
+- A la espera de pruebas en dispositivo antes de 1.0
