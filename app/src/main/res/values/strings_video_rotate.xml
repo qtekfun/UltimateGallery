@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="video_rotate">Rotate video</string>
+  <string name="video_rotate_left">Rotate left</string>
+  <string name="video_rotate_right">Rotate right</string>
+  <string name="video_rotate_cancel">Cancel</string>
+  <string name="video_rotate_save">Save</string>
+  <string name="video_rotate_saving">Saving rotated video</string>
+  <string name="video_rotate_ask_title">Save rotated video</string>
+  <string name="video_rotate_ask_message">How do you want to save this video?</string>
+  <string name="video_rotate_save_copy">Save a copy</string>
+  <string name="video_rotate_overwrite">Overwrite original</string>
+  <string name="video_rotate_remember">Remember my choice</string>
+  <string name="video_rotate_done">Video rotated</string>
+  <string name="video_rotate_done_copy">Rotated copy saved</string>
+  <string name="video_rotate_open_copy">Open copy</string>
+  <string name="video_rotate_denied">Not saved: changing the original needs your permission</string>
+  <string name="video_rotate_unsupported">This video format can\'t be rotated losslessly</string>
+  <string name="video_rotate_failed">Couldn\'t rotate the video: %1$s</string>
+  <string name="video_rotate_preview_state">Previewing %1$d degrees clockwise</string>
+</resources>
