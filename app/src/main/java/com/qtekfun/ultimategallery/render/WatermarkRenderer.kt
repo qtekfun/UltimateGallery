@@ -88,6 +88,7 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
             textSize = REF_SIZE
             textAlign = Paint.Align.CENTER
             typeface = face.typeface
+            textSkewX = face.skewX
             color = spec.colorArgb
             if (face.emboldenPx > 0f) {
                 style = Paint.Style.FILL_AND_STROKE
@@ -97,7 +98,7 @@ class WatermarkRenderer(private val bitmaps: (Uri) -> Bitmap?) {
         }
         private val metrics = fill.fontMetrics
         private val lineHeight = metrics.descent - metrics.ascent + face.emboldenPx
-        private val textWidth = lines.maxOf { fill.measureText(it) } + face.emboldenPx
+        private val textWidth = lines.maxOf { fill.measureText(it) } + face.emboldenPx + kotlin.math.abs(face.skewX) * REF_SIZE
         private val pad = if (spec.backgroundEnabled) spec.backgroundPadding * lineHeight else 0f
         private val contentWidth = max(textWidth, 1f) + 2 * pad
         private val contentHeight = lineHeight * lines.size + 2 * pad

@@ -12,12 +12,13 @@ import com.qtekfun.ultimategallery.domain.watermark.MarkFont
  */
 object MarkTypefaces {
     /** A typeface plus the extra stroke width (in pixels at the given text size) that emulates a missing weight. */
-    data class Resolved(val typeface: Typeface, val emboldenPx: Float)
+    data class Resolved(val typeface: Typeface, val emboldenPx: Float, val skewX: Float = 0f)
 
     /** Weight gap, in CSS units, under which the nearest real face is considered good enough. */
     private const val SNAP_GAP = 100
     private const val EMBOLDEN_PER_STEP = 0.012f
     private const val MAX_WEIGHT = 1000
+    private const val FAKE_ITALIC_SKEW = -0.25f
 
     fun familyOf(font: MarkFont): String = when (font) {
         MarkFont.SANS -> "sans-serif"
@@ -36,6 +37,8 @@ object MarkTypefaces {
         val actual = runCatching { typeface.weight }.getOrDefault(0)
         val gap = weight - actual
         val embolden = if (actual > 0 && gap >= SNAP_GAP) gap / 100f * EMBOLDEN_PER_STEP * textSize else 0f
-        return Resolved(typeface, embolden)
+        // Families without an italic face (script, monospace on many devices) would ignore the request: slant them instead.
+        val skew = if (italic && !typeface.isItalic) FAKE_ITALIC_SKEW else 0f
+        return Resolved(typeface, embolden, skew)
     }
 }

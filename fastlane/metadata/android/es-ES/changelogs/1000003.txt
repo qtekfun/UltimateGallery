@@ -1,0 +1,3 @@
+Firmada con la clave de release (preliminar).
+- Desinstala las versiones anteriores una vez; después se actualiza encima
+- La cursiva funciona en todas las fuentes
