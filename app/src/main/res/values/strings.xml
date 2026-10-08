@@ -202,4 +202,5 @@
   <string name="edit">Edit</string>
   <string name="haptics">Haptic feedback</string>
   <string name="haptics_summary">Short vibrations when snapping, selecting and rotating</string>
+  <string name="font_default">Default</string>
 </resources>
