@@ -1,0 +1,5 @@
+Correcciones (versión preliminar).
+- Recortar/girar: la foto y el marco coinciden
+- Los estilos de texto de la marca funcionan
+- Visor: la hoja de info ya no cae a la mitad
+- Respuesta háptica desactivada por defecto (Ajustes > Apariencia)

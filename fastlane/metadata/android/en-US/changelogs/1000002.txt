@@ -1,0 +1,5 @@
+Fixes (pre-release).
+- Crop/rotate: photo and frame now match
+- Watermark text styles work: weight, fonts, live sample
+- Viewer: info sheet no longer drops to half
+- Haptic feedback is off by default (Settings > Appearance)
