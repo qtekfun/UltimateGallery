@@ -1,7 +1,9 @@
 package com.qtekfun.ultimategallery.feature.viewer
 
 import android.app.Activity
+import android.net.Uri
 import android.text.format.DateFormat
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
@@ -32,6 +34,7 @@ import androidx.compose.material.icons.outlined.Crop
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.ScreenRotation
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,8 +43,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -61,6 +66,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -90,7 +96,8 @@ class ViewerActions(
     val onMove: ((MediaItem) -> Unit)? = null,
     val onCopy: ((MediaItem) -> Unit)? = null,
     val onRename: ((MediaItem) -> Unit)? = null,
-    val onDelete: ((MediaItem) -> Unit)? = null
+    val onDelete: ((MediaItem) -> Unit)? = null,
+    val onRotate: ((MediaItem) -> Unit)? = null
 )
 
 /** Full-screen viewer: swipe between items, zoom, swipe down to close, thumbnail strip and actions. */
@@ -109,6 +116,19 @@ fun ViewerScreen(
     val snackbar = remember { SnackbarHostState() }
     FileActionDialogs(files)
     FileActionsEffects(files, snackbar)
+    val resources = LocalResources.current
+    var openUri by remember { mutableStateOf<Uri?>(null) }
+    LaunchedEffect(viewModel) {
+        viewModel.rotate.events.collect { event ->
+            val copyUri = (event as? VideoRotateEvent.Rotated)?.takeIf { !it.overwritten }?.uri
+            val result = snackbar.showSnackbar(
+                message = rotateMessage(resources, event),
+                actionLabel = copyUri?.let { resources.getString(R.string.video_rotate_open_copy) },
+                duration = if (copyUri != null) SnackbarDuration.Long else SnackbarDuration.Short
+            )
+            if (result == SnackbarResult.ActionPerformed) openUri = copyUri
+        }
+    }
     Box(modifier.fillMaxSize().background(Color.Black)) {
         if (loaded == null) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -124,8 +144,12 @@ fun ViewerScreen(
                     onMove = { files.moveTo(listOf(it)) },
                     onCopy = { files.copyTo(listOf(it)) },
                     onRename = { files.rename(it) },
-                    onDelete = { files.trash(listOf(it)) }
+                    onDelete = { files.trash(listOf(it)) },
+                    onRotate = { viewModel.rotate.start(it) }
                 ),
+                rotate = viewModel.rotate,
+                openUri = openUri,
+                onOpenHandled = { openUri = null },
                 files = files,
                 onBack = onBack,
                 onWatermarkItem = {
@@ -145,6 +169,9 @@ private fun ViewerContent(
     initialId: Long,
     actions: ViewerActions,
     files: FileActionsViewModel,
+    rotate: VideoRotateController,
+    openUri: Uri?,
+    onOpenHandled: () -> Unit,
     onBack: () -> Unit,
     onWatermarkItem: (MediaItem) -> Unit,
     detailsOf: suspend (MediaItem) -> MediaDetails
@@ -159,6 +186,8 @@ private fun ViewerContent(
     var infoFor by rememberSaveable { mutableStateOf<Long?>(null) }
     val current = items.getOrNull(pager.currentPage)
     val dragging = dragY != 0f
+    val rotateState by rotate.state.collectAsStateWithLifecycle()
+    val rotating = rotateState.previewing
     val screenHeightPx = androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.height.toFloat()
 
     // Keep the same photo in view when the folder changes under the viewer (for example after a delete).
@@ -175,9 +204,21 @@ private fun ViewerContent(
         }
     }
     LaunchedEffect(current?.id) { if (infoFor != null && infoFor != current?.id) infoFor = null }
+    // The preview belongs to one video: leaving it drops the preview. Back cancels the preview before anything else.
+    LaunchedEffect(current?.id) { if (rotateState.item != null && rotateState.item?.id != current?.id) rotate.cancel() }
+    BackHandler(enabled = rotating) { rotate.cancel() }
+    // After "Open copy", jump to the new item as soon as the refreshed folder list contains it.
+    LaunchedEffect(openUri, items) {
+        val target = openUri ?: return@LaunchedEffect
+        val index = items.indexOfFirst { it.uri == target }
+        if (index >= 0) {
+            pager.scrollToPage(index)
+            onOpenHandled()
+        }
+    }
 
     // System bars stay put while the sheet is open so the window insets never change under it.
-    ImmersiveEffect(hideBars = (!overlays || dragging) && infoFor == null)
+    ImmersiveEffect(hideBars = (!overlays || dragging) && infoFor == null && !rotating)
 
     val backgroundAlpha = 1f - min(abs(dragY) / (screenHeightPx * 0.5f), 1f) * 0.85f
     Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = backgroundAlpha))) {
@@ -185,7 +226,8 @@ private fun ViewerContent(
             state = pager,
             modifier = Modifier.fillMaxSize(),
             key = { latestItems.getOrNull(it)?.id ?: it },
-            beyondViewportPageCount = 1
+            beyondViewportPageCount = 1,
+            userScrollEnabled = !rotating
         ) { page ->
             val item = latestItems.getOrNull(page) ?: return@HorizontalPager
             val isCurrent = page == pager.currentPage
@@ -193,7 +235,12 @@ private fun ViewerContent(
             LaunchedEffect(isCurrent) { if (!isCurrent) zoom.reset() }
             Box(Modifier.fillMaxSize().offset { IntOffset(0, if (isCurrent) dragY.roundToInt() else 0) }) {
                 if (item.isVideo) {
-                    VideoPage(item, isCurrent)
+                    VideoPage(
+                        item,
+                        isCurrent,
+                        previewTurns = if (isCurrent && rotateState.item?.id == item.id) rotateState.turns else 0,
+                        revision = rotateState.revision
+                    )
                 } else {
                     ZoomableImage(
                         item = item,
@@ -215,7 +262,7 @@ private fun ViewerContent(
         }
 
         AnimatedVisibility(
-            visible = overlays && !dragging,
+            visible = (overlays || rotating) && !dragging,
             modifier = Modifier.align(Alignment.TopCenter),
             enter = fadeIn() + slideInVertically { -it },
             exit = fadeOut() + slideOutVertically { -it }
@@ -223,7 +270,7 @@ private fun ViewerContent(
             if (current != null) TopBar(current, onBack)
         }
         AnimatedVisibility(
-            visible = overlays && !dragging,
+            visible = (overlays || rotating) && !dragging,
             modifier = Modifier.align(Alignment.BottomCenter),
             enter = fadeIn() + slideInVertically { it },
             exit = fadeOut() + slideOutVertically { it }
@@ -231,8 +278,12 @@ private fun ViewerContent(
             Column(
                 Modifier.background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xCC000000)))).navigationBarsPadding()
             ) {
-                ThumbnailStrip(items, pager.currentPage, onSelect = { scope.launch { pager.animateScrollToPage(it) } })
-                if (current != null) ViewerActionBar(current, actions, onWatermarkItem, onInfo = { infoFor = current.id })
+                if (rotating) {
+                    VideoRotateOverlay(rotateState, rotate)
+                } else {
+                    ThumbnailStrip(items, pager.currentPage, onSelect = { scope.launch { pager.animateScrollToPage(it) } })
+                    if (current != null) ViewerActionBar(current, actions, onWatermarkItem, onInfo = { infoFor = current.id })
+                }
             }
         }
     }
@@ -294,6 +345,10 @@ internal fun ViewerActionBar(item: MediaItem, actions: ViewerActions, onWatermar
                 ActionSlot { IconButton(onClick = { onWatermark(item) }) { Icon(Icons.Outlined.WaterDrop, stringResource(R.string.watermark)) } }
                 actions.onEdit?.let { edit ->
                     ActionSlot { IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.edit)) } }
+                }
+            } else {
+                actions.onRotate?.let { rotate ->
+                    ActionSlot { IconButton(onClick = { rotate(item) }) { Icon(Icons.Outlined.ScreenRotation, stringResource(R.string.video_rotate)) } }
                 }
             }
             ActionSlot { IconButton(onClick = { actions.onShare(item) }) { Icon(Icons.Outlined.Share, stringResource(R.string.share)) } }
