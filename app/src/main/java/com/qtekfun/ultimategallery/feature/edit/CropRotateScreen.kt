@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -91,10 +92,8 @@ import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.data.edit.CropRect
 import com.qtekfun.ultimategallery.data.prefs.SaveBehavior
 import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.roundToInt
-import kotlin.math.sin
 
 private val FRAME_PAD = 24.dp
 private val HANDLE_LENGTH = 22.dp
@@ -147,6 +146,7 @@ fun CropRotateScreen(onBack: () -> Unit, onSaved: (Uri?) -> Unit, modifier: Modi
                 onDragStart = viewModel::dragStarted,
                 onDrag = viewModel::drag,
                 onDragEnd = viewModel::dragEnded,
+                onPhotoMeasured = viewModel::photoMeasured,
                 onReset = viewModel::reset,
                 onSave = viewModel::requestSave,
                 onCancel = onBack
@@ -171,6 +171,7 @@ private class CropRotateActions(
     val onDragStart: () -> Unit,
     val onDrag: (CropHandle, Float, Float) -> Boolean,
     val onDragEnd: () -> Unit,
+    val onPhotoMeasured: (Int, Int) -> Unit,
     val onReset: () -> Unit,
     val onSave: () -> Unit,
     val onCancel: () -> Unit
@@ -200,6 +201,7 @@ private fun CropRotateContent(state: CropRotateState, actions: CropRotateActions
                     if (actions.onDrag(handle, dx, dy)) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
                 },
                 onDragEnd = actions.onDragEnd,
+                onPhotoMeasured = actions.onPhotoMeasured,
                 modifier = Modifier.fillMaxSize()
             )
             if (state.saving) LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -360,10 +362,12 @@ private fun CropStage(
     onDragStart: () -> Unit,
     onDrag: (CropHandle, Float, Float) -> Unit,
     onDragEnd: () -> Unit,
+    onPhotoMeasured: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val item = state.item ?: return
     val canvas = state.canvas ?: return
+    val photo = state.photoSize ?: return
     val spec = state.spec
     val motion = MaterialTheme.motionScheme
     val density = LocalDensity.current
@@ -388,35 +392,35 @@ private fun CropStage(
     BoxWithConstraints(modifier.padding(FRAME_PAD), contentAlignment = Alignment.Center) {
         val maxW = constraints.maxWidth.toFloat()
         val maxH = constraints.maxHeight.toFloat()
-        val w = item.width.toFloat()
-        val h = item.height.toFloat()
+        val w = photo.width
+        val h = photo.height
 
-        // Scale that fits the bounding box of the photo at its current (animated) angle: the photo shrinks while it turns.
-        val radians = Math.toRadians(rotation.value.toDouble())
-        val c = abs(cos(radians)).toFloat()
-        val s = abs(sin(radians)).toFloat()
-        val liveScale = min(maxW / (w * c + h * s), maxH / (w * s + h * c))
+        // The photo shrinks while it turns so that its bounding box always fits the stage.
+        val pose = PhotoPose(rotation.value, flipX, flipY, straighten, CropStageLayout.fitScale(maxW, maxH, w, h, rotation.value))
+        val liveScale = pose.scale
         val photoBase = min(maxW / w, maxH / h)
-        val frameBase = min(maxW / canvas.width, maxH / canvas.height)
+        val frameBase = CropStageLayout.frameScale(maxW, maxH, canvas)
 
+        // The layers apply from the last to the first: turn, mirror, straighten, then scale. This is the order of the saved result.
         Box(
             Modifier
-                .size(with(density) { (w * photoBase).toDp() }, with(density) { (h * photoBase).toDp() })
+                .requiredSize(with(density) { (w * photoBase).toDp() }, with(density) { (h * photoBase).toDp() })
                 .graphicsLayer {
-                    scaleX = liveScale / photoBase
-                    scaleY = liveScale / photoBase
+                    scaleX = pose.scale / photoBase
+                    scaleY = pose.scale / photoBase
                 }
-                .graphicsLayer { rotationZ = straighten }
+                .graphicsLayer { rotationZ = pose.straightenDeg }
                 .graphicsLayer {
-                    scaleX = flipX
-                    scaleY = flipY
+                    scaleX = pose.flipX
+                    scaleY = pose.flipY
                 }
-                .graphicsLayer { rotationZ = rotation.value }
+                .graphicsLayer { rotationZ = pose.rotationDeg }
         ) {
             AsyncImage(
                 model = item.uri,
                 contentDescription = stringResource(R.string.crop_image_description),
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Fit,
+                onSuccess = { success -> onPhotoMeasured(success.result.image.width, success.result.image.height) },
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -466,7 +470,7 @@ private fun CropFrame(
 
     Canvas(
         modifier
-            .size(with(density) { (canvasWidth + 2 * pad).toDp() }, with(density) { (canvasHeight + 2 * pad).toDp() })
+            .requiredSize(with(density) { (canvasWidth + 2 * pad).toDp() }, with(density) { (canvasHeight + 2 * pad).toDp() })
             .semantics { contentDescription = description }
             .pointerInput(Unit) {
                 awaitEachGesture {
