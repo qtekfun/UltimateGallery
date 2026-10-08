@@ -126,7 +126,7 @@ class EditorStyleViewModelTest {
         vm.setTextStyle(styleB)
         assertEquals(styleB, style())
         vm.undo()
-        assertEquals(WatermarkSource.Text("@wallapop").style, style())
+        assertEquals(WatermarkSource.Text("UltimateGallery").style, style())
         vm.redo()
         assertEquals(styleB, style())
     }

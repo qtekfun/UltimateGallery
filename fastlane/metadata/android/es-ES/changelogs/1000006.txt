@@ -1,0 +1,4 @@
+Valores neutros (versión preliminar).
+- El texto de marca por defecto es el nombre de la app
+- Perfil "Default", carpeta Pictures/UltimateGallery
+- Documentación y ficha sin servicios de terceros

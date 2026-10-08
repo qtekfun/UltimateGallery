@@ -24,7 +24,7 @@ class WeightVisibilityTest {
     private fun inkOf(style: TextStyleSpec): Int {
         val bmp = Bitmap.createBitmap(400, 100, Bitmap.Config.ARGB_8888)
         bmp.eraseColor(Color.WHITE)
-        renderer.draw(Canvas(bmp), 400, 100, WatermarkSource.Text("Wallapop", style), 1f, Placement(0.5f, 0.5f, 0.6f, 0f))
+        renderer.draw(Canvas(bmp), 400, 100, WatermarkSource.Text("Sample", style), 1f, Placement(0.5f, 0.5f, 0.6f, 0f))
         var ink = 0
         for (y in 0 until bmp.height) for (x in 0 until bmp.width) ink += 255 - Color.red(bmp.getPixel(x, y))
         return ink

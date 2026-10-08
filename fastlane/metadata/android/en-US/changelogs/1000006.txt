@@ -1,0 +1,4 @@
+Neutral defaults (pre-release).
+- Default watermark text is the app name
+- Default profile "Default", folder Pictures/UltimateGallery
+- Docs and listing are service-neutral

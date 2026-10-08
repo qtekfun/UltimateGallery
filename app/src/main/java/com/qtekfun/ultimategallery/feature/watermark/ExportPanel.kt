@@ -32,7 +32,7 @@ import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
 import kotlin.math.roundToInt
 
 private val SizeChoices = listOf(null, 4096, 3000, 2048, 1600, 1080)
-private val DestinationPresets = listOf("Pictures/Wallapop", "Pictures/Watermarked", "DCIM/Wallapop")
+private val DestinationPresets = listOf("Pictures/UltimateGallery", "Pictures/Watermarked", "DCIM/UltimateGallery")
 
 /** The "Export" tab: where and how the watermarked copies are written. */
 @Composable

@@ -24,7 +24,7 @@ class ItalicVisibilityTest {
         val bmp = Bitmap.createBitmap(600, 200, Bitmap.Config.ARGB_8888)
         bmp.eraseColor(Color.GRAY)
         val style = TextStyleSpec(fontId = fontId, italic = italic, shadowEnabled = false)
-        renderer.draw(Canvas(bmp), 600, 200, WatermarkSource.Text("Wallapop Hill", style), 1f, Placement(0.5f, 0.5f, 0.8f, 0f))
+        renderer.draw(Canvas(bmp), 600, 200, WatermarkSource.Text("Sample Hill", style), 1f, Placement(0.5f, 0.5f, 0.8f, 0f))
         return IntArray(600 * 200).also { bmp.getPixels(it, 0, 600, 0, 0, 600, 200) }.toList()
     }
 

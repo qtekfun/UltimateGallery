@@ -1,5 +1,5 @@
 Profiles (pre-release).
 - Save watermark profiles and reuse them
 - Choose, save, rename, duplicate, delete
-- Last used profile preselected, default "Wallapop"
+- Last used profile preselected, default "Default"
 - Unsaved changes are marked and confirmed

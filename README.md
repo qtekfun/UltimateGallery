@@ -2,7 +2,7 @@
 
 A refined, folder-based Android gallery whose flagship feature is **batch watermarking**: pick many
 photos, place one watermark with your fingers (position, size, rotation), preview it on every photo
-and export them all. Built for product photos (for example Wallapop listings), and growing into a
+and export them all. Built for product photos (for example online marketplace listings), and growing into a
 complete gallery.
 
 Part of the Ultimate family of apps. Package: `com.qtekfun.ultimategallery`.

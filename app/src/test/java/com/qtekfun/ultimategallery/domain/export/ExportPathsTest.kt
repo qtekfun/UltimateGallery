@@ -10,16 +10,16 @@ import org.junit.Test
 class ExportPathsTest {
     @Test
     fun normalizeTrimsAndCollapsesSlashes() {
-        assertEquals("Pictures/Wallapop", ExportPaths.normalize("  /Pictures//Wallapop/ "))
+        assertEquals("Pictures/UltimateGallery", ExportPaths.normalize("  /Pictures//UltimateGallery/ "))
         assertEquals("", ExportPaths.normalize("///"))
     }
 
     @Test
     fun onlyFoldersUnderPicturesOrDcimAreValid() {
-        assertTrue(ExportPaths.isValidDestination("Pictures/Wallapop"))
+        assertTrue(ExportPaths.isValidDestination("Pictures/UltimateGallery"))
         assertTrue(ExportPaths.isValidDestination("/DCIM/Shop/Items/"))
         assertFalse(ExportPaths.isValidDestination("Pictures"))
-        assertFalse(ExportPaths.isValidDestination("Download/Wallapop"))
+        assertFalse(ExportPaths.isValidDestination("Download/Default"))
         assertFalse(ExportPaths.isValidDestination("Pictures/../Android"))
         assertFalse(ExportPaths.isValidDestination(""))
     }

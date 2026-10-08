@@ -59,7 +59,7 @@ class WatermarkEditorViewModel @Inject constructor(
     private var gestureBefore: WatermarkProfile? = null
     private var rawPlacement: Placement? = null
     private var lastSnapSignature: Triple<Float?, Float?, Boolean> = Triple(null, null, false)
-    private var lastText: WatermarkSource.Text = WatermarkSource.Text("@wallapop")
+    private var lastText: WatermarkSource.Text = WatermarkSource.Text("UltimateGallery")
     private var lastImage: WatermarkSource.Image? = null
 
     /** True once the user changed the profile, so a late initial profile load must not replace it. */

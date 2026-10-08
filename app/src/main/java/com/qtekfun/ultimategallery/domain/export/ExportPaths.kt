@@ -6,7 +6,7 @@ import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
 object ExportPaths {
     private val AllowedRoots = listOf("Pictures", "DCIM")
 
-    /** Trims blanks and slashes and collapses repeated slashes: `/Pictures//Wallapop/` -> `Pictures/Wallapop`. */
+    /** Trims blanks and slashes and collapses repeated slashes: `/Pictures//Default/` -> `Pictures/Trips`. */
     fun normalize(destination: String): String = destination.trim().split('/').map { it.trim() }.filter { it.isNotEmpty() }.joinToString("/")
 
     /** The MediaStore only accepts image folders under Pictures or DCIM. */

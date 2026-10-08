@@ -6,7 +6,7 @@ import android.net.Uri
 data class Folder(
     val bucketId: Long,
     val name: String,
-    /** Path relative to the volume root, for example `Pictures/Wallapop/`; null when unknown. */
+    /** Path relative to the volume root, for example `Pictures/Trips/`; null when unknown. */
     val relativePath: String?,
     val count: Int,
     val coverUri: Uri,

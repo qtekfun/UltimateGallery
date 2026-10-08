@@ -61,16 +61,16 @@ data class ExportSettings(
     val maxLongEdge: Int? = null,
     /** Tokens: `{name}` original name without extension, `{n}` position in the batch, `{date}` yyyyMMdd. */
     val fileNamePattern: String = "{name}_wm",
-    /** Destination under the volume root, for example `Pictures/Wallapop`. */
-    val destination: String = "Pictures/Wallapop",
+    /** Destination under the volume root, for example `Pictures/Trips`. */
+    val destination: String = "Pictures/UltimateGallery",
     val exif: ExifMode = ExifMode.STRIP_LOCATION
 )
 
 /** A reusable watermark template. [id] is 0 until the profile is stored. */
 data class WatermarkProfile(
     val id: Long = 0,
-    val name: String = "Wallapop",
-    val source: WatermarkSource = WatermarkSource.Text("@wallapop"),
+    val name: String = "Default",
+    val source: WatermarkSource = WatermarkSource.Text("UltimateGallery"),
     val opacity: Float = 0.85f,
     val portrait: Placement = Placement.DefaultPortrait,
     val landscape: Placement = Placement.DefaultLandscape,

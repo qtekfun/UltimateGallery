@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 class ProfileRepository @Inject constructor(private val dao: ProfileDao, private val settings: SettingsRepository) {
     val profiles: Flow<List<WatermarkProfile>> = dao.observeAll().map { rows -> rows.map(::toProfile) }
 
-    /** Makes sure at least the default "Wallapop" profile exists (first run). */
+    /** Makes sure at least the default "Default" profile exists (first run). */
     suspend fun ensureDefault() {
         if (dao.count() == 0) save(WatermarkProfile(name = DEFAULT_NAME, export = settings.settings.first().exportDefaults))
     }
@@ -70,7 +70,7 @@ class ProfileRepository @Inject constructor(private val dao: ProfileDao, private
     private fun toProfile(row: ProfileEntity): WatermarkProfile = ProfileCodec.fromJson(row.json).copy(id = row.id, name = row.name)
 
     companion object {
-        const val DEFAULT_NAME = "Wallapop"
+        const val DEFAULT_NAME = "Default"
         private const val NO_PROFILE = -1L
     }
 }

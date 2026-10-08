@@ -20,7 +20,7 @@ Profiles (pre-release).
 
 - Save watermark profiles (watermark, both orientation placements, opacity, export settings) and reuse them.
 - Profile sheet in the editor: choose, save changes, save as new, rename, duplicate, delete.
-- The last used profile is preselected; the first-run default profile is called "Wallapop".
+- The last used profile is preselected; the first-run default profile is called "Default".
 - Unsaved changes are marked and confirmed before leaving the editor.
 
 ## [0.2.0]

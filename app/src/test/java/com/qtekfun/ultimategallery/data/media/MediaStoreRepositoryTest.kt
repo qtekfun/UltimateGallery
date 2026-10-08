@@ -41,9 +41,9 @@ class MediaStoreRepositoryTest {
                 path = "DCIM/Camera/",
                 dateTaken = 4_000
             ),
-            FakeRow(4, "d.png", bucketId = 20, bucketName = null, path = "Pictures/Wallapop/", dateAdded = 9),
+            FakeRow(4, "d.png", bucketId = 20, bucketName = null, path = "Pictures/Shop/", dateAdded = 9),
             FakeRow(
-                5, "e.jpg", bucketId = 20, bucketName = "Wallapop", path = "Pictures/Wallapop/",
+                5, "e.jpg", bucketId = 20, bucketName = "Shop", path = "Pictures/Shop/",
                 dateTaken = 100, width = 4000, height = 3000, orientation = 90
             )
         )
@@ -68,10 +68,10 @@ class MediaStoreRepositoryTest {
 
     @Test
     fun folderNameFallsBackToThePathAndNewestIsTheCover() = runBlocking {
-        val wallapop = repo.observeFolders().first().single { it.bucketId == 20L }
-        assertEquals("Wallapop", wallapop.name)
-        assertEquals(9_000L, wallapop.newestDateMs)
-        assertTrue(wallapop.coverUri.toString().endsWith("/4"))
+        val shop = repo.observeFolders().first().single { it.bucketId == 20L }
+        assertEquals("Shop", shop.name)
+        assertEquals(9_000L, shop.newestDateMs)
+        assertTrue(shop.coverUri.toString().endsWith("/4"))
     }
 
     @Test

@@ -67,7 +67,7 @@ class StyledTextExportTest {
     }
 
     private fun profile(style: TextStyleSpec) = WatermarkProfile(
-        source = WatermarkSource.Text("Wallapop", style),
+        source = WatermarkSource.Text("Sample", style),
         opacity = 1f,
         portrait = placement,
         landscape = placement,

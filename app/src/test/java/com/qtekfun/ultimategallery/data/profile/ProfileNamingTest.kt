@@ -12,8 +12,8 @@ class ProfileNamingTest {
 
     @Test
     fun copyNameAddsASuffixAndAvoidsExistingNames() {
-        assertEquals("Wallapop copy", ProfileNaming.copyName("Wallapop", listOf("Wallapop")))
-        assertEquals("Wallapop copy 2", ProfileNaming.copyName("Wallapop", listOf("Wallapop", "wallapop COPY")))
-        assertEquals("Wallapop copy 3", ProfileNaming.copyName("Wallapop", listOf("Wallapop copy", "Wallapop copy 2")))
+        assertEquals("Default copy", ProfileNaming.copyName("Default", listOf("Default")))
+        assertEquals("Default copy 2", ProfileNaming.copyName("Default", listOf("Default", "default COPY")))
+        assertEquals("Default copy 3", ProfileNaming.copyName("Default", listOf("Default copy", "Default copy 2")))
     }
 }

@@ -211,7 +211,7 @@ class ExportPipelineTest {
 
     @Test
     fun normalizesDestinationFolders() {
-        assertEquals("Pictures/Wallapop/", MediaStoreExportSink.normalizeRelativePath("Pictures/Wallapop"))
+        assertEquals("Pictures/UltimateGallery/", MediaStoreExportSink.normalizeRelativePath("Pictures/UltimateGallery"))
         assertEquals("DCIM/Shop/", MediaStoreExportSink.normalizeRelativePath("/DCIM/Shop/"))
         assertEquals("Pictures/Other/", MediaStoreExportSink.normalizeRelativePath("Other"))
         assertEquals("Pictures/", MediaStoreExportSink.normalizeRelativePath(""))

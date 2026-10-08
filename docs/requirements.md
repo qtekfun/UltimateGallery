@@ -6,7 +6,7 @@ Part of the Ultimate family (UltimateDeck, UltimateTasks, UltimateCalendar, Ulti
 
 ## 1. Vision
 
-A refined, folder-based gallery whose flagship feature is **batch watermarking**: pick many photos, place one watermark with your fingers (position, size, rotation), preview it on every photo, export them all. Main use case: product photos for Wallapop. The gallery grows around that flow.
+A refined, folder-based gallery whose flagship feature is **batch watermarking**: pick many photos, place one watermark with your fingers (position, size, rotation), preview it on every photo, export them all. Main use case: product photos for online marketplace listings. The gallery grows around that flow.
 
 Priority: watermark flow first, then the rest of the gallery.
 
@@ -52,11 +52,11 @@ Priority: watermark flow first, then the rest of the gallery.
 - R29. The editor shows the final result faithfully: preview and export use the same rendering code path.
 
 ### 2.6 Profiles (templates)
-- R30. Save named profiles (e.g. "Wallapop") containing: watermark definition, both orientation placements, opacity and export settings.
-- R31. Choose, rename, duplicate and delete profiles. Last used profile is preselected. First-run default profile named "Wallapop".
+- R30. Save named profiles (e.g. "Shop") containing: watermark definition, both orientation placements, opacity and export settings.
+- R31. Choose, rename, duplicate and delete profiles. Last used profile is preselected. First-run default profile named "Default" and a default watermark text equal to the app name.
 
 ### 2.7 Export
-- R32. Originals are never modified. Output goes to a configurable folder in the gallery (default `Pictures/Wallapop`, taken from the profile), visible immediately in the gallery.
+- R32. Originals are never modified. Output goes to a configurable folder in the gallery (default `Pictures/UltimateGallery`, taken from the profile), visible immediately in the gallery.
 - R33. Format JPEG / WebP / PNG, quality slider, optional resize (max long edge), filename pattern (original name + suffix), EXIF handling: keep, or strip location (default), or strip all. Orientation is always applied correctly.
 - R34. Batch export with progress (per-photo and overall), cancel, and a result summary with "Open folder" and "Share all". Runs reliably in the background (WorkManager/foreground service) for large batches.
 - R35. Handles photos of different sizes and orientations, large images (memory-safe decoding and tiled/downscaled rendering), HEIC/AVIF input where the device supports it.

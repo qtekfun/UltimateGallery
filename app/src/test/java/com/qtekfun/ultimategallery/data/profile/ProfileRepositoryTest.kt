@@ -48,10 +48,10 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun firstRunCreatesTheDefaultWallapopProfile() = runBlocking {
+    fun firstRunCreatesTheDefaultDefaultProfile() = runBlocking {
         repo.ensureDefault()
         val all = repo.profiles.first()
-        assertEquals(listOf("Wallapop"), all.map { it.name })
+        assertEquals(listOf("Default"), all.map { it.name })
         repo.ensureDefault()
         assertEquals(1, repo.profiles.first().size)
     }

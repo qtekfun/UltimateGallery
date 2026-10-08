@@ -110,7 +110,7 @@ class WatermarkRendererTest {
 
     @Test
     fun textMarkDrawsPixelsAndHasAWiderThanTallAspect() {
-        val src = WatermarkSource.Text("Wallapop", TextStyleSpec(colorArgb = Color.BLUE, shadowEnabled = false))
+        val src = WatermarkSource.Text("Sample", TextStyleSpec(colorArgb = Color.BLUE, shadowEnabled = false))
         assertTrue(renderer.markAspect(src) > 2f)
         val (bmp, canvas) = canvasOf(400, 200)
         renderer.draw(canvas, 400, 200, src, 1f, Placement(0.5f, 0.5f, 0.5f, 0f))
