@@ -1,0 +1,3 @@
+Old default profile renamed (pre-release).
+- Profiles from early builds get the neutral name, text and folder
+- Your own profiles are untouched

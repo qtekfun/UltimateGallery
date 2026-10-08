@@ -1,0 +1,3 @@
+Perfil por defecto antiguo renombrado (preliminar).
+- Los perfiles de las primeras versiones pasan a nombre, texto y carpeta neutros
+- Tus perfiles propios no se tocan

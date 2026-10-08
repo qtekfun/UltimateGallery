@@ -17,7 +17,20 @@ class ProfileRepository @Inject constructor(private val dao: ProfileDao, private
 
     /** Makes sure at least the default "Default" profile exists (first run). */
     suspend fun ensureDefault() {
+        migrateLegacyDefaults()
         if (dao.count() == 0) save(WatermarkProfile(name = DEFAULT_NAME, export = settings.settings.first().exportDefaults))
+    }
+
+    private var legacyChecked = false
+
+    /** Renames stored profiles that still carry the factory values of early pre-releases (once per process). */
+    private suspend fun migrateLegacyDefaults() {
+        if (legacyChecked) return
+        legacyChecked = true
+        for (profile in profiles.first()) {
+            val migrated = LegacyDefaults.migrate(profile)
+            if (migrated != profile) save(migrated)
+        }
     }
 
     suspend fun get(id: Long): WatermarkProfile? = dao.get(id)?.let(::toProfile)

@@ -115,4 +115,32 @@ class ProfileRepositoryTest {
         // Falls back to a remaining profile once the remembered one is gone.
         assertEquals(a.id, repo.lastUsed().id)
     }
+
+    // The old factory name, as code points so it does not appear in the sources.
+    private val old = String(intArrayOf(87, 97, 108, 108, 97, 112, 111, 112), 0, 8)
+
+    @Test
+    fun profilesStoredByEarlyBuildsAreRenamedToTheNeutralDefaults() = runBlocking {
+        val legacy = WatermarkProfile(
+            name = old,
+            source = WatermarkSource.Text("@" + old.lowercase()),
+            export = com.qtekfun.ultimategallery.domain.watermark.ExportSettings(destination = "Pictures/$old")
+        )
+        val saved = repo.save(legacy)
+        repo.markUsed(saved.id)
+        val loaded = repo.lastUsed()
+        assertEquals("Default", loaded.name)
+        assertEquals(WatermarkSource.Text("UltimateGallery", (loaded.source as WatermarkSource.Text).style), loaded.source)
+        assertEquals("Pictures/UltimateGallery", loaded.export.destination)
+        assertEquals(saved.id, loaded.id)
+        // Stored, not just returned.
+        assertEquals("Default", repo.get(saved.id)!!.name)
+    }
+
+    @Test
+    fun customProfilesAreLeftAlone() = runBlocking {
+        val custom = repo.save(WatermarkProfile(name = "My shop", source = WatermarkSource.Text("@myshop")))
+        repo.markUsed(custom.id)
+        assertEquals(custom, repo.lastUsed())
+    }
 }
