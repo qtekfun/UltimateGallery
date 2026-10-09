@@ -1,0 +1,52 @@
+# Dependabot keeps the Gradle dependencies and the GitHub Actions up to date.
+# Related libraries are grouped so a release train (Compose, Kotlin + KSP, Hilt, AndroidX) lands as one PR.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 6
+    commit-message:
+      prefix: "deps"
+    groups:
+      kotlin-and-ksp:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "com.google.devtools.ksp*"
+      compose:
+        patterns:
+          - "androidx.compose*"
+      hilt:
+        patterns:
+          - "com.google.dagger*"
+          - "androidx.hilt*"
+      androidx:
+        patterns:
+          - "androidx.*"
+        exclude-patterns:
+          - "androidx.compose*"
+          - "androidx.hilt*"
+        update-types:
+          - minor
+          - patch
+      testing:
+        patterns:
+          - "junit*"
+          - "org.robolectric*"
+          - "app.cash.turbine*"
+          - "org.jetbrains.kotlinx:kotlinx-coroutines-test*"
+      lint-and-quality:
+        patterns:
+          - "io.gitlab.arturbosch.detekt*"
+          - "org.jlleitschuh.gradle.ktlint*"
+          - "app.cash.licensee*"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 4
+    commit-message:
+      prefix: "ci"
