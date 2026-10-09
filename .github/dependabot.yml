@@ -8,6 +8,9 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 6
+    # New releases wait one day before being proposed (the default is three), to skip yanked releases.
+    cooldown:
+      default-days: 1
     commit-message:
       prefix: "deps"
     groups:
@@ -48,5 +51,7 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 4
+    cooldown:
+      default-days: 1
     commit-message:
       prefix: "ci"
