@@ -1,0 +1,3 @@
+Actualización de dependencias (preliminar).
+- Dependabot vigila Gradle y Actions cada semana
+- Gradle 9.8.1, plugin de Kotlin 2.4.21
