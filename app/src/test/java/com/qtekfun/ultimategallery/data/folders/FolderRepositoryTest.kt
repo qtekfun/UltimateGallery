@@ -7,6 +7,7 @@ import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import com.qtekfun.ultimategallery.data.db.AppDatabase
+import com.qtekfun.ultimategallery.data.db.DeviceHiddenFolderEntity
 import com.qtekfun.ultimategallery.data.media.MediaRepository
 import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.domain.Folder
@@ -54,7 +55,7 @@ class FolderRepositoryTest {
         db = Room.inMemoryDatabaseBuilder<AppDatabase>(context).setDriver(BundledSQLiteDriver()).build()
         file = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
         settings = SettingsRepository(PreferenceDataStoreFactory.create { file })
-        repo = FolderRepository(media, db.hiddenFolderDao(), settings)
+        repo = FolderRepository(media, db.hiddenFolderDao(), settings, db.deviceHiddenFolderDao())
     }
 
     @After
@@ -101,5 +102,12 @@ class FolderRepositoryTest {
         assertTrue(settings.settings.first().autoHideApps.isEmpty())
         assertEquals(listOf("whatsapp", "screenshots"), repo.detectedAppFolders().first().map { it.entry.id })
         assertEquals(3, repo.visible().first().size)
+    }
+
+    @Test
+    fun foldersHiddenOnTheDeviceAreLeftOutEvenWhileStillIndexed() = runBlocking {
+        db.deviceHiddenFolderDao().insert(DeviceHiddenFolderEntity("/storage/emulated/0/Pictures/Screenshots", "Screenshots", "Pictures/Screenshots/", 1))
+        assertEquals(listOf(camera, whatsapp), repo.visible(includeHidden = true).first())
+        assertEquals(2, repo.all().first().size)
     }
 }

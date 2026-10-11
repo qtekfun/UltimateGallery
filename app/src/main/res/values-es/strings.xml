@@ -139,7 +139,6 @@
   <string name="viewer_close">Cerrar visor</string>
   <string name="app_folder_screenshots">Capturas de pantalla</string>
   <string name="app_folder_screen_recordings">Grabaciones de pantalla</string>
-  <string name="hide_folder">Ocultar carpeta</string>
   <string name="folder_hidden">«%1$s» oculta</string>
   <string name="undo_action">Deshacer</string>
   <string name="show_hidden_folders">Mostrar carpetas ocultas</string>

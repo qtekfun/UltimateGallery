@@ -3,6 +3,8 @@ package com.qtekfun.ultimategallery.feature.gallery
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qtekfun.ultimategallery.data.folders.DetectedAppFolders
+import com.qtekfun.ultimategallery.data.folders.DeviceHideResult
+import com.qtekfun.ultimategallery.data.folders.DeviceHidingRepository
 import com.qtekfun.ultimategallery.data.folders.FolderRepository
 import com.qtekfun.ultimategallery.data.prefs.HomeViewMode
 import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
@@ -11,6 +13,8 @@ import com.qtekfun.ultimategallery.domain.Folder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -28,9 +33,19 @@ sealed interface HomeState {
     data class Loaded(val folders: List<Folder>, val mode: HomeViewMode, val columns: Int) : HomeState
 }
 
+/** The outcome of hiding [folder] on the whole device. */
+data class DeviceHideEvent(val folder: Folder, val result: DeviceHideResult)
+
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val folders: FolderRepository, private val settings: SettingsRepository, private val batch: BatchSelection) :
-    ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val folders: FolderRepository,
+    private val settings: SettingsRepository,
+    private val batch: BatchSelection,
+    private val deviceHiding: DeviceHidingRepository
+) : ViewModel() {
+    private val _deviceHideEvents = Channel<DeviceHideEvent>(Channel.BUFFERED)
+    val deviceHideEvents: Flow<DeviceHideEvent> = _deviceHideEvents.receiveAsFlow()
+
     private val _showHidden = MutableStateFlow(false)
 
     /** Whether hidden folders are listed too (only offered in the watermark picker). */
@@ -61,6 +76,13 @@ class HomeViewModel @Inject constructor(private val folders: FolderRepository, p
 
     fun unhide(bucketId: Long) {
         viewModelScope.launch { folders.unhide(listOf(bucketId)) }
+    }
+
+    fun hasAllFilesAccess(): Boolean = deviceHiding.hasAccess()
+
+    /** Hides [folder] on the whole device with a `.nomedia`; the caller has confirmed it and secured the access. */
+    fun hideOnDevice(folder: Folder) {
+        viewModelScope.launch { _deviceHideEvents.send(DeviceHideEvent(folder, deviceHiding.hide(folder))) }
     }
 
     /** Hides the apps' folders (and future ones of the same apps); nothing is hidden without this call. */

@@ -1,5 +1,6 @@
 package com.qtekfun.ultimategallery.data.folders
 
+import com.qtekfun.ultimategallery.data.db.DeviceHiddenFolderDao
 import com.qtekfun.ultimategallery.data.db.HiddenFolderDao
 import com.qtekfun.ultimategallery.data.db.HiddenFolderEntity
 import com.qtekfun.ultimategallery.data.media.MediaRepository
@@ -18,24 +19,29 @@ data class FolderState(val folder: Folder, val hiddenByUser: Boolean, val hidden
 }
 
 /**
- * Folders as the app shows them. Hiding is app-only: nothing changes on disk and no `.nomedia` is
- * written. A folder is hidden when the user hid it or when its app is in the auto-hide list.
+ * Folders as the app shows them. Hiding here is app-only: nothing changes on disk. A folder is hidden
+ * when the user hid it or when its app is in the auto-hide list. Folders hidden on the device with a
+ * `.nomedia` (see [DeviceHidingRepository]) are left out altogether, even while the media scanner
+ * still lists them.
  */
 @Singleton
 class FolderRepository @Inject constructor(
     private val media: MediaRepository,
     private val hiddenDao: HiddenFolderDao,
-    private val settings: SettingsRepository
+    private val settings: SettingsRepository,
+    private val deviceHiddenDao: DeviceHiddenFolderDao
 ) {
     /** Every folder with its hidden state. */
     fun all(): Flow<List<FolderState>> = combine(
         media.observeFolders(),
         hiddenDao.observeAll(),
-        settings.settings.map { it.autoHideApps }.distinctUntilChanged()
-    ) { folders, hidden, apps ->
+        settings.settings.map { it.autoHideApps }.distinctUntilChanged(),
+        deviceHiddenDao.observeAll().map { rows -> rows.mapTo(HashSet()) { DeviceHidingRules.normalize(it.relativePath) } }
+    ) { folders, hidden, apps, onDevice ->
         val hiddenIds = hidden.mapTo(HashSet()) { it.bucketId }
-        val byApp = AppFolderCatalog.hiddenBy(folders, apps)
-        folders.map { FolderState(it, it.bucketId in hiddenIds, byApp[it.bucketId]) }
+        val shown = folders.filter { f -> f.relativePath == null || DeviceHidingRules.normalize(f.relativePath) !in onDevice }
+        val byApp = AppFolderCatalog.hiddenBy(shown, apps)
+        shown.map { FolderState(it, it.bucketId in hiddenIds, byApp[it.bucketId]) }
     }
 
     /** The folders to show; with [includeHidden] the hidden ones too (the explicit folder list). */

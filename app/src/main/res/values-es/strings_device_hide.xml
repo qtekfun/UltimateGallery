@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hide_folder_in_app">Ocultar en esta app</string>
+  <string name="hide_folder_on_device">Ocultar en todo el dispositivo…</string>
+  <string name="hide_folder_on_device_unavailable">Esta carpeta no se puede ocultar en el dispositivo</string>
+  <string name="hide_on_device_title">¿Ocultar «%1$s» en el dispositivo?</string>
+  <string name="hide_on_device_body">Se añade un archivo oculto .nomedia a la carpeta. Sus fotos y vídeos dejan de aparecer en todas las galerías, también en esta, y las apps de copia en la nube pueden dejar de subirlos. No se borra ni se modifica nada, y puedes volver a mostrar la carpeta desde Ajustes → Carpetas.</string>
+  <string name="hide_on_device_confirm">Ocultar en el dispositivo</string>
+  <string name="all_files_access_title">¿Permitir acceso a todos los archivos?</string>
+  <string name="all_files_access_body">Android solo deja a una app crear o borrar un archivo .nomedia en otra carpeta con «Acceso a todos los archivos». UltimateGallery no lo usa para nada más: nunca lee, modifica ni sube tus archivos.</string>
+  <string name="all_files_access_open">Abrir ajustes</string>
+  <string name="all_files_access_denied">No se ha hecho: no se concedió el acceso a todos los archivos</string>
+  <string name="folder_hidden_on_device">«%1$s» está oculta en el dispositivo</string>
+  <string name="folder_shown_on_device">«%1$s» vuelve a estar visible</string>
+  <string name="device_hide_not_allowed">Esta carpeta no se puede ocultar en el dispositivo</string>
+  <string name="device_hide_not_found">No se encontró la carpeta en el dispositivo</string>
+  <string name="device_hide_failed">No se pudo cambiar el archivo .nomedia de la carpeta</string>
+  <string name="folders_hidden_on_device">Ocultas en el dispositivo</string>
+  <string name="folders_hidden_on_device_note">Estas carpetas tienen un archivo .nomedia y no aparecen en ninguna galería.</string>
+  <string name="folders_in_app">En esta app</string>
+  <string name="folder_show_on_device">Mostrar</string>
+  <string name="folder_show_on_device_label">Volver a mostrar %1$s en el dispositivo</string>
+</resources>

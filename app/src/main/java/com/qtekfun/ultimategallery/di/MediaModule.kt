@@ -1,5 +1,7 @@
 package com.qtekfun.ultimategallery.di
 
+import com.qtekfun.ultimategallery.data.folders.AndroidDeviceStorage
+import com.qtekfun.ultimategallery.data.folders.DeviceStorage
 import com.qtekfun.ultimategallery.data.media.MediaRepository
 import com.qtekfun.ultimategallery.data.media.MediaStoreRepository
 import dagger.Binds
@@ -14,4 +16,7 @@ abstract class MediaModule {
     @Binds
     @Singleton
     abstract fun mediaRepository(impl: MediaStoreRepository): MediaRepository
+
+    @Binds
+    abstract fun deviceStorage(impl: AndroidDeviceStorage): DeviceStorage
 }

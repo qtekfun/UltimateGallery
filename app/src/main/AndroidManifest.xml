@@ -9,6 +9,15 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
+    <!-- Only asked for when the user hides a folder on the whole device: it lets the app create or
+         delete the empty .nomedia marker in that folder. Nothing else is read or written with it. -->
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+    <!-- "Set as wallpaper" from the viewer. A normal permission, granted at install. -->
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+
     <!-- Batch export runs as a foreground data-sync service with a progress notification. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
