@@ -11,7 +11,8 @@ UltimateGallery es una galería elegante basada en carpetas cuya función estrel
 <b>Galería</b>
 • Carpetas en cuadrícula o lista, pellizca para cambiar el tamaño, cabeceras por fecha, selección por arrastre
 • Visor con zoom, transiciones de elemento compartido, tira de miniaturas y vídeo
-• Oculta carpetas solo dentro de la app (no se cambia nada en el dispositivo), con atajo para WhatsApp, Telegram y capturas
+• Oculta carpetas solo dentro de la app (no se cambia nada en el dispositivo), con atajo para WhatsApp, Telegram y capturas, o en todo el dispositivo con un archivo .nomedia
+• Pon cualquier foto como fondo de la pantalla de inicio o de bloqueo
 • Mover, copiar, renombrar, compartir y eliminar (papelera del sistema), detalles y EXIF
 • Recorta, gira, voltea y endereza con animaciones fluidas; giro JPEG sin pérdida
 

@@ -64,3 +64,8 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] F-Droid metadata (`fastlane/`), reproducible build check, no proprietary dependencies.
 - [ ] Screenshots and store listing text in English and Spanish. (Listing text is done; screenshots must be taken on a device and added under `fastlane/metadata/android/<locale>/images/phoneScreenshots/`.)
 - [x] Tag pre-releases on GitHub (0.1.0 to 0.9.0 and 1.0.0-rc1); 1.0 after on-device testing; F-Droid submission after 1.0.
+
+## Phase 11 — Wallpaper and device hiding (after 1.0.0-rc9)
+- [x] Hide folders on the whole device with `.nomedia` (all-files access, confirmation, Settings → Folders section to show them again); Room migration 2→3; tests.
+- [x] Set as wallpaper from the viewer (framing screen, home/lock/both, decode only the crop) and "Use as…"; geometry tests.
+- [ ] Verify on a device: MediaStore refresh after hiding/showing, wallpaper result on home and lock screens. Known gaps are tracked in `requirements.md` §4.1.
