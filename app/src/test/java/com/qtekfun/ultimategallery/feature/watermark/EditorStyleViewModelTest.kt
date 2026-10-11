@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
@@ -28,6 +29,7 @@ import com.qtekfun.ultimategallery.render.WatermarkRenderer
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -92,6 +94,8 @@ class EditorStyleViewModelTest {
 
     @After
     fun tearDown() {
+        // Stop the view model's Room collectors before the database closes under them.
+        if (::vm.isInitialized) vm.viewModelScope.cancel()
         Dispatchers.resetMain()
         db.close()
         settingsFile.delete()
