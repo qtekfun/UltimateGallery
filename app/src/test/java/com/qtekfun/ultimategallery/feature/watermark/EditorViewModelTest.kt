@@ -1,15 +1,9 @@
 package com.qtekfun.ultimategallery.feature.watermark
 
 import android.content.Context
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import androidx.room3.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
-import com.qtekfun.ultimategallery.data.db.AppDatabase
 import com.qtekfun.ultimategallery.data.media.MediaRepository
-import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.data.profile.ProfileRepository
 import com.qtekfun.ultimategallery.domain.BatchSelection
 import com.qtekfun.ultimategallery.domain.Folder
@@ -20,14 +14,10 @@ import com.qtekfun.ultimategallery.domain.watermark.FontIds
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
-import java.io.File
+import com.qtekfun.ultimategallery.testing.TestStores
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -36,6 +26,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -44,10 +35,9 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class EditorViewModelTest {
-    private lateinit var db: AppDatabase
-    private lateinit var file: File
-    private val dispatcher = StandardTestDispatcher()
-    private val viewModels = mutableListOf<WatermarkEditorViewModel>()
+    @get:Rule val stores = TestStores()
+
+    private val dispatcher get() = stores.dispatcher
 
     private val media = object : MediaRepository {
         override fun observeFolders(): Flow<List<Folder>> = flowOf(emptyList())
@@ -67,33 +57,27 @@ class EditorViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder<AppDatabase>(context).setDriver(BundledSQLiteDriver()).build()
-        file = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
     }
 
     @After
     fun tearDown() {
-        // Stop the view models' Room collectors before the database closes under them.
-        viewModels.forEach { it.viewModelScope.cancel() }
         Dispatchers.resetMain()
-        db.close()
-        file.delete()
     }
 
     private fun viewModel(): WatermarkEditorViewModel {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        val settings = SettingsRepository(PreferenceDataStoreFactory.create { file })
-        return WatermarkEditorViewModel(
-            SavedStateHandle(),
-            media,
-            BatchSelection(),
-            LogoImporter(context),
-            exporter,
-            ProfileRepository(db.profileDao(), settings),
-            WatermarkRenderer { null },
-            FakeFontLibrary()
-        ).also { viewModels += it }
+        return stores.track(
+            WatermarkEditorViewModel(
+                SavedStateHandle(),
+                media,
+                BatchSelection(),
+                LogoImporter(context),
+                exporter,
+                ProfileRepository(stores.database().profileDao(), stores.settings()),
+                WatermarkRenderer { null },
+                FakeFontLibrary()
+            )
+        )
     }
 
     @Test

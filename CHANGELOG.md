@@ -3,6 +3,112 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [1.0.0-rc10]
+
+Wallpaper and device-wide hiding (pre-release).
+
+- Set a photo as the home and/or lock screen wallpaper from the viewer: frame it with your fingers in a screen-shaped frame, with an optional lock-screen clock preview. Only the visible part is decoded, at screen size.
+- "Use as…" hands a photo to other apps (wallpaper pickers, contact photos…).
+- Hide a folder on the whole device with a `.nomedia` file, after a confirmation. All files access is asked for only then; Settings → Folders lists those folders and can show them again. Hiding inside the app stays the default.
+
+## [1.0.0-rc9]
+
+Dependency updates (pre-release).
+
+- Dependabot watches Gradle and GitHub Actions weekly.
+- Gradle 9.8.1, Kotlin Compose plugin 2.4.21.
+
+## [1.0.0-rc8]
+
+Old default profile renamed (pre-release).
+
+- Profiles stored by early builds get the neutral default name, text and folder.
+- Your own profiles are left untouched.
+
+## [1.0.0-rc7]
+
+Fixes from phone testing (pre-release).
+
+- The video rotation preview fills the screen.
+- The viewer refreshes after overwriting a video.
+- Folders without a name get a proper one.
+
+## [1.0.0-rc6]
+
+Neutral defaults (pre-release).
+
+- The default watermark text is the app name.
+- The default profile is called "Default" and exports to `Pictures/UltimateGallery`.
+- Docs and store listing are service-neutral.
+
+## [1.0.0-rc5]
+
+Font picker (pre-release).
+
+- Pick fonts from a list where each one is shown in its own typeface.
+- Six free fonts included; import your own `.ttf`/`.otf`.
+- A single Italic button replaces the old font chips.
+
+## [1.0.0-rc4]
+
+Rotate videos (pre-release).
+
+- Rotate button for videos with an animated preview.
+- Lossless: only the rotation flag changes (MP4/MOV/3GP).
+- Overwrite the original or save a copy.
+
+## [1.0.0-rc3]
+
+Signed with the release key (pre-release).
+
+- Uninstall earlier builds once; from now on updates install over each other.
+- Italic works on every font.
+
+## [1.0.0-rc2]
+
+Fixes (pre-release).
+
+- Crop and rotate: the photo and the crop frame now match.
+- Watermark text styles work: weight, fonts and a live sample.
+- Viewer: the info sheet no longer drops to half height.
+- Haptic feedback is off by default (Settings → Appearance).
+
+## [1.0.0-rc1]
+
+First release candidate (pre-release).
+
+- Feature-complete gallery with batch watermarking.
+- Themed launcher icon and store listing.
+- Reproducible build, fully offline.
+- Awaiting on-device testing before 1.0.
+
+## [0.9.0]
+
+Settings and polish (pre-release).
+
+- Settings: appearance, folders, editing, export defaults, about.
+- Theme and dynamic color options.
+- Two-pane editor and more grid columns on tablets.
+- Haptics and larger touch targets.
+
+## [0.6.0]
+
+Crop and rotate (pre-release).
+
+- Crop with free and fixed aspect ratios, rotate 90°, flip and a straighten dial.
+- Spring-animated rotation and flip.
+- Save behavior: ask, save a copy or overwrite.
+- Lossless JPEG rotation through the EXIF orientation.
+
+## [0.5.0]
+
+Gallery completion (pre-release).
+
+- Pinch to resize the folder and photo grids.
+- Hide folders in the app (with undo) and an app folders list.
+- Move, copy, rename, delete (system trash) and share.
+- Share or save a copy without EXIF.
+
 ## [0.4.0]
 
 Viewer (pre-release).

@@ -1,7 +1,6 @@
 package com.qtekfun.ultimategallery.feature.edit
 
 import android.net.Uri
-import android.os.Looper
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -9,7 +8,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.lifecycle.SavedStateHandle
 import com.qtekfun.ultimategallery.data.edit.CropRotateSpec
 import com.qtekfun.ultimategallery.data.edit.EditSaver
@@ -19,20 +17,22 @@ import com.qtekfun.ultimategallery.data.prefs.SaveBehavior
 import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.domain.Folder
 import com.qtekfun.ultimategallery.domain.MediaItem
-import java.io.File
+import com.qtekfun.ultimategallery.testing.TestStores
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
@@ -42,7 +42,8 @@ import org.robolectric.annotation.GraphicsMode
 class CropRotateScreenTest {
     @get:Rule val rule = createComposeRule()
 
-    @get:Rule val folder = TemporaryFolder()
+    /** Unconfined: the view model's and DataStore's work completes inside the click that starts it. */
+    @get:Rule val stores = TestStores(UnconfinedTestDispatcher())
 
     private val item = MediaItem(
         id = 5,
@@ -85,8 +86,9 @@ class CropRotateScreenTest {
     private var savedUri: Uri? = null
 
     private fun show(behavior: SaveBehavior) {
-        settings = SettingsRepository(PreferenceDataStoreFactory.create { File(folder.root, "prefs.preferences_pb") })
-        runBlocking { settings.setSaveBehavior(behavior) }
+        Dispatchers.setMain(stores.dispatcher)
+        settings = stores.settings()
+        stores.complete { settings.setSaveBehavior(behavior) }
         viewModel = CropRotateViewModel(SavedStateHandle(mapOf("mediaId" to 5L)), media, settings, saver)
         rule.setContent {
             MaterialTheme { CropRotateScreen(onBack = {}, onSaved = { savedUri = it }, viewModel = viewModel) }
@@ -141,7 +143,7 @@ class CropRotateScreenTest {
         show(SaveBehavior.COPY)
         rule.onNodeWithContentDescription("Rotate right").performClick()
         rule.onNodeWithText("Save").performClick()
-        awaitUntil { saver.behavior != null && savedUri != null }
+        settle { saver.behavior != null && savedUri != null }
         assertEquals(SaveBehavior.COPY, saver.behavior)
         assertEquals(1, saver.spec?.turns)
         assertNotNull(savedUri)
@@ -152,28 +154,21 @@ class CropRotateScreenTest {
         show(SaveBehavior.ASK)
         rule.onNodeWithContentDescription("Rotate right").performClick()
         rule.onNodeWithText("Save").performClick()
-        awaitUntil { viewModel.state.value.askingBehavior }
+        settle { viewModel.state.value.askingBehavior }
         rule.onNodeWithText("Overwrite original").assertExists()
         rule.onNodeWithText("Remember my choice").performClick()
         rule.onNodeWithText("Save a copy").performClick()
-        awaitUntil { saver.behavior != null && savedUri != null }
+        settle { saver.behavior != null && savedUri != null }
         assertEquals(SaveBehavior.COPY, saver.behavior)
-        assertEquals(SaveBehavior.COPY, runBlocking { settings.settings.first().saveBehavior })
+        assertEquals(SaveBehavior.COPY, stores.complete { settings.settings.first().saveBehavior })
     }
 
-    /** Waits for work done off the main thread (DataStore) and lets its results reach the main looper. */
-    private fun awaitUntil(condition: () -> Boolean) {
-        val deadline = System.currentTimeMillis() + TIMEOUT_MS
-        while (!condition()) {
-            check(System.currentTimeMillis() < deadline) { "Condition not met in time" }
-            shadowOf(Looper.getMainLooper()).idle()
-            rule.waitForIdle()
-            Thread.sleep(POLL_MS)
-        }
+    /** Lets the results of the view model reach the screen, then checks they did. */
+    private fun settle(condition: () -> Boolean) {
+        rule.waitForIdle()
+        assertTrue("condition not met", condition())
     }
 
-    private companion object {
-        const val POLL_MS = 20L
-        const val TIMEOUT_MS = 5_000L
-    }
+    @After
+    fun resetMain() = Dispatchers.resetMain()
 }

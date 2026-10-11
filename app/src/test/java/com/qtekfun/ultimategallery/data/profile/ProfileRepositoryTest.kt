@@ -1,24 +1,19 @@
 package com.qtekfun.ultimategallery.data.profile
 
-import android.content.Context
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.room3.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import androidx.test.core.app.ApplicationProvider
 import com.qtekfun.ultimategallery.data.db.AppDatabase
 import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.domain.watermark.Placement
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
-import java.io.File
+import com.qtekfun.ultimategallery.testing.TestStores
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -27,28 +22,21 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class ProfileRepositoryTest {
+    @get:Rule val stores = TestStores()
+
     private lateinit var db: AppDatabase
     private lateinit var repo: ProfileRepository
     private lateinit var settings: SettingsRepository
-    private lateinit var file: File
 
     @Before
     fun setUp() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder<AppDatabase>(context).setDriver(BundledSQLiteDriver()).build()
-        file = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
-        settings = SettingsRepository(PreferenceDataStoreFactory.create { file })
+        db = stores.database()
+        settings = stores.settings()
         repo = ProfileRepository(db.profileDao(), settings)
     }
 
-    @After
-    fun tearDown() {
-        db.close()
-        file.delete()
-    }
-
     @Test
-    fun firstRunCreatesTheDefaultDefaultProfile() = runBlocking {
+    fun firstRunCreatesTheDefaultDefaultProfile() = runTest(stores.dispatcher) {
         repo.ensureDefault()
         val all = repo.profiles.first()
         assertEquals(listOf("Default"), all.map { it.name })
@@ -57,7 +45,7 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun saveRoundTripsEveryPartOfTheProfile() = runBlocking {
+    fun saveRoundTripsEveryPartOfTheProfile() = runTest(stores.dispatcher) {
         val original = WatermarkProfile(
             name = "Shop",
             source = WatermarkSource.Tiled(WatermarkSource.Text("SOLD"), spacing = 1.2f),
@@ -72,7 +60,7 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun savingAnExistingProfileUpdatesIt() = runBlocking {
+    fun savingAnExistingProfileUpdatesIt() = runTest(stores.dispatcher) {
         val saved = repo.save(WatermarkProfile(name = "A"))
         repo.save(saved.copy(opacity = 0.1f))
         val all = repo.profiles.first()
@@ -81,7 +69,7 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun renameDuplicateAndSaveAs() = runBlocking {
+    fun renameDuplicateAndSaveAs() = runTest(stores.dispatcher) {
         val a = repo.save(WatermarkProfile(name = "A"))
         repo.rename(a.id, "  Renamed  ")
         assertEquals("Renamed", repo.get(a.id)!!.name)
@@ -94,7 +82,7 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun theLastProfileCannotBeDeleted() = runBlocking {
+    fun theLastProfileCannotBeDeleted() = runTest(stores.dispatcher) {
         val a = repo.save(WatermarkProfile(name = "A"))
         assertFalse(repo.delete(a.id))
         val b = repo.save(WatermarkProfile(name = "B"))
@@ -104,7 +92,7 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun theLastUsedProfileIsPreselected() = runBlocking {
+    fun theLastUsedProfileIsPreselected() = runTest(stores.dispatcher) {
         val a = repo.save(WatermarkProfile(name = "A"))
         val b = repo.save(WatermarkProfile(name = "B"))
         repo.markUsed(a.id)
@@ -120,7 +108,7 @@ class ProfileRepositoryTest {
     private val old = String(intArrayOf(87, 97, 108, 108, 97, 112, 111, 112), 0, 8)
 
     @Test
-    fun profilesStoredByEarlyBuildsAreRenamedToTheNeutralDefaults() = runBlocking {
+    fun profilesStoredByEarlyBuildsAreRenamedToTheNeutralDefaults() = runTest(stores.dispatcher) {
         val legacy = WatermarkProfile(
             name = old,
             source = WatermarkSource.Text("@" + old.lowercase()),
@@ -138,7 +126,7 @@ class ProfileRepositoryTest {
     }
 
     @Test
-    fun customProfilesAreLeftAlone() = runBlocking {
+    fun customProfilesAreLeftAlone() = runTest(stores.dispatcher) {
         val custom = repo.save(WatermarkProfile(name = "My shop", source = WatermarkSource.Text("@myshop")))
         repo.markUsed(custom.id)
         assertEquals(custom, repo.lastUsed())

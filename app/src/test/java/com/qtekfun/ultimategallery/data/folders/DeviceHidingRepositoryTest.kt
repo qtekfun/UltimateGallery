@@ -1,22 +1,18 @@
 package com.qtekfun.ultimategallery.data.folders
 
-import android.content.Context
 import android.net.Uri
-import androidx.room3.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import androidx.test.core.app.ApplicationProvider
-import com.qtekfun.ultimategallery.data.db.AppDatabase
 import com.qtekfun.ultimategallery.domain.Folder
+import com.qtekfun.ultimategallery.testing.TestStores
 import java.io.File
-import java.nio.file.Files
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -37,7 +33,10 @@ class DeviceHidingRepositoryTest {
         }
     }
 
-    private lateinit var db: AppDatabase
+    @get:Rule val stores = TestStores()
+
+    @get:Rule val temp = TemporaryFolder()
+
     private lateinit var root: File
     private lateinit var trips: File
     private lateinit var storage: FakeStorage
@@ -47,23 +46,15 @@ class DeviceHidingRepositoryTest {
 
     @Before
     fun setUp() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder<AppDatabase>(context).setDriver(BundledSQLiteDriver()).build()
-        root = Files.createTempDirectory("volume").toFile()
+        root = temp.newFolder("volume")
         trips = File(root, "Pictures/Trips").apply { mkdirs() }
         File(trips, "photo.jpg").writeText("not really a photo")
         storage = FakeStorage(mapOf(7L to trips))
-        repo = DeviceHidingRepository(db.deviceHiddenFolderDao(), storage)
-    }
-
-    @After
-    fun tearDown() {
-        db.close()
-        root.deleteRecursively()
+        repo = DeviceHidingRepository(stores.database().deviceHiddenFolderDao(), storage)
     }
 
     @Test
-    fun hidingWritesAnEmptyNomediaAndRemembersTheFolder() = runBlocking {
+    fun hidingWritesAnEmptyNomediaAndRemembersTheFolder() = runTest(stores.dispatcher) {
         assertEquals(DeviceHideResult.DONE, repo.hide(folder, now = 42))
         val marker = File(trips, ".nomedia")
         assertTrue(marker.isFile)
@@ -76,7 +67,7 @@ class DeviceHidingRepositoryTest {
     }
 
     @Test
-    fun showingDeletesOnlyTheMarker() = runBlocking {
+    fun showingDeletesOnlyTheMarker() = runTest(stores.dispatcher) {
         repo.hide(folder)
         assertEquals(DeviceHideResult.DONE, repo.show(trips.path))
         assertFalse(File(trips, ".nomedia").exists())
@@ -85,14 +76,14 @@ class DeviceHidingRepositoryTest {
     }
 
     @Test
-    fun anExistingNomediaIsKept() = runBlocking {
+    fun anExistingNomediaIsKept() = runTest(stores.dispatcher) {
         File(trips, ".nomedia").writeText("")
         assertEquals(DeviceHideResult.DONE, repo.hide(folder))
         assertEquals(1, repo.observe().first().size)
     }
 
     @Test
-    fun nothingHappensWithoutAccess() = runBlocking {
+    fun nothingHappensWithoutAccess() = runTest(stores.dispatcher) {
         storage.access = false
         assertEquals(DeviceHideResult.NO_ACCESS, repo.hide(folder))
         assertFalse(File(trips, ".nomedia").exists())
@@ -100,17 +91,17 @@ class DeviceHidingRepositoryTest {
     }
 
     @Test
-    fun standardTopLevelFoldersAreRefused() = runBlocking {
+    fun standardTopLevelFoldersAreRefused() = runTest(stores.dispatcher) {
         assertEquals(DeviceHideResult.NOT_ALLOWED, repo.hide(folder.copy(relativePath = "DCIM/")))
     }
 
     @Test
-    fun anUnknownFolderIsReported() = runBlocking {
+    fun anUnknownFolderIsReported() = runTest(stores.dispatcher) {
         assertEquals(DeviceHideResult.NOT_FOUND, repo.hide(folder.copy(bucketId = 99)))
     }
 
     @Test
-    fun aFolderThatWasDeletedIsForgottenOnShow() = runBlocking {
+    fun aFolderThatWasDeletedIsForgottenOnShow() = runTest(stores.dispatcher) {
         repo.hide(folder)
         trips.deleteRecursively()
         assertEquals(DeviceHideResult.DONE, repo.show(trips.path))

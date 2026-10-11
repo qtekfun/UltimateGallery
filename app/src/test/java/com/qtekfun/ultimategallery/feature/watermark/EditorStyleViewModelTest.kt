@@ -2,15 +2,9 @@ package com.qtekfun.ultimategallery.feature.watermark
 
 import android.content.Context
 import android.net.Uri
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import androidx.room3.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
-import com.qtekfun.ultimategallery.data.db.AppDatabase
 import com.qtekfun.ultimategallery.data.media.MediaRepository
-import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.data.profile.ProfileCodec
 import com.qtekfun.ultimategallery.data.profile.ProfileRepository
 import com.qtekfun.ultimategallery.domain.BatchSelection
@@ -26,14 +20,11 @@ import com.qtekfun.ultimategallery.domain.watermark.TextStyleSpec
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkProfile
 import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
-import java.io.File
+import com.qtekfun.ultimategallery.testing.TestStores
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -41,6 +32,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -50,10 +42,8 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class EditorStyleViewModelTest {
-    private val dispatcher = StandardTestDispatcher()
-    private val scope = TestScope(dispatcher)
-    private lateinit var db: AppDatabase
-    private lateinit var settingsFile: File
+    @get:Rule val stores = TestStores()
+
     private lateinit var repo: ProfileRepository
     private lateinit var vm: WatermarkEditorViewModel
     private val fonts = FakeFontLibrary()
@@ -83,31 +73,21 @@ class EditorStyleViewModelTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(dispatcher)
+        Dispatchers.setMain(stores.dispatcher)
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder<AppDatabase>(context).setDriver(BundledSQLiteDriver()).build()
-        settingsFile = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
-        repo = ProfileRepository(db.profileDao(), SettingsRepository(PreferenceDataStoreFactory.create { settingsFile }))
+        repo = ProfileRepository(stores.database().profileDao(), stores.settings())
         val batch = BatchSelection().apply { set(listOf(1L)) }
-        vm = WatermarkEditorViewModel(SavedStateHandle(), media, batch, LogoImporter(context), exporter, repo, WatermarkRenderer { null }, fonts)
+        vm = stores.track(WatermarkEditorViewModel(SavedStateHandle(), media, batch, LogoImporter(context), exporter, repo, WatermarkRenderer { null }, fonts))
     }
 
     @After
     fun tearDown() {
-        // Stop the view model's Room collectors before the database closes under them.
-        if (::vm.isInitialized) vm.viewModelScope.cancel()
         Dispatchers.resetMain()
-        db.close()
-        settingsFile.delete()
     }
 
-    /** Runs queued coroutines until [done] holds; Room does its IO on its own threads, so poll briefly. */
+    /** Runs all queued work (view model, Room and DataStore share one test dispatcher) and checks it reached [done]. */
     private fun settle(done: () -> Boolean = { vm.state.value.savedProfile != null && !vm.state.value.loading }) {
-        repeat(WAIT_ROUNDS) {
-            scope.testScheduler.advanceUntilIdle()
-            if (done()) return
-            Thread.sleep(POLL_MS)
-        }
+        stores.drain()
         assertTrue("view model did not settle", done())
     }
 
@@ -149,9 +129,7 @@ class EditorStyleViewModelTest {
     @Test
     fun loadedProfileStyleIsKeptWhenSwitchingMarkType() {
         settle()
-        val stored = kotlinx.coroutines.runBlocking {
-            repo.saveAs(WatermarkProfile(source = WatermarkSource.Text("Shop", styleA)), "Styled")
-        }
+        val stored = stores.complete { repo.saveAs(WatermarkProfile(source = WatermarkSource.Text("Shop", styleA)), "Styled") }
         vm.selectProfile(stored.id)
         settle { (vm.state.value.profile.source as? WatermarkSource.Text)?.style == styleA }
         vm.setType(MarkType.TILED)
@@ -220,9 +198,4 @@ class EditorStyleViewModelTest {
     }
 
     private fun assertNotEquals0(id: Long) = assertTrue("profile id should come from the store", id != 0L)
-
-    private companion object {
-        const val WAIT_ROUNDS = 200
-        const val POLL_MS = 10L
-    }
 }
