@@ -1,0 +1,4 @@
+Wallpaper and device-wide hiding (pre-release).
+- Set a photo as the home and/or lock screen wallpaper: frame it with your fingers, optional clock preview
+- "Use as..." hands a photo to other apps
+- Hide a folder on the whole device with a .nomedia file (asks for all files access only then); show it again from Settings > Folders

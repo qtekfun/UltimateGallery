@@ -1,0 +1,4 @@
+Fondo de pantalla y ocultado en todo el dispositivo (preliminar).
+- Pon una foto como fondo de inicio y/o bloqueo: encuádrala con los dedos, con vista previa del reloj
+- «Usar como...» pasa una foto a otras apps
+- Oculta una carpeta en todo el dispositivo con un archivo .nomedia (solo entonces pide acceso a todos los archivos); vuelve a mostrarla desde Ajustes > Carpetas
