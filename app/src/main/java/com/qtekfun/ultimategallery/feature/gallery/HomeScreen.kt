@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.FolderOff
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Videocam
@@ -56,6 +57,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +69,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -78,6 +81,7 @@ import com.qtekfun.ultimategallery.core.ui.MediaThumb
 import com.qtekfun.ultimategallery.data.folders.AppFolderCatalog
 import com.qtekfun.ultimategallery.data.folders.AppFolderEntry
 import com.qtekfun.ultimategallery.data.folders.DetectedAppFolders
+import com.qtekfun.ultimategallery.data.folders.DeviceHidingRules
 import com.qtekfun.ultimategallery.data.media.MediaAccessLevel
 import com.qtekfun.ultimategallery.data.prefs.HomeViewMode
 import com.qtekfun.ultimategallery.domain.Folder
@@ -121,6 +125,30 @@ fun HomeScreen(
             if (result == SnackbarResult.ActionPerformed) viewModel.unhide(folder.bucketId)
         }
     }
+    val resources = LocalResources.current
+    var confirmDeviceHide by remember { mutableStateOf<Folder?>(null) }
+    val withAllFilesAccess = rememberAllFilesAccessGate(viewModel::hasAllFilesAccess) {
+        scope.launch { snackbar.showSnackbar(resources.getString(R.string.all_files_access_denied)) }
+    }
+    LaunchedEffect(viewModel) {
+        viewModel.deviceHideEvents.collect { event ->
+            val message = event.result.errorMessage()?.let(resources::getString)
+                ?: resources.getString(R.string.folder_hidden_on_device, event.folder.name)
+            snackbar.currentSnackbarData?.dismiss()
+            snackbar.showSnackbar(message, duration = SnackbarDuration.Long)
+        }
+    }
+    confirmDeviceHide?.let { folder ->
+        HideOnDeviceDialog(
+            folderName = folder.name,
+            onConfirm = {
+                confirmDeviceHide = null
+                withAllFilesAccess { viewModel.hideOnDevice(folder) }
+            },
+            onDismiss = { confirmDeviceHide = null }
+        )
+    }
+    val onHideOnDevice: (Folder) -> Unit = { confirmDeviceHide = it }
     if (!pickMode) {
         offer?.let { AppFoldersOfferSheet(it, onApply = viewModel::applyAppFolders, onDismiss = viewModel::dismissAppFolderOffer) }
     }
@@ -187,7 +215,13 @@ fun HomeScreen(
             if (accessLevel == MediaAccessLevel.PARTIAL) PartialAccessBanner(accessActions)
             when (val s = state) {
                 HomeState.Loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
-                is HomeState.Loaded -> FolderContent(s, padding.calculateBottomPadding(), onOpenFolder, if (pickMode) null else onHide, viewModel::setColumns)
+                is HomeState.Loaded -> FolderContent(
+                    s,
+                    padding.calculateBottomPadding(),
+                    onOpenFolder,
+                    if (pickMode) null else FolderHideActions(onHide, onHideOnDevice),
+                    viewModel::setColumns
+                )
             }
         }
     }
@@ -198,7 +232,7 @@ private fun FolderContent(
     state: HomeState.Loaded,
     bottomInset: androidx.compose.ui.unit.Dp,
     onOpen: (Folder) -> Unit,
-    onHide: ((Folder) -> Unit)?,
+    hide: FolderHideActions?,
     onColumnsChange: (Int) -> Unit
 ) {
     if (state.folders.isEmpty()) {
@@ -216,17 +250,17 @@ private fun FolderContent(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(state.folders, key = { it.bucketId }) { FolderCard(it, onOpen, onHide = onHide) }
+            items(state.folders, key = { it.bucketId }) { FolderCard(it, onOpen, hide = hide) }
         }
     } else {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = contentPadding) {
-            items(state.folders, key = { it.bucketId }) { FolderRow(it, onOpen, onHide = onHide) }
+            items(state.folders, key = { it.bucketId }) { FolderRow(it, onOpen, hide = hide) }
         }
     }
 }
 
 @Composable
-fun FolderCard(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Modifier, onHide: ((Folder) -> Unit)? = null) {
+fun FolderCard(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Modifier, hide: FolderHideActions? = null) {
     var menu by remember { mutableStateOf(false) }
     val shape = MaterialTheme.shapes.extraLarge
     Box(
@@ -234,10 +268,10 @@ fun FolderCard(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = M
             .fillMaxWidth()
             .aspectRatio(1f)
             .clip(shape)
-            .combinedClickable(onClick = { onClick(folder) }, onLongClick = onHide?.let { { menu = true } })
+            .combinedClickable(onClick = { onClick(folder) }, onLongClick = hide?.let { { menu = true } })
     ) {
         MediaThumb(folder.coverUri, contentDescription = null, modifier = Modifier.fillMaxSize())
-        HideMenu(menu, onDismiss = { menu = false }) { onHide?.invoke(folder) }
+        hide?.let { HideMenu(folder, it, menu, onDismiss = { menu = false }) }
         Box(
             Modifier
                 .align(Alignment.BottomCenter)
@@ -272,13 +306,13 @@ fun FolderCard(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = M
 }
 
 @Composable
-fun FolderRow(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Modifier, onHide: ((Folder) -> Unit)? = null) {
+fun FolderRow(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Modifier, hide: FolderHideActions? = null) {
     var menu by remember { mutableStateOf(false) }
     Row(
         modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
-            .combinedClickable(onClick = { onClick(folder) }, onLongClick = onHide?.let { { menu = true } })
+            .combinedClickable(onClick = { onClick(folder) }, onLongClick = hide?.let { { menu = true } })
             .padding(vertical = 6.dp, horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -301,19 +335,32 @@ fun FolderRow(folder: Folder, onClick: (Folder) -> Unit, modifier: Modifier = Mo
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        HideMenu(menu, onDismiss = { menu = false }) { onHide?.invoke(folder) }
+        hide?.let { HideMenu(folder, it, menu, onDismiss = { menu = false }) }
     }
 }
 
+/** What a long press on a folder offers: hiding it in this app, or on the whole device. */
+class FolderHideActions(val inApp: (Folder) -> Unit, val onDevice: (Folder) -> Unit)
+
 @Composable
-private fun HideMenu(expanded: Boolean, onDismiss: () -> Unit, onHide: () -> Unit) {
+private fun HideMenu(folder: Folder, hide: FolderHideActions, expanded: Boolean, onDismiss: () -> Unit) {
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
         DropdownMenuItem(
-            text = { Text(stringResource(R.string.hide_folder)) },
+            text = { Text(stringResource(R.string.hide_folder_in_app)) },
             leadingIcon = { Icon(Icons.Outlined.VisibilityOff, contentDescription = null) },
             onClick = {
                 onDismiss()
-                onHide()
+                hide.inApp(folder)
+            }
+        )
+        val allowed = DeviceHidingRules.canHide(folder.relativePath)
+        DropdownMenuItem(
+            text = { Text(stringResource(if (allowed) R.string.hide_folder_on_device else R.string.hide_folder_on_device_unavailable)) },
+            leadingIcon = { Icon(Icons.Outlined.FolderOff, contentDescription = null) },
+            enabled = allowed,
+            onClick = {
+                onDismiss()
+                hide.onDevice(folder)
             }
         )
     }

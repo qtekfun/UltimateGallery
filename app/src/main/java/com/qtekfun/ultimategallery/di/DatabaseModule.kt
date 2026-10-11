@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import com.qtekfun.ultimategallery.data.db.AppDatabase
+import com.qtekfun.ultimategallery.data.db.DeviceHiddenFolderDao
 import com.qtekfun.ultimategallery.data.db.HiddenFolderDao
 import com.qtekfun.ultimategallery.data.db.ProfileDao
 import dagger.Module
@@ -19,7 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 object DatabaseModule {
     private const val DATABASE_NAME = "ultimategallery.db"
 
-    // The spread copies a one-element array once, when the database is created.
+    // The spread copies a small array once, when the database is created.
     @Suppress("SpreadOperator")
     @Provides
     @Singleton
@@ -35,4 +36,7 @@ object DatabaseModule {
 
     @Provides
     fun hiddenFolderDao(db: AppDatabase): HiddenFolderDao = db.hiddenFolderDao()
+
+    @Provides
+    fun deviceHiddenFolderDao(db: AppDatabase): DeviceHiddenFolderDao = db.deviceHiddenFolderDao()
 }

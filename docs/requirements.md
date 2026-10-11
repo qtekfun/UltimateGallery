@@ -24,9 +24,12 @@ Priority: watermark flow first, then the rest of the gallery.
 - R7. Folder screen shows photos and videos in a grid, newest first, with date headers.
 - R8. Multi-selection: long press to start, drag to select ranges, select-all. Selection action bar: **Watermark** (primary), Share, Move, Copy, Delete, Info; Rename when one item is selected.
 
-### 2.3 Hidden folders (app-only)
-- R9. Hiding a folder only removes it from this app's views. Nothing is changed on disk, no `.nomedia`.
-- R10. Long press a folder → **Hide**. A snackbar offers Undo.
+### 2.3 Hidden folders
+- R9. Two ways to hide a folder:
+  - **In this app** (default): removes it from this app's views only. Nothing is changed on disk.
+  - **On the whole device** (R9b): an empty `.nomedia` file is created in the folder, so every gallery app (this one included) stops showing it. Only offered on explicit request, after a confirmation that explains the effect (other galleries, cloud backup apps). Needs "All files access" (`MANAGE_EXTERNAL_STORAGE`), asked for only at that moment with an explanation; nothing else uses it. Originals are never touched: only the marker is created or deleted.
+- R9b. Folders hidden on the device are listed in Settings → Folders ("Hidden on the device") with a **Show** action that deletes the `.nomedia`. Not offered for the volume root, the standard top-level folders (DCIM, Pictures, Download...; the scanner ignores a `.nomedia` there) or `Android/data|obb`.
+- R10. Long press a folder → **Hide in this app** (a snackbar offers Undo) or **Hide on the whole device…**.
 - R11. Settings → **Folders**: complete list of all folders with thumbnail, name, path, count and a switch hidden/visible.
 - R12. Settings → **App folders**: list of detected app-generated folders (WhatsApp, Telegram, Screenshots, etc.) where the user chooses which to hide automatically. WhatsApp is suggested. On first run, offer this list once with WhatsApp pre-checked; nothing is hidden without confirmation.
 - R13. Hidden folders never appear in the watermark picker either, unless the user opens the folder list explicitly.
@@ -37,7 +40,8 @@ Priority: watermark flow first, then the rest of the gallery.
 - R16. Bottom **thumbnail strip** for quick navigation within the folder.
 - R17. Video playback (Media3) with simple controls; videos are viewable but not watermarked in v1.
 - R18. Info panel: date, size, resolution, camera data (EXIF), location coordinates if present.
-- R19. Actions in the viewer: watermark, edit, share, move, copy, rename, delete, info.
+- R19. Actions in the viewer: watermark, edit, share, move, copy, rename, delete, info, set as wallpaper, use as.
+- R19b. **Set as wallpaper** (photos only): full-screen preview in a frame shaped like the screen held upright; pinch and drag to frame the photo (it always covers the frame), double tap to reset, optional lock-screen clock preview. Target: home, lock or both. Only the visible part is decoded, at screen size. Hidden when the device doesn't support wallpapers or a policy forbids changing them. **Use as…** hands the photo to other apps (`ACTION_ATTACH_DATA`).
 
 ### 2.5 Watermark editor (flagship)
 - R20. Entry: from the selection bar or from a dedicated "Watermark" entry on the home screen (opens the picker).
@@ -88,6 +92,14 @@ Priority: watermark flow first, then the rest of the gallery.
 
 ## 4. Out of scope for v1
 Camera capture, brightness/contrast/filters, blur or cover-up regions, video watermarking, cloud sync, face or object search, custom trash, virtual albums, per-photo watermark overrides.
+
+### 4.1 Known gaps (debt) of the wallpaper and device hiding features
+- Wallpaper: one crop for the portrait screen only. No separate crops for the inner and outer screens of foldables, for tablets in landscape, or per display (`WallpaperManager` crop hints per screen size); no parallax/scrolling wallpaper; no live or video wallpapers; animated GIFs become their first frame.
+- Wallpaper: the screen shape is the device's maximum window bounds; in multi-window or desktop modes the frame may not match the final screen.
+- Device hiding: the contents of folders hidden on the device can't be browsed in this app (the MediaStore no longer lists them; it would need direct file listing and decoding).
+- Device hiding: folders that already had a `.nomedia` (created by other apps or by hand) are not listed; only the ones hidden from this app can be shown again from Settings.
+- Device hiding: folders are matched to the record by path relative to the volume, so two folders with the same relative path on internal storage and an SD card are treated as one while the scanner still lists them.
+- Device hiding: how fast the MediaStore drops or restores the folder after the rescan depends on the device's media provider; it needs on-device verification.
 
 ## 5. Roadmap (after v1)
 Brightness/contrast/saturation, blur/cover regions (plates, faces), integrated camera with live watermark, video watermarking, search.

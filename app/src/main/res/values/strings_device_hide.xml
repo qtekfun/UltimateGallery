@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hide_folder_in_app">Hide in this app</string>
+  <string name="hide_folder_on_device">Hide on the whole device…</string>
+  <string name="hide_folder_on_device_unavailable">Can\'t hide this folder on the device</string>
+  <string name="hide_on_device_title">Hide “%1$s” on the device?</string>
+  <string name="hide_on_device_body">A hidden .nomedia file is added to the folder. Its photos and videos stop appearing in every gallery app, this one included, and cloud backup apps may stop uploading them. Nothing is deleted or changed, and you can show the folder again from Settings → Folders.</string>
+  <string name="hide_on_device_confirm">Hide on device</string>
+  <string name="all_files_access_title">Allow access to all files?</string>
+  <string name="all_files_access_body">Android only lets an app create or delete a .nomedia file in another folder with “All files access”. UltimateGallery uses it for nothing else: it never reads, changes or uploads your files.</string>
+  <string name="all_files_access_open">Open settings</string>
+  <string name="all_files_access_denied">Not done: all files access wasn\'t granted</string>
+  <string name="folder_hidden_on_device">“%1$s” is hidden on the device</string>
+  <string name="folder_shown_on_device">“%1$s” is visible again</string>
+  <string name="device_hide_not_allowed">This folder can\'t be hidden on the device</string>
+  <string name="device_hide_not_found">The folder wasn\'t found on the device</string>
+  <string name="device_hide_failed">Couldn\'t change the folder\'s .nomedia file</string>
+  <string name="folders_hidden_on_device">Hidden on the device</string>
+  <string name="folders_hidden_on_device_note">These folders have a .nomedia file and don\'t appear in any gallery app.</string>
+  <string name="folders_in_app">In this app</string>
+  <string name="folder_show_on_device">Show</string>
+  <string name="folder_show_on_device_label">Show %1$s on the device again</string>
+</resources>

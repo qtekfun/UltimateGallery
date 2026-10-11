@@ -94,6 +94,13 @@ A `CoroutineWorker` runs the batch as a foreground service with a progress notif
 - App folder catalog: a local, editable list of known app folder names/paths (WhatsApp Images/Video/Animated GIFs/Stickers, Telegram, Screenshots, Instagram, etc.), matched against real buckets. The settings screen shows only the ones detected on the device.
 - First-run sheet offers detected app folders, WhatsApp pre-checked, nothing applied without confirmation.
 
+### 8b. Hiding on the whole device (`.nomedia`)
+- `DeviceHidingRepository` (`data/folders`) creates or deletes an empty `.nomedia` with plain file I/O, which on Android 11+ needs `MANAGE_EXTERNAL_STORAGE` ("All files access"). Chosen over a per-folder SAF tree grant for a single, predictable grant; the permission is requested only from the hide/show flow (`rememberAllFilesAccessGate`), with an explanation first.
+- The folder's directory is resolved from the MediaStore (`VOLUME_NAME` + `RELATIVE_PATH` of one item of the bucket → `StorageManager.getStorageVolume(uri).directory`). After writing, `MediaScannerConnection.scanFile` rescans the folder (bounded wait).
+- Room table `device_hidden_folder(path PK, name, relativePath, hiddenAt)` (migration 2→3) keeps the folders hidden this way, because the MediaStore stops listing them. `FolderRepository` also filters them out by relative path so they disappear at once, even before the scanner catches up.
+- `DeviceHidingRules.canHide` refuses the volume root, the standard top-level folders and `Android/data|obb`.
+- `DeviceStorage` abstracts the access check, directory lookup and rescan so the repository is unit-tested against a temp directory.
+
 ## 9. Gallery UI details
 - Home: toggle grid of folder cards ↔ list. Grid is `LazyVerticalGrid` with a pinch-driven column count: track pinch scale, animate item size continuously, snap to the nearest column count on release, persist per grid type.
 - Folder grid: same pinch behavior, sticky date headers, drag-to-select with auto-scroll.
@@ -115,6 +122,11 @@ A `CoroutineWorker` runs the batch as a foreground service with a progress notif
 - F-Droid ready from day 1: `fastlane/metadata/android/{en-US,es-ES}` with descriptions, changelogs, screenshots; reproducible builds; all dependencies FOSS. F-Droid submission after 1.0.
 - License: decide with the owner before first release (default proposal: GPL-3.0 or Apache-2.0; confirm).
 - At the end of the plan: icon, screenshots and store listing material.
+
+## 12b. Wallpaper
+- `feature/wallpaper/WallpaperScreen`: the photo is drawn with `ContentScale.Crop` in a frame with the aspect of the screen held upright (`maximumWindowMetrics`, short × long side); zoom (1–5×, cover) and pan are applied with `graphicsLayer` and clamped so no edge ever shows.
+- `data/wallpaper/WallpaperGeometry` (pure, unit-tested) turns zoom and pan into a crop in fractions of the photo, and plans the decode: scale so the crop just covers the screen (never enlarging), then cut. `WallpaperSetter` decodes with `ImageDecoder` (`setTargetSize` + `crop`, EXIF orientation applied) and calls `WallpaperManager.setBitmap(bitmap, null, true, FLAG_SYSTEM | FLAG_LOCK)`. `SET_WALLPAPER` is a normal install-time permission.
+- Known gaps are listed in requirements §4.1.
 
 ## 13. Implementation notes (deviations and clarifications)
 - Tiled marks: the pattern angle is the placement rotation (so two-finger rotation edits it per orientation) and the placement center anchors the lattice; `WatermarkSource.Tiled` carries `spacing`, `staggerX` and `staggerY` instead of `angleDeg` and `offset`.

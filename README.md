@@ -9,13 +9,15 @@ Part of the Ultimate family of apps. Package: `com.qtekfun.ultimategallery`.
 
 ## Highlights
 
-- Folder-based gallery on top of MediaStore, live updates, hidden folders that are app-only
-  (nothing is touched on disk), pinch-to-resize grids, drag-to-select.
+- Folder-based gallery on top of MediaStore, live updates, pinch-to-resize grids, drag-to-select.
+- Hidden folders: app-only by default (nothing is touched on disk), or on the whole device with a
+  `.nomedia` file when you ask for it (this one option needs "All files access").
 - Watermark editor: image/logo, text and tiled marks; one finger moves, two fingers scale and rotate;
   snapping guides with haptics; independent portrait and landscape placements stored as fractions of the
   image, so the mark lands in the same relative spot on every photo whatever its resolution.
 - Profiles (templates) and batch export in the background, with the originals never modified.
-- Viewer with zoom, shared-element transitions, thumbnail strip and video; crop and rotate editor.
+- Viewer with zoom, shared-element transitions, thumbnail strip and video; crop and rotate editor;
+  set a photo as the home and/or lock screen wallpaper, framed with your fingers.
 - Material 3 Expressive, dynamic color, English and Spanish.
 - **Fully offline**: no network permission, no Google Play Services, no analytics. FOSS dependencies only.
 

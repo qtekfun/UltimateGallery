@@ -97,7 +97,9 @@ class ViewerActions(
     val onCopy: ((MediaItem) -> Unit)? = null,
     val onRename: ((MediaItem) -> Unit)? = null,
     val onDelete: ((MediaItem) -> Unit)? = null,
-    val onRotate: ((MediaItem) -> Unit)? = null
+    val onRotate: ((MediaItem) -> Unit)? = null,
+    val onSetWallpaper: ((MediaItem) -> Unit)? = null,
+    val onUseAs: ((MediaItem) -> Unit)? = null
 )
 
 /** Full-screen viewer: swipe between items, zoom, swipe down to close, thumbnail strip and actions. */
@@ -108,6 +110,8 @@ fun ViewerScreen(
     onShare: (MediaItem) -> Unit,
     onEdit: (MediaItem) -> Unit,
     modifier: Modifier = Modifier,
+    onSetWallpaper: ((MediaItem) -> Unit)? = null,
+    onUseAs: ((MediaItem) -> Unit)? = null,
     viewModel: ViewerViewModel = hiltViewModel()
 ) {
     val items by viewModel.items.collectAsStateWithLifecycle()
@@ -145,7 +149,9 @@ fun ViewerScreen(
                     onCopy = { files.copyTo(listOf(it)) },
                     onRename = { files.rename(it) },
                     onDelete = { files.trash(listOf(it)) },
-                    onRotate = { viewModel.rotate.start(it) }
+                    onRotate = { viewModel.rotate.start(it) },
+                    onSetWallpaper = onSetWallpaper,
+                    onUseAs = onUseAs
                 ),
                 rotate = viewModel.rotate,
                 openUri = openUri,
@@ -389,6 +395,20 @@ private fun MoreMenu(item: MediaItem, actions: ViewerActions) {
                     open = false
                     act(item)
                 })
+            }
+            if (!item.isVideo) {
+                actions.onSetWallpaper?.let { act ->
+                    DropdownMenuItem(text = { Text(stringResource(R.string.wallpaper_set_as)) }, onClick = {
+                        open = false
+                        act(item)
+                    })
+                }
+                actions.onUseAs?.let { act ->
+                    DropdownMenuItem(text = { Text(stringResource(R.string.wallpaper_use_as)) }, onClick = {
+                        open = false
+                        act(item)
+                    })
+                }
             }
         }
     }

@@ -97,6 +97,12 @@ android {
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+        // Temporary files of the tests (and Robolectric) stay on disk under build/, never in the system /tmp.
+        unitTests.all { test ->
+            val dir = layout.buildDirectory.dir("tmp/test").get().asFile
+            test.doFirst { dir.mkdirs() }
+            test.systemProperty("java.io.tmpdir", dir.absolutePath)
+        }
     }
 
     lint {

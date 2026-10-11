@@ -1,10 +1,12 @@
 package com.qtekfun.ultimategallery.navigation
 
+import android.app.WallpaperManager
 import android.content.Intent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NamedNavArgument
@@ -14,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.qtekfun.ultimategallery.R
 import com.qtekfun.ultimategallery.core.ui.LocalNavAnimatedScope
 import com.qtekfun.ultimategallery.core.ui.LocalSharedTransitionScope
 import com.qtekfun.ultimategallery.data.media.MediaAccessLevel
@@ -32,6 +35,7 @@ import com.qtekfun.ultimategallery.feature.settings.FoldersSettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.SettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.settingsEntries
 import com.qtekfun.ultimategallery.feature.viewer.ViewerScreen
+import com.qtekfun.ultimategallery.feature.wallpaper.WallpaperScreen
 import com.qtekfun.ultimategallery.feature.watermark.WatermarkEditorScreen
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -39,6 +43,10 @@ import com.qtekfun.ultimategallery.feature.watermark.WatermarkEditorScreen
 fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modifier: Modifier = Modifier) {
     val nav = rememberNavController()
     val context = LocalContext.current
+    val wallpaperAvailable = remember(context) {
+        val manager = WallpaperManager.getInstance(context)
+        manager.isWallpaperSupported && manager.isSetWallpaperAllowed
+    }
     SharedTransitionLayout {
         CompositionLocalProvider(LocalSharedTransitionScope provides this) {
             NavHost(navController = nav, startDestination = Routes.HOME, modifier = modifier) {
@@ -96,8 +104,13 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                         onBack = { nav.popBackStack() },
                         onWatermark = { nav.navigate(Routes.WATERMARK) },
                         onShare = { item -> share(context, listOf(item)) },
-                        onEdit = { item -> nav.navigate(Routes.edit(item.id)) }
+                        onEdit = { item -> nav.navigate(Routes.edit(item.id)) },
+                        onSetWallpaper = if (wallpaperAvailable) ({ item -> nav.navigate(Routes.wallpaper(item.id)) }) else null,
+                        onUseAs = { item -> useAs(context, item) }
                     )
+                }
+                destination(Routes.WALLPAPER, arguments = listOf(navArgument("mediaId") { type = NavType.LongType })) {
+                    WallpaperScreen(onBack = { nav.popBackStack() })
                 }
                 destination(Routes.EDIT, arguments = listOf(navArgument("mediaId") { type = NavType.LongType })) {
                     CropRotateScreen(onBack = { nav.popBackStack() }, onSaved = { nav.popBackStack() })
@@ -158,4 +171,13 @@ private fun share(context: android.content.Context, items: List<MediaItem>) {
             .setType("*/*")
     }.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     context.startActivity(Intent.createChooser(intent, null))
+}
+
+/** "Use as": hands the photo to whatever app can use it (wallpaper pickers, contact photos...). */
+private fun useAs(context: android.content.Context, item: MediaItem) {
+    val intent = Intent(Intent.ACTION_ATTACH_DATA)
+        .setDataAndType(item.uri, item.mimeType)
+        .putExtra("mimeType", item.mimeType)
+        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    context.startActivity(Intent.createChooser(intent, context.getString(R.string.wallpaper_use_as)))
 }

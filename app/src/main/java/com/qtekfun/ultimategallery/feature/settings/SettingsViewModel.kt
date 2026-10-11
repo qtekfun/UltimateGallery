@@ -2,7 +2,10 @@ package com.qtekfun.ultimategallery.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qtekfun.ultimategallery.data.db.DeviceHiddenFolderEntity
 import com.qtekfun.ultimategallery.data.folders.DetectedAppFolders
+import com.qtekfun.ultimategallery.data.folders.DeviceHideResult
+import com.qtekfun.ultimategallery.data.folders.DeviceHidingRepository
 import com.qtekfun.ultimategallery.data.folders.FolderRepository
 import com.qtekfun.ultimategallery.data.folders.FolderState
 import com.qtekfun.ultimategallery.data.prefs.AppSettings
@@ -12,21 +15,38 @@ import com.qtekfun.ultimategallery.data.prefs.ThemeMode
 import com.qtekfun.ultimategallery.domain.watermark.ExportSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+
+/** The outcome of showing a folder hidden on the device again. */
+data class DeviceShowEvent(val name: String, val result: DeviceHideResult)
 
 /** An app folder group with whether it is hidden automatically. */
 data class AppFolderRow(val detected: DetectedAppFolders, val autoHidden: Boolean)
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val folders: FolderRepository, private val settingsRepo: SettingsRepository) : ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val folders: FolderRepository,
+    private val settingsRepo: SettingsRepository,
+    private val deviceHiding: DeviceHidingRepository
+) : ViewModel() {
     /** Every folder with its hidden state; null while loading. */
     val folderStates: StateFlow<List<FolderState>?> = folders.all()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), null)
+
+    /** Folders this app hid on the whole device. */
+    val deviceHidden: StateFlow<List<DeviceHiddenFolderEntity>> = deviceHiding.observe()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), emptyList())
+
+    private val _deviceShowEvents = Channel<DeviceShowEvent>(Channel.BUFFERED)
+    val deviceShowEvents: Flow<DeviceShowEvent> = _deviceShowEvents.receiveAsFlow()
 
     val appFolders: StateFlow<List<AppFolderRow>?> = combine(
         folders.detectedAppFolders(),
@@ -59,6 +79,13 @@ class SettingsViewModel @Inject constructor(private val folders: FolderRepositor
         viewModelScope.launch {
             if (visible) folders.unhide(listOf(state.folder.bucketId)) else folders.hide(listOf(state.folder))
         }
+    }
+
+    fun hasAllFilesAccess(): Boolean = deviceHiding.hasAccess()
+
+    /** Removes the `.nomedia` of a folder hidden on the device; the caller has secured the access. */
+    fun showOnDevice(folder: DeviceHiddenFolderEntity) {
+        viewModelScope.launch { _deviceShowEvents.send(DeviceShowEvent(folder.name, deviceHiding.show(folder.path))) }
     }
 
     fun setAppFolderHidden(id: String, hidden: Boolean) {

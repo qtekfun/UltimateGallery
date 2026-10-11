@@ -137,7 +137,6 @@
   <string name="viewer_close">Close viewer</string>
   <string name="app_folder_screenshots">Screenshots</string>
   <string name="app_folder_screen_recordings">Screen recordings</string>
-  <string name="hide_folder">Hide folder</string>
   <string name="folder_hidden">“%1$s” hidden</string>
   <string name="undo_action">Undo</string>
   <string name="show_hidden_folders">Show hidden folders</string>

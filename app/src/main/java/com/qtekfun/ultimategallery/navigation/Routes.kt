@@ -10,6 +10,7 @@ object Routes {
     const val WATERMARK = "watermark"
     const val VIEWER = "viewer/{bucketId}/{mediaId}"
     const val EDIT = "edit/{mediaId}"
+    const val WALLPAPER = "wallpaper/{mediaId}"
     const val EXPORT = "export/{jobId}"
     const val SETTINGS = "settings"
     const val SETTINGS_APPEARANCE = "settings/appearance"
@@ -22,6 +23,8 @@ object Routes {
     fun viewer(bucketId: Long, mediaId: Long) = "viewer/$bucketId/$mediaId"
 
     fun edit(mediaId: Long) = "edit/$mediaId"
+
+    fun wallpaper(mediaId: Long) = "wallpaper/$mediaId"
 
     fun export(jobId: String) = "export/$jobId"
 

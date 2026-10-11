@@ -11,7 +11,8 @@ UltimateGallery is a refined, folder-based gallery whose flagship feature is <b>
 <b>Gallery</b>
 • Folders as a grid or a list, pinch to resize grids, date headers, drag to select
 • Viewer with zoom, shared-element transitions, thumbnail strip and video playback
-• Hide folders inside the app only (nothing changes on disk), with a shortcut for WhatsApp, Telegram and screenshot folders
+• Hide folders inside the app only (nothing changes on disk), with a shortcut for WhatsApp, Telegram and screenshot folders, or on the whole device with a .nomedia file
+• Set any photo as the home or lock screen wallpaper
 • Move, copy, rename, share and delete (system trash), photo details and EXIF
 • Crop, rotate, flip and straighten with smooth animations; lossless JPEG rotation
 
