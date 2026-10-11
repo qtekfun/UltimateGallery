@@ -3,6 +3,7 @@ package com.qtekfun.ultimategallery.feature.watermark
 import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
@@ -21,6 +22,7 @@ import com.qtekfun.ultimategallery.domain.watermark.WatermarkSource
 import com.qtekfun.ultimategallery.render.WatermarkRenderer
 import java.io.File
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -45,6 +47,7 @@ class EditorViewModelTest {
     private lateinit var db: AppDatabase
     private lateinit var file: File
     private val dispatcher = StandardTestDispatcher()
+    private val viewModels = mutableListOf<WatermarkEditorViewModel>()
 
     private val media = object : MediaRepository {
         override fun observeFolders(): Flow<List<Folder>> = flowOf(emptyList())
@@ -71,6 +74,8 @@ class EditorViewModelTest {
 
     @After
     fun tearDown() {
+        // Stop the view models' Room collectors before the database closes under them.
+        viewModels.forEach { it.viewModelScope.cancel() }
         Dispatchers.resetMain()
         db.close()
         file.delete()
@@ -88,7 +93,7 @@ class EditorViewModelTest {
             ProfileRepository(db.profileDao(), settings),
             WatermarkRenderer { null },
             FakeFontLibrary()
-        )
+        ).also { viewModels += it }
     }
 
     @Test
