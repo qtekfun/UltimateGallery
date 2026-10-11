@@ -1,27 +1,22 @@
 package com.qtekfun.ultimategallery.data.folders
 
-import android.content.Context
 import android.net.Uri
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.room3.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import androidx.test.core.app.ApplicationProvider
 import com.qtekfun.ultimategallery.data.db.AppDatabase
 import com.qtekfun.ultimategallery.data.db.DeviceHiddenFolderEntity
 import com.qtekfun.ultimategallery.data.media.MediaRepository
 import com.qtekfun.ultimategallery.data.prefs.SettingsRepository
 import com.qtekfun.ultimategallery.domain.Folder
 import com.qtekfun.ultimategallery.domain.MediaItem
-import java.io.File
+import com.qtekfun.ultimategallery.testing.TestStores
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -44,33 +39,26 @@ class FolderRepositoryTest {
         override suspend fun loadItems(ids: List<Long>): List<MediaItem> = emptyList()
     }
 
+    @get:Rule val stores = TestStores()
+
     private lateinit var db: AppDatabase
     private lateinit var settings: SettingsRepository
     private lateinit var repo: FolderRepository
-    private lateinit var file: File
 
     @Before
     fun setUp() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder<AppDatabase>(context).setDriver(BundledSQLiteDriver()).build()
-        file = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
-        settings = SettingsRepository(PreferenceDataStoreFactory.create { file })
+        db = stores.database()
+        settings = stores.settings()
         repo = FolderRepository(media, db.hiddenFolderDao(), settings, db.deviceHiddenFolderDao())
     }
 
-    @After
-    fun tearDown() {
-        db.close()
-        file.delete()
-    }
-
     @Test
-    fun everythingIsVisibleByDefault() = runBlocking {
+    fun everythingIsVisibleByDefault() = runTest(stores.dispatcher) {
         assertEquals(listOf(camera, whatsapp, shots), repo.visible().first())
     }
 
     @Test
-    fun hidingAFolderRemovesItFromTheVisibleListOnly() = runBlocking {
+    fun hidingAFolderRemovesItFromTheVisibleListOnly() = runTest(stores.dispatcher) {
         repo.hide(listOf(camera))
         assertEquals(listOf(whatsapp, shots), repo.visible().first())
         assertEquals(3, repo.visible(includeHidden = true).first().size)
@@ -80,14 +68,14 @@ class FolderRepositoryTest {
     }
 
     @Test
-    fun undoShowsTheFolderAgain() = runBlocking {
+    fun undoShowsTheFolderAgain() = runTest(stores.dispatcher) {
         repo.hide(listOf(camera))
         repo.unhide(listOf(camera.bucketId))
         assertEquals(3, repo.visible().first().size)
     }
 
     @Test
-    fun autoHidingAnAppHidesItsFolders() = runBlocking {
+    fun autoHidingAnAppHidesItsFolders() = runTest(stores.dispatcher) {
         settings.setAutoHideApp("whatsapp", true)
         assertEquals(listOf(camera, shots), repo.visible().first())
         val state = repo.all().first().single { it.folder == whatsapp }
@@ -98,14 +86,14 @@ class FolderRepositoryTest {
     }
 
     @Test
-    fun nothingIsHiddenUntilTheUserConfirms() = runBlocking {
+    fun nothingIsHiddenUntilTheUserConfirms() = runTest(stores.dispatcher) {
         assertTrue(settings.settings.first().autoHideApps.isEmpty())
         assertEquals(listOf("whatsapp", "screenshots"), repo.detectedAppFolders().first().map { it.entry.id })
         assertEquals(3, repo.visible().first().size)
     }
 
     @Test
-    fun foldersHiddenOnTheDeviceAreLeftOutEvenWhileStillIndexed() = runBlocking {
+    fun foldersHiddenOnTheDeviceAreLeftOutEvenWhileStillIndexed() = runTest(stores.dispatcher) {
         db.deviceHiddenFolderDao().insert(DeviceHiddenFolderEntity("/storage/emulated/0/Pictures/Screenshots", "Screenshots", "Pictures/Screenshots/", 1))
         assertEquals(listOf(camera, whatsapp), repo.visible(includeHidden = true).first())
         assertEquals(2, repo.all().first().size)
