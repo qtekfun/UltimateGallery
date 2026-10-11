@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="wallpaper_set_as">Set as wallpaper</string>
+  <string name="wallpaper_use_as">Use as…</string>
+  <string name="wallpaper_title">Set as wallpaper</string>
+  <string name="wallpaper_hint">Pinch and drag to frame the photo</string>
+  <string name="wallpaper_target_home">Home</string>
+  <string name="wallpaper_target_lock">Lock</string>
+  <string name="wallpaper_target_both">Both</string>
+  <string name="wallpaper_apply">Set wallpaper</string>
+  <string name="wallpaper_applying">Setting wallpaper</string>
+  <string name="wallpaper_done">Wallpaper set</string>
+  <string name="wallpaper_failed">Couldn\'t set the wallpaper</string>
+  <string name="wallpaper_preview_clock">Preview the lock screen clock</string>
+  <string name="wallpaper_hide_clock">Hide the clock preview</string>
+</resources>

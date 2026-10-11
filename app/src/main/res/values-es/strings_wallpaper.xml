@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="wallpaper_set_as">Establecer como fondo</string>
+  <string name="wallpaper_use_as">Usar como…</string>
+  <string name="wallpaper_title">Establecer como fondo</string>
+  <string name="wallpaper_hint">Pellizca y arrastra para encuadrar la foto</string>
+  <string name="wallpaper_target_home">Inicio</string>
+  <string name="wallpaper_target_lock">Bloqueo</string>
+  <string name="wallpaper_target_both">Ambas</string>
+  <string name="wallpaper_apply">Establecer fondo</string>
+  <string name="wallpaper_applying">Estableciendo el fondo</string>
+  <string name="wallpaper_done">Fondo establecido</string>
+  <string name="wallpaper_failed">No se pudo establecer el fondo</string>
+  <string name="wallpaper_preview_clock">Previsualizar el reloj de la pantalla de bloqueo</string>
+  <string name="wallpaper_hide_clock">Ocultar la previsualización del reloj</string>
+</resources>
