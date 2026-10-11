@@ -6,6 +6,8 @@ Releases are tagged by hand; there is no release automation beyond the tag workf
 2. Add a `## [x.y.z]` section to `CHANGELOG.md` and save the same text (500 bytes max) as
    `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt` and `es-ES/...`.
    The version code is `(MAJOR*10000 + MINOR*100 + PATCH) * 100 + 99` (or `+ N` for `-rcN`).
+   `scripts/release-notes.sh` prints the notes the release will get and fails if any of this is
+   missing; CI runs it on every push, and the release workflow refuses to publish without notes.
 3. Commit, push to `main`, wait for CI to be green.
 4. `git tag vX.Y.Z && git push origin vX.Y.Z`. The *Release* workflow builds the APK and
    creates the GitHub pre-release with it attached.
