@@ -3,6 +3,14 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [1.0.0-rc11]
+
+Settings backup (pre-release).
+
+- Settings → Backup exports your settings and watermark profiles to a JSON file and imports them back, for a new phone or a reinstall.
+- Photos and folders are never included; image watermarks are exported as text.
+- Importing replaces your settings and only adds profiles: existing ones are never changed or deleted.
+
 ## [1.0.0-rc10]
 
 Wallpaper and device-wide hiding (pre-release).

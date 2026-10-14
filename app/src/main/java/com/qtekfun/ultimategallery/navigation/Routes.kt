@@ -16,6 +16,7 @@ object Routes {
     const val SETTINGS_APPEARANCE = "settings/appearance"
     const val SETTINGS_EDIT = "settings/edit"
     const val SETTINGS_EXPORT = "settings/export"
+    const val SETTINGS_BACKUP = "settings/backup"
     const val SETTINGS_ABOUT = "settings/about"
     const val SETTINGS_FOLDERS = "settings/folders"
     const val SETTINGS_APP_FOLDERS = "settings/app-folders"

@@ -198,4 +198,31 @@
   <string name="haptics_summary">Short vibrations when snapping, selecting and rotating</string>
   <string name="font_default">Default</string>
   <string name="unknown_folder">Unnamed folder</string>
+  <string name="settings_backup">Backup</string>
+  <string name="settings_backup_summary">Export or import your settings and profiles</string>
+  <string name="backup_note">The file holds your settings and watermark profiles. It never includes photos, and image watermarks are exported as text.</string>
+  <string name="backup_export">Export settings</string>
+  <string name="backup_export_summary">Save a file you can keep or move to another device</string>
+  <string name="backup_import">Import settings</string>
+  <string name="backup_import_summary">Load a file exported by UltimateGallery</string>
+  <string name="backup_exported">Settings exported</string>
+  <plurals name="backup_exported_images">
+    <item quantity="one">Settings exported. %d profile used an image watermark and was saved with text instead</item>
+    <item quantity="other">Settings exported. %d profiles used an image watermark and were saved with text instead</item>
+  </plurals>
+  <string name="backup_import_title">Import settings?</string>
+  <string name="backup_import_body">Your current settings will be replaced by the ones in the file. Your photos are not affected.</string>
+  <string name="backup_import_newer">This file comes from a newer version of the app; some of its content may be ignored.</string>
+  <plurals name="backup_import_profiles">
+    <item quantity="one">%d profile will be added; none of your profiles is changed or deleted.</item>
+    <item quantity="other">%d profiles will be added; none of your profiles is changed or deleted.</item>
+  </plurals>
+  <string name="backup_import_confirm">Import</string>
+  <string name="backup_imported">Settings imported</string>
+  <plurals name="backup_imported_profiles">
+    <item quantity="one">Settings imported and %d profile added</item>
+    <item quantity="other">Settings imported and %d profiles added</item>
+  </plurals>
+  <string name="backup_invalid">That file is not an UltimateGallery settings backup</string>
+  <string name="backup_failed">The file could not be read or written</string>
 </resources>

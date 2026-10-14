@@ -69,3 +69,6 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Hide folders on the whole device with `.nomedia` (all-files access, confirmation, Settings → Folders section to show them again); Room migration 2→3; tests.
 - [x] Set as wallpaper from the viewer (framing screen, home/lock/both, decode only the crop) and "Use as…"; geometry tests.
 - [ ] Verify on a device: MediaStore refresh after hiding/showing, wallpaper result on home and lock screens. Known gaps are tracked in `requirements.md` §4.1.
+
+## Phase 12 — Settings backup
+- [x] Export and import preferences and watermark profiles as JSON (R42): `BackupCodec`, `SettingsBackup`, Settings → Backup screen, confirmation dialog, EN/ES strings; tests for round trip, validation and idempotent import.

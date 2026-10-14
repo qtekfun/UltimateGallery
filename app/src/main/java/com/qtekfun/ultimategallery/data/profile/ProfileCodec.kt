@@ -63,7 +63,7 @@ object ProfileCodec {
         rotationDeg = o.optFloat("rot", d.rotationDeg)
     )
 
-    private fun exportToJson(e: ExportSettings) = JSONObject().apply {
+    internal fun exportToJson(e: ExportSettings) = JSONObject().apply {
         put("format", e.format.name)
         put("quality", e.quality)
         if (e.maxLongEdge != null) put("maxLongEdge", e.maxLongEdge)
@@ -72,7 +72,7 @@ object ProfileCodec {
         put("exif", e.exif.name)
     }
 
-    private fun exportFromJson(o: JSONObject): ExportSettings {
+    internal fun exportFromJson(o: JSONObject): ExportSettings {
         val d = ExportSettings()
         return ExportSettings(
             format = enumOrDefault(o.optString("format"), d.format),

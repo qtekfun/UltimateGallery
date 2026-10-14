@@ -29,6 +29,7 @@ import com.qtekfun.ultimategallery.feature.onboarding.AccessActions
 import com.qtekfun.ultimategallery.feature.settings.AboutScreen
 import com.qtekfun.ultimategallery.feature.settings.AppFoldersSettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.AppearanceSettingsScreen
+import com.qtekfun.ultimategallery.feature.settings.BackupSettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.EditSettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.ExportDefaultsScreen
 import com.qtekfun.ultimategallery.feature.settings.FoldersSettingsScreen
@@ -138,6 +139,7 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                             onAppFolders = { nav.navigate(Routes.SETTINGS_APP_FOLDERS) },
                             onEdit = { nav.navigate(Routes.SETTINGS_EDIT) },
                             onExport = { nav.navigate(Routes.SETTINGS_EXPORT) },
+                            onBackup = { nav.navigate(Routes.SETTINGS_BACKUP) },
                             onAbout = { nav.navigate(Routes.SETTINGS_ABOUT) }
                         ),
                         onBack = { nav.popBackStack() }
@@ -146,6 +148,7 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                 destination(Routes.SETTINGS_APPEARANCE) { AppearanceSettingsScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_EDIT) { EditSettingsScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_EXPORT) { ExportDefaultsScreen(onBack = { nav.popBackStack() }) }
+                destination(Routes.SETTINGS_BACKUP) { BackupSettingsScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_ABOUT) { AboutScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_FOLDERS) { FoldersSettingsScreen(onBack = { nav.popBackStack() }) }
                 destination(Routes.SETTINGS_APP_FOLDERS) { AppFoldersSettingsScreen(onBack = { nav.popBackStack() }) }
