@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Backup
 import androidx.compose.material.icons.outlined.Crop
 import androidx.compose.material.icons.outlined.FolderOff
 import androidx.compose.material.icons.outlined.FolderOpen
@@ -268,6 +269,7 @@ fun settingsEntries(
     onAppFolders: () -> Unit,
     onEdit: () -> Unit,
     onExport: () -> Unit,
+    onBackup: () -> Unit,
     onAbout: () -> Unit
 ): List<SettingsEntry> = listOf(
     SettingsEntry(Icons.Outlined.Palette, R.string.settings_appearance, R.string.settings_appearance_summary, onAppearance),
@@ -275,5 +277,6 @@ fun settingsEntries(
     SettingsEntry(Icons.Outlined.Apps, R.string.settings_app_folders, R.string.settings_app_folders_summary, onAppFolders),
     SettingsEntry(Icons.Outlined.Crop, R.string.settings_edit, R.string.settings_edit_summary, onEdit),
     SettingsEntry(Icons.Outlined.IosShare, R.string.settings_export, R.string.settings_export_summary, onExport),
+    SettingsEntry(Icons.Outlined.Backup, R.string.settings_backup, R.string.settings_backup_summary, onBackup),
     SettingsEntry(Icons.Outlined.Info, R.string.settings_about, R.string.settings_about_summary, onAbout)
 )

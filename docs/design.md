@@ -101,6 +101,12 @@ A `CoroutineWorker` runs the batch as a foreground service with a progress notif
 - `DeviceHidingRules.canHide` refuses the volume root, the standard top-level folders and `Android/data|obb`.
 - `DeviceStorage` abstracts the access check, directory lookup and rescan so the repository is unit-tested against a temp directory.
 
+### 8c. Settings backup
+- `data/backup/BackupCodec`: the file format (`format: "ultimategallery-settings"`, `schema: 1`) with the preferences and the profiles (as produced by `ProfileCodec`). Reading is tolerant and defensive: unknown keys and enums fall back to defaults, and every value is clamped to the range the app allows (columns, quality, placements, file name pattern, destination without `..`). Files over 1 MB are refused.
+- `data/backup/SettingsBackup`: `export()` and `restore()` over `SettingsRepository` and `ProfileRepository`. `lastProfileId` and `appFoldersOffered` are internal state and never travel. A profile already present with identical content is skipped, so importing twice adds nothing; a name clash is added as "<name> imported".
+- Image watermarks point at this install's private storage, so they are exported as the default text mark.
+- UI: Settings → Backup uses `CreateDocument` / `OpenDocument` (no permissions) and a confirmation dialog before importing.
+
 ## 9. Gallery UI details
 - Home: toggle grid of folder cards ↔ list. Grid is `LazyVerticalGrid` with a pinch-driven column count: track pinch scale, animate item size continuously, snap to the nearest column count on release, persist per grid type.
 - Folder grid: same pinch behavior, sticky date headers, drag-to-select with auto-scroll.

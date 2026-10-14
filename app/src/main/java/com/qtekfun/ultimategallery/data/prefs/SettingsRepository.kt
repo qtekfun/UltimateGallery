@@ -101,6 +101,29 @@ class SettingsRepository @Inject constructor(private val store: DataStore<Prefer
         }
     }
 
+    /**
+     * Replaces every user-facing preference with [s] in one write. The last used profile and the
+     * "app folders offered" flag are internal state of this install and are left alone.
+     */
+    suspend fun restore(s: AppSettings) {
+        store.edit {
+            it[HOME_VIEW] = s.homeViewMode.name
+            it[FOLDER_COLUMNS] = s.folderGridColumns
+            it[PHOTO_COLUMNS] = s.photoGridColumns
+            it[THEME] = s.themeMode.name
+            it[DYNAMIC] = s.dynamicColor
+            it[HAPTICS] = s.hapticsEnabled
+            it[SAVE] = s.saveBehavior.name
+            it[AUTO_HIDE_APPS] = s.autoHideApps
+            it[EXPORT_FORMAT] = s.exportDefaults.format.name
+            it[EXPORT_QUALITY] = s.exportDefaults.quality
+            it[EXPORT_MAX_EDGE] = s.exportDefaults.maxLongEdge ?: 0
+            it[EXPORT_PATTERN] = s.exportDefaults.fileNamePattern
+            it[EXPORT_DESTINATION] = s.exportDefaults.destination
+            it[EXPORT_EXIF] = s.exportDefaults.exif.name
+        }
+    }
+
     suspend fun setAutoHideApps(ids: Set<String>) = set(AUTO_HIDE_APPS, ids)
 
     suspend fun setAutoHideApp(id: String, enabled: Boolean) {

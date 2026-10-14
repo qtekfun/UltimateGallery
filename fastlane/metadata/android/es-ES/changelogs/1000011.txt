@@ -1,0 +1,4 @@
+Copia de seguridad de ajustes (preliminar).
+- Ajustes > Copia de seguridad exporta tus ajustes y perfiles de marca de agua a un archivo y los importa de nuevo
+- Nunca incluye fotos ni carpetas; las marcas de agua con imagen se exportan como texto
+- Importar solo añade perfiles: los tuyos no se modifican ni se borran

@@ -74,12 +74,14 @@ Priority: watermark flow first, then the rest of the gallery.
 - R39. Crop and rotate: free and fixed ratios (1:1, 4:3, 3:4, 16:9), 90° rotate buttons, flip, and a fine straighten dial.
 - R40. **Polished, animated rotation** (spring animation of the image and crop frame when rotating).
 - R41. **Save behavior is a setting**: always overwrite, always save as copy, or ask every time. Default: ask. Overwrite uses system consent. 90° rotations of JPEG use lossless orientation where possible.
+- R42. **Settings backup**: Settings → Backup exports the preferences and the watermark profiles to one JSON file chosen with the system file picker, and imports such a file after a confirmation. Photos, folders and hidden-folder lists are never included; image watermarks are exported as text. Importing replaces the preferences and only adds profiles (never changes or deletes existing ones).
 
 ### 2.10 Settings
 - Appearance: theme (system/light/dark), dynamic color, default grid size.
 - Folders and App folders (R11, R12).
 - Edit: save behavior (R41).
 - Export defaults.
+- Backup: export and import the configuration (R42).
 - About: version, licenses, EasyWatermark credit.
 
 ## 3. Non-functional requirements

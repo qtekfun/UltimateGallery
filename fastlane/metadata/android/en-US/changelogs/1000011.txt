@@ -1,0 +1,4 @@
+Settings backup (pre-release).
+- Settings > Backup exports your settings and watermark profiles to a file and imports them back
+- Photos and folders are never included; image watermarks are exported as text
+- Importing only adds profiles: yours are never changed or deleted
