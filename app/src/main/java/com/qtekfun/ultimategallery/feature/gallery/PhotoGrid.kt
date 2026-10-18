@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -55,6 +56,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -97,7 +99,9 @@ fun PhotoGrid(
     gridState: LazyGridState = rememberLazyGridState()
 ) {
     val haptics = LocalHapticFeedback.current
-    val edgePx = with(LocalDensity.current) { 80.dp.toPx() }
+    val density = LocalDensity.current
+    val edgePx = with(density) { 80.dp.toPx() }
+    val startPaddingPx = with(density) { contentPadding.calculateStartPadding(LocalLayoutDirection.current).toPx() }
     val keyToIndex = remember(entries) {
         entries.filterIsInstance<GridEntry.Media>().associate { it.key to it.index }
     }
@@ -110,10 +114,16 @@ fun PhotoGrid(
     var base by remember { mutableStateOf<Set<Long>>(emptySet()) }
     var lastTouched by remember { mutableIntStateOf(-1) }
 
-    fun indexAt(pos: Offset): Int? = gridState.layoutInfo.visibleItemsInfo.firstOrNull {
-        pos.x >= it.offset.x && pos.x < it.offset.x + it.size.width &&
-            pos.y >= it.offset.y && pos.y < it.offset.y + it.size.height
-    }?.key?.let { keyToIndex[it] }
+    // Item offsets are relative to the padded content area; pointer positions are relative to the grid bounds.
+    fun indexAt(pos: Offset): Int? {
+        val info = gridState.layoutInfo
+        val x = pos.x - startPaddingPx
+        val y = pos.y + info.viewportStartOffset
+        return info.visibleItemsInfo.firstOrNull {
+            x >= it.offset.x && x < it.offset.x + it.size.width &&
+                y >= it.offset.y && y < it.offset.y + it.size.height
+        }?.key?.let { keyToIndex[it] }
+    }
 
     fun applyRange(index: Int) {
         if (anchor < 0 || index == lastTouched) return

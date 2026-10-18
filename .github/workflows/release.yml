@@ -4,6 +4,8 @@
 # With the UG_KEYSTORE_* secrets set, the APK is signed with the release key. Without them it is
 # signed with the debug key, which is installable but not suitable for distribution, and the
 # release notes say so.
+#
+# Tags with a suffix (vX.Y.Z-rcN) are published as pre-releases; plain vX.Y.Z tags as regular releases.
 name: Release
 
 on:
@@ -62,4 +64,6 @@ jobs:
           fi
           apk="UltimateGallery-$version.apk"
           cp app/build/outputs/apk/release/app-release.apk "$apk"
-          gh release create "$GITHUB_REF_NAME" "$apk" --title "UltimateGallery $version" --notes-file notes.md --prerelease
+          prerelease=()
+          case "$version" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "$GITHUB_REF_NAME" "$apk" --title "UltimateGallery $version" --notes-file notes.md "${prerelease[@]}"
