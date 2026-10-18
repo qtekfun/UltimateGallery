@@ -3,6 +3,12 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [1.0.1]
+
+Fixes.
+
+- Long-press selection no longer deselects the photo when you lift the finger.
+
 ## [1.0.0]
 
 First stable release.

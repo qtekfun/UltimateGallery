@@ -1,0 +1,2 @@
+Fixes.
+- Long-press selection no longer deselects the photo when you lift the finger

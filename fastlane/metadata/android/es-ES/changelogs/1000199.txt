@@ -1,0 +1,2 @@
+Correcciones.
+- La selección con pulsación larga ya no deselecciona la foto al levantar el dedo
