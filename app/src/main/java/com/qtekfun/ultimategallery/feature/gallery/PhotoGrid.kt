@@ -10,6 +10,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +55,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -165,6 +169,18 @@ fun PhotoGrid(
             modifier = Modifier
                 .fillMaxSize()
                 .pinchToResize(columns, MIN_PHOTO_COLUMNS, MAX_PHOTO_COLUMNS, onColumnsChange)
+                .pointerInput(Unit) {
+                    // Once a long press has started a selection, consume its release before the cells see it,
+                    // so it is not also a tap that toggles the photo off again. Moves are left alone: the drag
+                    // below stops on consumed moves, and it consumes them itself.
+                    awaitEachGesture {
+                        awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                        do {
+                            val event = awaitPointerEvent(PointerEventPass.Initial)
+                            if (anchor >= 0) event.changes.forEach { if (it.changedToUp()) it.consume() }
+                        } while (event.changes.any { it.pressed })
+                    }
+                }
                 .pointerInput(keyToIndex) {
                     detectDragGesturesAfterLongPress(
                         onDragStart = { pos ->
