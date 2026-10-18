@@ -13,6 +13,12 @@ Photo editor (pre-release).
 - Remove the background without any network or model: automatic for plain backgrounds, tap to remove areas, brushes to erase or restore, and soft edges. Keep it transparent (saved as PNG) or fill it with a color.
 - One undo history for every tool, press and hold to compare with the original, and your save setting (copy, overwrite or ask).
 
+## [1.0.1]
+
+Fixes.
+
+- Long-press selection no longer deselects the photo when you lift the finger.
+
 ## [1.0.0]
 
 First stable release.
