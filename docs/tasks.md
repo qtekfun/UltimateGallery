@@ -83,4 +83,4 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Text tool.
 - [x] Blur and pixelate brush.
 - [x] Background tool.
-- [ ] Viewer entry, EN/ES strings, release notes for 1.1.0.
+- [x] Viewer entry, EN/ES strings, release notes for 1.1.0 (first as 1.1.0-rc1 for device testing).
