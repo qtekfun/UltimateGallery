@@ -3,7 +3,9 @@ package com.qtekfun.ultimategallery.di
 import com.qtekfun.ultimategallery.data.edit.EditSaver
 import com.qtekfun.ultimategallery.data.edit.EditStore
 import com.qtekfun.ultimategallery.data.edit.MediaEditSaver
+import com.qtekfun.ultimategallery.data.edit.MediaPhotoEditSaver
 import com.qtekfun.ultimategallery.data.edit.MediaStoreEditStore
+import com.qtekfun.ultimategallery.data.edit.PhotoEditSaver
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,7 @@ abstract class EditModule {
 
     @Binds
     abstract fun editStore(impl: MediaStoreEditStore): EditStore
+
+    @Binds
+    abstract fun photoEditSaver(impl: MediaPhotoEditSaver): PhotoEditSaver
 }

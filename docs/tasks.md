@@ -77,7 +77,7 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Model, color matrices, snapshot history; tests.
 - [x] Background mask (flood fill, auto, brushes, feather) and sharpening; tests.
 - [x] Renderer: base layers and annotation painter shared by preview and save; render tests.
-- [ ] Save path: output format, copy/overwrite rules; tests.
+- [x] Save path: output format, copy/overwrite rules; tests.
 - [ ] Editor screen: stage, tool tabs, undo/redo, compare, save, discard confirmation; Adjust and Filters tools.
 - [ ] Draw and shapes tool with selection, move and delete.
 - [ ] Text tool.
