@@ -9,6 +9,7 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /** Pure geometry of the drawn items: hit testing, moving and the shape of arrow heads. Distances are in image pixels. */
+@Suppress("TooManyFunctions")
 object AnnotationGeometry {
     private const val ARROW_HEAD_ANGLE = 0.5
     private const val ARROW_HEAD_PER_WIDTH = 4.5f
@@ -36,6 +37,32 @@ object AnnotationGeometry {
                 is Annotation.Text -> hitsText(a, px, py, width, height, slop, extent)
             }
         }?.id
+    }
+
+    /** A box around an item, in image pixels: its center, half sizes and clockwise rotation. */
+    data class Bounds(val centerX: Float, val centerY: Float, val halfWidth: Float, val halfHeight: Float, val rotationDeg: Float)
+
+    /** The box that outlines a selected item on a [width] x [height] image, including its stroke. */
+    fun bounds(annotation: Annotation, width: Int, height: Int, extent: TextExtent): Bounds {
+        val short = min(width, height).toFloat()
+        fun box(points: List<EditPoint>, stroke: Float): Bounds {
+            val xs = points.map { it.x * width }
+            val ys = points.map { it.y * height }
+            val pad = stroke / 2f
+            val left = xs.min() - pad
+            val right = xs.max() + pad
+            val top = ys.min() - pad
+            val bottom = ys.max() + pad
+            return Bounds((left + right) / 2f, (top + bottom) / 2f, (right - left) / 2f, (bottom - top) / 2f, 0f)
+        }
+        return when (annotation) {
+            is Annotation.Stroke -> box(annotation.points.ifEmpty { listOf(EditPoint(0f, 0f)) }, annotation.width * short)
+            is Annotation.Shape -> box(listOf(annotation.start, annotation.end), annotation.width * short)
+            is Annotation.Text -> {
+                val (hw, hh) = extent.halfSize(annotation, width, height)
+                Bounds(annotation.center.x * width, annotation.center.y * height, hw, hh, annotation.rotationDeg)
+            }
+        }
     }
 
     /** [annotation] moved by [dx], [dy] (fractions of the image). */
