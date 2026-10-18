@@ -3,6 +3,16 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [1.1.0-rc1]
+
+Photo editor (pre-release).
+
+- A new editor, next to crop and rotate in the viewer: brightness, contrast, exposure, saturation, warmth, sharpness and vignette, plus filters with intensity.
+- Draw with a pen or highlighter, add lines, arrows, rectangles and ellipses, and text notes you can move, resize and turn.
+- Blur or pixelate faces, plates or anything else with a brush.
+- Remove the background without any network or model: automatic for plain backgrounds, tap to remove areas, brushes to erase or restore, and soft edges. Keep it transparent (saved as PNG) or fill it with a color.
+- One undo history for every tool, press and hold to compare with the original, and your save setting (copy, overwrite or ask).
+
 ## [1.0.1]
 
 Fixes.

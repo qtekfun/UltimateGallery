@@ -76,6 +76,25 @@ Priority: watermark flow first, then the rest of the gallery.
 - R41. **Save behavior is a setting**: always overwrite, always save as copy, or ask every time. Default: ask. Overwrite uses system consent. 90° rotations of JPEG use lossless orientation where possible.
 - R42. **Settings backup**: Settings → Backup exports the preferences and the watermark profiles to one JSON file chosen with the system file picker, and imports such a file after a confirmation. Photos, folders and hidden-folder lists are never included; image watermarks are exported as text. Importing replaces the preferences and only adds profiles (never changes or deletes existing ones).
 
+### 2.9b Photo editor (1.1)
+A second editor, next to crop and rotate, opened from the viewer. All its tools share one undo/redo history, a press-and-hold
+"compare with original" button and the save-behavior setting (R41).
+- R43. **Light and color**: brightness, contrast, exposure, saturation, warmth, sharpness and vignette, each on a slider with a
+  detent at zero.
+- R44. **Filters**: a row of presets (mono, sepia, warm, cool, vivid, fade, noir) with live thumbnails and an intensity slider.
+- R45. **Draw and shapes**: freehand pen and highlighter, line, arrow, rectangle and ellipse (outline or filled), with a color
+  palette and a width slider. Drawn items can be selected, moved and deleted.
+- R46. **Text**: free text notes with color, font (the watermark fonts), size and an optional background box; move with one
+  finger, scale and rotate with two.
+- R47. **Blur and pixelate**: a brush that blurs or pixelates the regions it paints (faces, plates, personal data), with brush
+  size and strength.
+- R48. **Remove background** without any model or network: one-tap automatic removal of a plain background touching the
+  borders, tap-to-remove regions by color similarity with a tolerance slider, erase and restore brushes, and edge softness.
+  The background becomes transparent or a solid color. A transparent result is saved as PNG (a JPEG is never overwritten with
+  a PNG: it becomes a copy).
+- Geometry of every drawn item, brush stroke and tap is stored in fractions of the image (widths in fractions of the short
+  side), so the preview and the full-resolution result match.
+
 ### 2.10 Settings
 - Appearance: theme (system/light/dark), dynamic color, default grid size.
 - Folders and App folders (R11, R12).
@@ -93,7 +112,15 @@ Priority: watermark flow first, then the rest of the gallery.
 - N6. Localization: English and Spanish from day 1; all strings in resources.
 
 ## 4. Out of scope for v1
-Camera capture, brightness/contrast/filters, blur or cover-up regions, video watermarking, cloud sync, face or object search, custom trash, virtual albums, per-photo watermark overrides.
+Camera capture, video watermarking, cloud sync, face or object search, custom trash, virtual albums, per-photo watermark overrides.
+
+### 4.0 Known gaps of the photo editor (1.1)
+- Background removal is color based: it works well on plain or evenly lit backgrounds (product photos) and needs the brushes
+  on busy ones. There is no subject detection.
+- The editor works on photos up to 16 megapixels; larger photos are decoded at a power-of-two fraction (for example a 50 MP
+  photo is edited at 12.5 MP).
+- The stage cannot be zoomed while drawing; fine work relies on brush size and undo.
+- Drawn items, text and brush strokes are flattened into the saved photo; they can't be edited after saving.
 
 ### 4.1 Known gaps (debt) of the wallpaper and device hiding features
 - Wallpaper: one crop for the portrait screen only. No separate crops for the inner and outer screens of foldables, for tablets in landscape, or per display (`WallpaperManager` crop hints per screen size); no parallax/scrolling wallpaper; no live or video wallpapers; animated GIFs become their first frame.
@@ -104,7 +131,7 @@ Camera capture, brightness/contrast/filters, blur or cover-up regions, video wat
 - Device hiding: how fast the MediaStore drops or restores the folder after the rescan depends on the device's media provider; it needs on-device verification.
 
 ## 5. Roadmap (after v1)
-Brightness/contrast/saturation, blur/cover regions (plates, faces), integrated camera with live watermark, video watermarking, search.
+Integrated camera with live watermark, video watermarking, search.
 
 ## 6. Assumptions to confirm during development
 - Pinch-to-resize applies to both folder grid and photo grid.

@@ -16,6 +16,8 @@ Part of the Ultimate family of apps. Package: `com.qtekfun.ultimategallery`.
   snapping guides with haptics; independent portrait and landscape placements stored as fractions of the
   image, so the mark lands in the same relative spot on every photo whatever its resolution.
 - Profiles (templates) and batch export in the background, with the originals never modified.
+- Photo editor: light and color, filters, pen, shapes and text, blur or pixelate regions, and background
+  removal (color based, fully offline) with a transparent or solid result.
 - Viewer with zoom, shared-element transitions, thumbnail strip and video; crop and rotate editor;
   set a photo as the home and/or lock screen wallpaper, framed with your fingers.
 - Material 3 Expressive, dynamic color, English and Spanish.

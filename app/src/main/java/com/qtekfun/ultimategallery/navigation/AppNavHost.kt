@@ -26,6 +26,7 @@ import com.qtekfun.ultimategallery.feature.export.ExportProgressScreen
 import com.qtekfun.ultimategallery.feature.gallery.FolderScreen
 import com.qtekfun.ultimategallery.feature.gallery.HomeScreen
 import com.qtekfun.ultimategallery.feature.onboarding.AccessActions
+import com.qtekfun.ultimategallery.feature.photoedit.PhotoEditorScreen
 import com.qtekfun.ultimategallery.feature.settings.AboutScreen
 import com.qtekfun.ultimategallery.feature.settings.AppFoldersSettingsScreen
 import com.qtekfun.ultimategallery.feature.settings.AppearanceSettingsScreen
@@ -106,6 +107,7 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                         onWatermark = { nav.navigate(Routes.WATERMARK) },
                         onShare = { item -> share(context, listOf(item)) },
                         onEdit = { item -> nav.navigate(Routes.edit(item.id)) },
+                        onPhotoEdit = { item -> nav.navigate(Routes.photoEdit(item.id)) },
                         onSetWallpaper = if (wallpaperAvailable) ({ item -> nav.navigate(Routes.wallpaper(item.id)) }) else null,
                         onUseAs = { item -> useAs(context, item) }
                     )
@@ -115,6 +117,9 @@ fun AppNavHost(accessLevel: MediaAccessLevel, accessActions: AccessActions, modi
                 }
                 destination(Routes.EDIT, arguments = listOf(navArgument("mediaId") { type = NavType.LongType })) {
                     CropRotateScreen(onBack = { nav.popBackStack() }, onSaved = { nav.popBackStack() })
+                }
+                destination(Routes.PHOTO_EDIT, arguments = listOf(navArgument("mediaId") { type = NavType.LongType })) {
+                    PhotoEditorScreen(onBack = { nav.popBackStack() }, onSaved = { nav.popBackStack() })
                 }
                 destination(Routes.WATERMARK) {
                     WatermarkEditorScreen(

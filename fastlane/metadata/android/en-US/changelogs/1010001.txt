@@ -1,0 +1,6 @@
+Photo editor (pre-release).
+- Light, color and filters
+- Pen, highlighter, lines, arrows, shapes and text
+- Blur or pixelate regions with a brush
+- Remove the background offline: automatic, tap or brush; transparent (PNG) or a color
+- Undo/redo, compare with the original, and your save setting

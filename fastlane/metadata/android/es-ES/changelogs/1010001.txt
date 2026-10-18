@@ -1,0 +1,6 @@
+Editor de fotos (preliminar).
+- Luz, color y filtros
+- Lápiz, rotulador, líneas, flechas, formas y texto
+- Desenfoca o pixela zonas con un pincel
+- Quita el fondo sin conexión: automático, tocando o con pincel; transparente (PNG) o de un color
+- Deshacer/rehacer, comparar con el original y tu ajuste de guardado

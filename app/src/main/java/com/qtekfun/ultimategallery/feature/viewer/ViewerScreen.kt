@@ -36,6 +36,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.ScreenRotation
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -99,7 +100,8 @@ class ViewerActions(
     val onDelete: ((MediaItem) -> Unit)? = null,
     val onRotate: ((MediaItem) -> Unit)? = null,
     val onSetWallpaper: ((MediaItem) -> Unit)? = null,
-    val onUseAs: ((MediaItem) -> Unit)? = null
+    val onUseAs: ((MediaItem) -> Unit)? = null,
+    val onPhotoEdit: ((MediaItem) -> Unit)? = null
 )
 
 /** Full-screen viewer: swipe between items, zoom, swipe down to close, thumbnail strip and actions. */
@@ -110,6 +112,7 @@ fun ViewerScreen(
     onShare: (MediaItem) -> Unit,
     onEdit: (MediaItem) -> Unit,
     modifier: Modifier = Modifier,
+    onPhotoEdit: ((MediaItem) -> Unit)? = null,
     onSetWallpaper: ((MediaItem) -> Unit)? = null,
     onUseAs: ((MediaItem) -> Unit)? = null,
     viewModel: ViewerViewModel = hiltViewModel()
@@ -145,6 +148,7 @@ fun ViewerScreen(
                 actions = ViewerActions(
                     onShare = onShare,
                     onEdit = onEdit,
+                    onPhotoEdit = onPhotoEdit,
                     onMove = { files.moveTo(listOf(it)) },
                     onCopy = { files.copyTo(listOf(it)) },
                     onRename = { files.rename(it) },
@@ -349,8 +353,11 @@ internal fun ViewerActionBar(item: MediaItem, actions: ViewerActions, onWatermar
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             if (!item.isVideo) {
                 ActionSlot { IconButton(onClick = { onWatermark(item) }) { Icon(Icons.Outlined.WaterDrop, stringResource(R.string.watermark)) } }
+                actions.onPhotoEdit?.let { edit ->
+                    ActionSlot { IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Tune, stringResource(R.string.photo_edit_open)) } }
+                }
                 actions.onEdit?.let { edit ->
-                    ActionSlot { IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.edit)) } }
+                    ActionSlot { IconButton(onClick = { edit(item) }) { Icon(Icons.Outlined.Crop, stringResource(R.string.crop_title)) } }
                 }
             } else {
                 actions.onRotate?.let { rotate ->
