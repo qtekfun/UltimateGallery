@@ -75,7 +75,7 @@ Execute all phases in order without pausing for review between them. Commit per 
 
 ## Phase 13 — Photo editor (1.1)
 - [x] Model, color matrices, snapshot history; tests.
-- [ ] Background mask (flood fill, auto, brushes, feather) and sharpening; tests.
+- [x] Background mask (flood fill, auto, brushes, feather) and sharpening; tests.
 - [ ] Renderer: base layers and annotation painter shared by preview and save; render tests.
 - [ ] Save path: output format, copy/overwrite rules; tests.
 - [ ] Editor screen: stage, tool tabs, undo/redo, compare, save, discard confirmation; Adjust and Filters tools.
