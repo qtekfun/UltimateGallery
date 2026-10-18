@@ -23,9 +23,8 @@ Part of the Ultimate family of apps. Package: `com.qtekfun.ultimategallery`.
 
 ## Status
 
-Pre-releases are published on the GitHub releases page; the current one is a release candidate that still
-needs on-device testing. Until a release signing key is configured the APKs are signed with the debug key
-(the release notes say so), which is fine for trying the app but not for distribution.
+Version 1.0 is out. Releases, with the signed APK attached, are published on the GitHub releases page;
+F-Droid submission is next.
 
 ## Build
 

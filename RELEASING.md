@@ -10,7 +10,7 @@ Releases are tagged by hand; there is no release automation beyond the tag workf
    missing; CI runs it on every push, and the release workflow refuses to publish without notes.
 3. Commit, push to `main`, wait for CI to be green.
 4. `git tag vX.Y.Z && git push origin vX.Y.Z`. The *Release* workflow builds the APK and
-   creates the GitHub pre-release with it attached.
+   creates the GitHub release with it attached: a pre-release for `-rcN` tags, a regular release otherwise.
 
 ## Signing
 

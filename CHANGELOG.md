@@ -3,6 +3,14 @@
 All notable changes to UltimateGallery. Versions follow [SemVer](https://semver.org/); the
 same text is kept under `fastlane/metadata/android/*/changelogs` for F-Droid.
 
+## [1.0.0]
+
+First stable release.
+
+- Folder-based gallery with batch watermarking: place one watermark with your fingers, preview it on every photo and export them all. Originals are never modified.
+- Viewer, crop and rotate, wallpaper, hidden folders, file operations and settings backup, as in the release candidates.
+- Fixed: long-press multi-select picked the photo in the row below the finger.
+
 ## [1.0.0-rc11]
 
 Settings backup (pre-release).

@@ -1,0 +1,4 @@
+First stable release.
+- Folder-based gallery with batch watermarking: place one watermark, preview it on every photo and export them all. Originals are never modified
+- Viewer, crop and rotate, wallpaper, hidden folders, file operations and settings backup
+- Fixed: long-press multi-select picked the photo in the row below the finger

@@ -1,0 +1,4 @@
+Primera versión estable.
+- Galería por carpetas con marca de agua por lotes: coloca una marca, revísala en cada foto y expórtalas todas. Los originales nunca se modifican
+- Visor, recorte y giro, fondo de pantalla, carpetas ocultas, operaciones con archivos y copia de seguridad de ajustes
+- Corregido: la selección múltiple con pulsación larga elegía la foto de la fila inferior
