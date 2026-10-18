@@ -72,3 +72,15 @@ Execute all phases in order without pausing for review between them. Commit per 
 
 ## Phase 12 — Settings backup
 - [x] Export and import preferences and watermark profiles as JSON (R42): `BackupCodec`, `SettingsBackup`, Settings → Backup screen, confirmation dialog, EN/ES strings; tests for round trip, validation and idempotent import.
+
+## Phase 13 — Photo editor (1.1)
+- [ ] Model, color matrices, snapshot history; tests.
+- [ ] Background mask (flood fill, auto, brushes, feather) and sharpening; tests.
+- [ ] Renderer: base layers and annotation painter shared by preview and save; render tests.
+- [ ] Save path: output format, copy/overwrite rules; tests.
+- [ ] Editor screen: stage, tool tabs, undo/redo, compare, save, discard confirmation; Adjust and Filters tools.
+- [ ] Draw and shapes tool with selection, move and delete.
+- [ ] Text tool.
+- [ ] Blur and pixelate brush.
+- [ ] Background tool.
+- [ ] Viewer entry, EN/ES strings, release notes for 1.1.0.

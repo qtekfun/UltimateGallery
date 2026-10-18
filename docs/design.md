@@ -118,6 +118,33 @@ A `CoroutineWorker` runs the batch as a foreground service with a progress notif
 - Rotation animates with a spring on the image and frame together (scale to fit during the turn). Flip animates on the axis.
 - Save: on confirm, apply per the save-behavior setting (overwrite / copy / ask). For JPEG with pure 90° steps and no crop, write the EXIF orientation flag instead of re-encoding when possible.
 
+## 10b. Photo editor
+- `domain/edit/PhotoEdit`: the immutable document. `Adjustments` (seven values), `FilterChoice` (preset + intensity), `covers`
+  (blur/pixelate brush strokes), `annotations` (strokes, shapes, text notes) and an optional `BackgroundEdit` (mask operations,
+  feather and fill). Points are `EditPoint(x, y)` in fractions of the image; widths and text sizes are fractions of the short
+  side. Every annotation has a stable id for selection.
+- `domain/edit/ColorMatrices` (pure): 4×5 color matrices for each adjustment and preset, composition and intensity blending.
+  The same values feed `android.graphics.ColorMatrix` (render) and Compose `ColorMatrix` (filter thumbnails).
+- `domain/edit/BackgroundMask` (pure, on `IntArray` pixels and a `ByteArray` alpha mask): scanline flood fill by color
+  distance (redmean-weighted RGB) from a seed's 5×5 average; automatic removal floods from every border pixel close to the
+  median border color; brush stamps along the stroke; feather is a two-pass box blur of the mask.
+- `domain/edit/PixelOps` (pure): unsharp-mask sharpening processed in row bands.
+- `domain/edit/AnnotationGeometry` (pure): hit testing (stroke distance to polyline, shape bounds), moving and normalizing
+  items, arrow heads.
+- `render/edit/PhotoEditRenderer`: the single render path. `renderBase` applies color (one composed `ColorMatrix`), sharpen,
+  vignette (radial gradient), covers (the stroke path painted with a `BitmapShader` of a blurred — downscale/upscale with
+  filtering — or pixelated — downscale/upscale without filtering — copy) and the background mask with its fill.
+  `AnnotationPainter` draws strokes, shapes and text (`StaticLayout`, typefaces through `FontLibrary` and `MarkTypefaces`) on any
+  `Canvas` given the image size. Saving renders base + annotations at full resolution. The preview renders the base
+  asynchronously at a 1600 px long edge (latest edit wins) and draws the annotations live on top with the same
+  `AnnotationPainter` through `drawIntoCanvas`, so dragging items costs no re-render.
+- `data/edit/ImageEditor.renderPhotoEdit` + `MediaEditSaver.saveEdit`: same copy/overwrite plumbing as crop. The output format is
+  the source format, or PNG when the result has transparency and the source format has none; overwriting only happens when the
+  output format equals the source format, otherwise a copy is saved and the UI says so. The editor decodes with a 16 MP budget.
+- `feature/photoedit`: `PhotoEditorScreen` (stage + tool tabs: Adjust, Filters, Draw, Text, Blur, Background; side panel in
+  landscape), `PhotoEditorViewModel` (document, tool settings, `SnapshotHistory<PhotoEdit>` undo/redo with slider coalescing,
+  preview rendering, save), discard confirmation on back. A checkerboard is drawn behind the image so transparency is visible.
+
 ## 11. Motion and polish
 - Material 3 Expressive shapes and motion springs, subtle haptics (snap, selection, rotation detent).
 - Predictive back, edge-to-edge, per-screen insets handling, foldable/tablet two-pane layouts where useful.
