@@ -66,10 +66,18 @@ class ViewerChromeTest {
     }
 
     @Test
+    fun actionBarOffersThePhotoEditorNextToCrop() {
+        rule.setContent { ViewerActionBar(item(), ViewerActions({}, {}, onPhotoEdit = {}), {}, {}) }
+        rule.onNodeWithContentDescription("Edit photo").assertExists()
+        rule.onNodeWithContentDescription("Crop and rotate").assertExists()
+    }
+
+    @Test
     fun actionBarHidesPhotoOnlyActionsForVideos() {
         rule.setContent { ViewerActionBar(item(isVideo = true), actions(), {}, {}) }
         rule.onNodeWithContentDescription("Watermark").assertDoesNotExist()
-        rule.onNodeWithContentDescription("Edit").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Crop and rotate").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Edit photo").assertDoesNotExist()
         rule.onAllNodes(hasClickAction()).assertCountEquals(4)
     }
 }

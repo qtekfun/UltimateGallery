@@ -78,9 +78,9 @@ Execute all phases in order without pausing for review between them. Commit per 
 - [x] Background mask (flood fill, auto, brushes, feather) and sharpening; tests.
 - [x] Renderer: base layers and annotation painter shared by preview and save; render tests.
 - [x] Save path: output format, copy/overwrite rules; tests.
-- [ ] Editor screen: stage, tool tabs, undo/redo, compare, save, discard confirmation; Adjust and Filters tools.
-- [ ] Draw and shapes tool with selection, move and delete.
-- [ ] Text tool.
-- [ ] Blur and pixelate brush.
-- [ ] Background tool.
+- [x] Editor screen: stage, tool tabs, undo/redo, compare, save, discard confirmation; Adjust and Filters tools.
+- [x] Draw and shapes tool with selection, move and delete.
+- [x] Text tool.
+- [x] Blur and pixelate brush.
+- [x] Background tool.
 - [ ] Viewer entry, EN/ES strings, release notes for 1.1.0.
